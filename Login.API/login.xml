@@ -4,6 +4,62 @@
         <name>Login.API</name>
     </assembly>
     <members>
+        <member name="M:Login.API.Controllers.GroupController.Get(System.String)">
+            <summary>
+            get adusers by groupname
+            </summary>
+            <param name="groupName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.GroupController.Post(System.String)">
+            <summary>
+            create new group
+            </summary>
+            <param name="groupName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.GroupController.Remove(System.String,System.String)">
+            <summary>
+            remove group member
+            </summary>
+            <param name="groupName"></param>
+            <param name="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.GroupController.Add(System.String,System.String)">
+            <summary>
+            add group member
+            </summary>
+            <param name="groupName"></param>
+            <param name="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.GroupController.Delete(System.String)">
+            <summary>
+            delete adgroup
+            </summary>
+            <param name="groupname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.RouterController.Get">
+            <summary>
+            get online connections
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.RouterController.Disconnect(System.String)">
+            <summary>
+            disconnect aduser
+            </summary>
+            <param username="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.RouterController.GetInfo">
+            <summary>
+            get online connections
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Login.API.Controllers.UsersController.Get(System.String)">
             <summary>
             Get single user.

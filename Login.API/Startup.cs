@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
+using Swashbuckle.Swagger.Model;
 
 namespace Login.API
 {
@@ -29,6 +32,29 @@ namespace Login.API
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddSwaggerGen();
+
+            services.ConfigureSwaggerGen(options =>
+            {
+                options.SingleApiVersion(new Info
+                {
+                    Version = "v1",
+                    Title = "Login API",
+                    Description = "Login Web API",
+                    TermsOfService = "None",
+                    Contact = new Contact { Name = "bosxixi", Email = "", Url = "http://bosxixi.com" },
+                    //License = new License { Name = "Use under LICX", Url = "http://url.com" }
+                });
+
+                //Determine base path for the application.
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+
+                //Set the comments path for the swagger json and ui.
+                var xmlPath = Path.Combine(basePath, "login.xml");
+                Console.WriteLine(xmlPath);
+                options.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +64,12 @@ namespace Login.API
             loggerFactory.AddDebug();
 
             app.UseMvc();
+
+            //Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+
+            //Enable middleware to serve swagger - ui assets(HTML, JS, CSS etc.)
+            app.UseSwaggerUi();
         }
     }
 }
