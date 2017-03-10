@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Login.API</name>
+    </assembly>
+    <members>
+        <member name="M:Login.API.Controllers.UsersController.Get(System.String)">
+            <summary>
+            Get single user.
+            </summary>
+            <remarks>
+            Note that the name must supply.
+            </remarks>
+            <param name="name">user's name</param>
+            <returns>ADUser</returns>
+            <response code="200">Returns the user</response>
+            <response code="404">If can't find the user.</response>
+        </member>
+        <member name="M:Login.API.Controllers.UsersController.GetByFilter(System.String)">
+            <summary>
+            get adusers by filter
+            </summary>
+            <param name="filter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.UsersController.Post(Login.API.Controllers.ADUser)">
+            <summary>
+            create aduser
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.UsersController.Put(Login.API.Controllers.ADUser)">
+            <summary>
+            set aduser properties
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Login.API.Controllers.UsersController.Delete(System.String)">
+            <summary>
+            remove aduser
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
