@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Login.API.Controllers
+namespace Extensions.Windows
 {
     public static class Extension
     {

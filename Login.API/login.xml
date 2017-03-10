@@ -41,25 +41,6 @@
             <param name="groupname"></param>
             <returns></returns>
         </member>
-        <member name="M:Login.API.Controllers.RouterController.Get">
-            <summary>
-            get online connections
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Login.API.Controllers.RouterController.Disconnect(System.String)">
-            <summary>
-            disconnect aduser
-            </summary>
-            <param username="username"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Login.API.Controllers.RouterController.GetInfo">
-            <summary>
-            get online connections
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:Login.API.Controllers.UsersController.Get(System.String)">
             <summary>
             Get single user.

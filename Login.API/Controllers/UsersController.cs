@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Xml;
 using System.IO;
 using Microsoft.Extensions.PlatformAbstractions;
+using Extensions.Windows;
 
 namespace Login.API.Controllers
 {

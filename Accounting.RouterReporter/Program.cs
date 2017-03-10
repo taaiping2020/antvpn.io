@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.ServiceProcess;
 using System.Diagnostics;
+using Extensions.Windows;
 
 namespace Accounting.RouterReporter
 {
@@ -102,7 +103,7 @@ namespace Accounting.RouterReporter
                 else
                 {
                     var now = DateTime.UtcNow;
-                    var racs = psos.Select(c => new RemoteAccessConnection(c, machineName, now)).ToList();
+                    var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
                     collection.InsertMany(racs.Select(c => c.ToBsonDocument()));
 
                     var filterBuilder = Builders<Meta>.Filter;
