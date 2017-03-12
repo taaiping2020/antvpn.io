@@ -1,4 +1,5 @@
-﻿using Extensions;
+﻿using Accounting.API.Models;
+using Extensions;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Driver;
@@ -45,14 +46,14 @@ namespace Accounting.API
             return list;
         }
 
-        public IEnumerable<RemoteAccessConnection> GetCurrent()
+        public IEnumerable<RemoteAccessConnectionObjectId> GetCurrent()
         {
             var database = client.GetDatabase("accountingdata");
             var meta = database.GetCollection<BsonDocument>("meta");
             var first = meta.Find(new BsonDocument() { new BsonElement("name", "currenttimestamp") }).First();
             DateTime timestamp = first["timestamp"].AsDateTime;
 
-            var collection = database.GetCollection<RemoteAccessConnection>("current");
+            var collection = database.GetCollection<RemoteAccessConnectionObjectId>("current");
             var filterBuilder = Builders<BsonDocument>.Filter;
             var filter = filterBuilder.Eq("TimeStamp", timestamp);
             return collection.Find(t => t.TimeStamp == timestamp).ToList();

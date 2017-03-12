@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Accounting.API
+namespace Accounting.API.Models
 {
     public class Acct : IEqualityComparer<Acct>, IEquatable<Acct>
     {
