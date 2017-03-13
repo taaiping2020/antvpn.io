@@ -14,11 +14,11 @@ namespace Accounting.API.Controllers
         static AcctRepo repo = new AcctRepo();
         // GET api/values
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var currentConnections = repo.GetCurrent();
-            var usernames = repo.GetAllUserNames();
-            var list4 = repo.GetStoppedAcctWithDocsByUserNames(usernames, null, null);
+            var currentConnections = await repo.GetCurrentAsync();
+            var usernames = await repo.GetAllUserNamesAsync();
+            var list4 = await repo.GetStoppedAcctWithDocsByUserNamesAsync(usernames, null, null);
             var g1 = list4.GroupBy(c => c.UserName);
             var result = new List<BasicAcct>();
             foreach (var item in g1)

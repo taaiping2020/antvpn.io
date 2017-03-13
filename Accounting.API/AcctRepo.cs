@@ -46,7 +46,7 @@ namespace Accounting.API
             return list;
         }
 
-        public IEnumerable<RemoteAccessConnectionObjectId> GetCurrent()
+        public async Task<IEnumerable<RemoteAccessConnectionObjectId>> GetCurrentAsync()
         {
             var database = client.GetDatabase("accountingdata");
             var meta = database.GetCollection<BsonDocument>("meta");
@@ -56,7 +56,7 @@ namespace Accounting.API
             var collection = database.GetCollection<RemoteAccessConnectionObjectId>("current");
             var filterBuilder = Builders<BsonDocument>.Filter;
             var filter = filterBuilder.Eq("TimeStamp", timestamp);
-            return collection.Find(t => t.TimeStamp == timestamp).ToList();
+            return await collection.Find(t => t.TimeStamp == timestamp).ToListAsync();
         }
 
         public IEnumerable<BsonDocument> Get(string userName, bool getStart, bool getStop)
@@ -85,18 +85,18 @@ namespace Accounting.API
 
             return list;
         }
-        public IEnumerable<string> GetAllUserNames()
+        public async Task<IEnumerable<string>> GetAllUserNamesAsync()
         {
             var database = client.GetDatabase("accountingdata");
             var collection = database.GetCollection<BsonDocument>("accounting");
             var filterBuilder = Builders<BsonDocument>.Filter;
             var filter = filterBuilder.Eq("Acct_Status_Type", AcctStatusType.Start);
-            var list = collection.Aggregate()
+            var list = await collection.Aggregate()
                 .Match(filter)
                 .Group(new JsonProjectionDefinition<BsonDocument>(@"{
                           '_id': '$User_Name',
                 }"))
-                .ToList();
+                .ToListAsync();
             var usernames = list.Select(c => c["_id"].AsString).ToArray();
             return usernames;
         }
@@ -164,7 +164,7 @@ namespace Accounting.API
             var result = list.Select(c => ToAcct(c)).ToArray();
             return result;
         }
-        public IEnumerable<Acct> GetStoppedAcctWithDocsByUserNames(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime)
+        public async Task<IEnumerable<Acct>> GetStoppedAcctWithDocsByUserNamesAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime)
         {
             var database = client.GetDatabase("accountingdata");
             var collection = database.GetCollection<BsonDocument>("accounting");
@@ -183,7 +183,7 @@ namespace Accounting.API
                 }
             }
             filter = filter & filterBuilder.Eq("Acct_Status_Type", AcctStatusType.Stop);
-            var list = collection.Find(filter).ToList();
+            var list = await collection.Find(filter).ToListAsync();
             var result = list.Select(c => ToAcct(c)).ToArray();
             return result;
         }
