@@ -35,24 +35,23 @@ namespace Accounting.RouterReporter
 
         private static void Stop()
         {
-
+            ps?.Dispose();
         }
 
         private static void Start(string[] args)
         {
-
             var autoEvent = new AutoResetEvent(false);
-            ps.AddCommand("Get-RemoteAccessConnectionStatistics");
+
             int interval = 30;
             if (args.Length > 0)
                 interval = int.Parse(args[0]);
 
-            if (args.Length == 3)
-                uri = $"mongodb://{args[1]}:{args[2]}";
+            if (args.Length == 2)
+                uri = $"{args[1]}";
             else
                 uri = "mongodb://104.160.35.172:27017";
 
-            Log(EventLogEntryType.Information, $"uri: {uri}, uploads interval: {interval}");
+            Log(EventLogEntryType.Information, $"connectionString: {uri}, uploads interval: {interval}");
 
             client = new MongoClient(uri);
 
@@ -95,6 +94,8 @@ namespace Accounting.RouterReporter
                 var collection = database.GetCollection<BsonDocument>("current");
                 var meta = database.GetCollection<Meta>("meta");
 
+                ps.Commands.Clear();
+                ps.AddCommand("Get-RemoteAccessConnectionStatistics");
                 var psos = ps.Invoke();
                 if (psos.IsNullOrCountEqualsZero())
                 {
@@ -137,17 +138,14 @@ namespace Accounting.RouterReporter
                     foreach (var username in disconnectusers.users)
                     {
                         Console.WriteLine($"try disconnecting {username}");
-                        using (var psd = PowerShell.Create())
-                        {
-                            psd.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
-                            psd.Invoke();
-                        }
-                        using (var psd = PowerShell.Create())
-                        {
-                            psd.AddCommand($@"Disconnect-VpnUser");
-                            psd.AddParameter("UserName", username);
-                            psd.Invoke();
-                        }
+                        ps.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
+                        ps.Invoke();
+
+                        ps.Commands.Clear();
+
+                        ps.AddCommand($@"Disconnect-VpnUser");
+                        ps.AddParameter("UserName", username);
+                        ps.Invoke();
                     }
                 }
             }
