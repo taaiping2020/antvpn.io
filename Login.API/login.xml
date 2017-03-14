@@ -60,14 +60,14 @@
             <param name="filter"></param>
             <returns></returns>
         </member>
-        <member name="M:Login.API.Controllers.UsersController.Post(Login.API.Controllers.ADUser)">
+        <member name="M:Login.API.Controllers.UsersController.Post(Login.API.Models.ADUser)">
             <summary>
             create aduser
             </summary>
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:Login.API.Controllers.UsersController.Put(Login.API.Controllers.ADUser)">
+        <member name="M:Login.API.Controllers.UsersController.Put(Login.API.Models.ADUser)">
             <summary>
             set aduser properties
             </summary>

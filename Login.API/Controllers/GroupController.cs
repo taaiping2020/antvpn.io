@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Management.Automation;
 using Extensions.Windows;
 using System.Management.Automation.Runspaces;
 using System.IO;
 using Microsoft.Extensions.PlatformAbstractions;
+using Login.API.Models;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,7 +39,7 @@ namespace Login.API.Controllers
         /// <param name="groupName"></param>
         /// <returns></returns>
         [HttpGet("Members/{groupName}")]
-        [ProducesResponseType(typeof(ADUserInfo[]), 200)]
+        [ProducesResponseType(typeof(ADUser[]), 200)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 400)]
         public IActionResult Get(string groupName)
@@ -51,14 +50,14 @@ namespace Login.API.Controllers
             }
 
             ps.Commands.Clear();
-            ps.AddScript($@"Get-ADGroup -Identity ""{groupName}"" -Properties Members | Select-Object -ExpandProperty Members | Foreach-Object {{ Get-ADUser -Identity $_ -Properties * }}");
+            ps.AddScript($@"Get-ADGroup -Identity ""{groupName}"" -Properties Members | Select-Object -ExpandProperty Members | Get-ADUser -Properties *");
             var psos = ps.Invoke();
             if (psos.IsNullOrCountEqualsZero())
             {
                 return NotFound();
             }
 
-            var uis = psos.Select(c => new ADUserInfo(c));
+            var uis = psos.Select(c => ADUserFactory.Create(c));
             return Ok(uis);
         }
 

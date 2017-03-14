@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Login.API.Models
+namespace Accounting.API.Models
 {
     public class ADUser
     {

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Xml;
 using System.IO;
 using Microsoft.Extensions.PlatformAbstractions;
 using Extensions.Windows;
+using Login.API.Models;
 
 namespace Login.API.Controllers
 {
@@ -43,7 +42,7 @@ namespace Login.API.Controllers
         /// <response code="200">Returns the user</response>
         /// <response code="404">If can't find the user.</response>
         [HttpGet("{name}")]
-        [ProducesResponseType(typeof(ADUserInfo), 200)]
+        [ProducesResponseType(typeof(ADUser), 200)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 400)]
         public IActionResult Get(string name)
@@ -61,7 +60,7 @@ namespace Login.API.Controllers
             }
 
             PSObject pso = psos.First();
-            var ui = new ADUserInfo(pso);
+            var ui = ADUserFactory.Create(pso);
             return Ok(ui);
         }
 
@@ -72,7 +71,7 @@ namespace Login.API.Controllers
         /// <returns></returns>
         [HttpGet()]
         [Route("Filter/{filter}")]
-        [ProducesResponseType(typeof(ADUserInfo[]), 200)]
+        [ProducesResponseType(typeof(ADUser[]), 200)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 400)]
         public IActionResult GetByFilter(string filter)
@@ -93,7 +92,7 @@ namespace Login.API.Controllers
                     return NotFound();
                 }
 
-                var uis = psos.Select(c => new ADUserInfo(c));
+                var uis = psos.Select(c => ADUserFactory.Create(c));
                 return Ok(uis);
             }
             catch (Exception ex)
