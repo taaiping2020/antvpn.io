@@ -35,21 +35,22 @@ namespace Login.API.Controllers
         {
             get
             {
-                using (var ps = PowerShell.Create())
-                {
-                    ps.AddCommand("Get-ADPrincipalGroupMembership");
-                    ps.AddParameter("Identity", this.Name);
-                    var psos = ps.Invoke();
-                    if (psos.IsNullOrCountEqualsZero())
-                    {
-                        yield break;
-                    }
+                yield break;
+                //using (var ps = PowerShell.Create())
+                //{
+                //    ps.AddCommand("Get-ADPrincipalGroupMembership");
+                //    ps.AddParameter("Identity", this.Name);
+                //    var psos = ps.Invoke();
+                //    if (psos.IsNullOrCountEqualsZero())
+                //    {
+                //        yield break;
+                //    }
 
-                    foreach (var p in psos)
-                    {
-                        yield return p.GetValue("Name");
-                    }
-                }
+                //    foreach (var p in psos)
+                //    {
+                //        yield return p.GetValue("Name");
+                //    }
+                //}
             }
         }
     }

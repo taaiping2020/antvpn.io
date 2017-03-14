@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Management.Automation;
 using Extensions.Windows;
+using System.Management.Automation.Runspaces;
+using System.IO;
+using Microsoft.Extensions.PlatformAbstractions;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,6 +16,24 @@ namespace Login.API.Controllers
     [Route("api/[controller]")]
     public class GroupController : Controller
     {
+        static readonly string ModuleFileNameOrigin = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "UserManager.psm1");
+        static readonly string ModuleFileName = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "UserManagerLocalGroup.psm1");
+        static readonly PowerShell ps;
+        static readonly Runspace runspace;
+        static readonly InitialSessionState initial;
+        static GroupController()
+        {
+            var text = System.IO.File.ReadAllText(ModuleFileNameOrigin);
+            System.IO.File.WriteAllText(ModuleFileName, text);
+
+            initial = InitialSessionState.CreateDefault();
+            initial.ImportPSModule(new string[] { ModuleFileName });
+            runspace = RunspaceFactory.CreateRunspace(initial);
+            ps = PowerShell.Create(initial);
+            ps.Runspace = runspace;
+            runspace.Open();
+        }
+
         /// <summary>
         /// get adusers by groupname
         /// </summary>
@@ -29,18 +50,16 @@ namespace Login.API.Controllers
                 return BadRequest();
             }
 
-            using (var ps = PowerShell.Create())
+            ps.Commands.Clear();
+            ps.AddScript($@"Get-ADGroup -Identity ""{groupName}"" -Properties Members | Select-Object -ExpandProperty Members | Foreach-Object {{ Get-ADUser -Identity $_ -Properties * }}");
+            var psos = ps.Invoke();
+            if (psos.IsNullOrCountEqualsZero())
             {
-                ps.AddScript($@"Get-ADGroup -Identity ""{groupName}"" -Properties Members | Select-Object -ExpandProperty Members | Foreach-Object {{ Get-ADUser -Identity $_ -Properties * }}");
-                var psos = ps.Invoke();
-                if (psos.IsNullOrCountEqualsZero())
-                {
-                    return NotFound();
-                }
-
-                var uis = psos.Select(c => new ADUserInfo(c));
-                return Ok(uis);
+                return NotFound();
             }
+
+            var uis = psos.Select(c => new ADUserInfo(c));
+            return Ok(uis);
         }
 
         /// <summary>
@@ -58,21 +77,20 @@ namespace Login.API.Controllers
                 return BadRequest();
             }
 
-            using (var ps = PowerShell.Create())
+            ps.Commands.Clear();
+            ps.AddCommand("New-ADGroup");
+            ps.AddParameter("Name", groupName);
+            ps.AddParameter("GroupScope", "Global");
+            try
             {
-                ps.AddCommand("New-ADGroup");
-                ps.AddParameter("Name", groupName);
-                ps.AddParameter("GroupScope", "Global");
-                try
-                {
-                    ps.Invoke();
-                }
-                catch (CmdletInvocationException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-                return Ok();
+                ps.Invoke();
             }
+            catch (CmdletInvocationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+
         }
 
         /// <summary>
@@ -97,16 +115,14 @@ namespace Login.API.Controllers
                 return BadRequest();
             }
 
-            using (var ps = PowerShell.Create())
-            {
-                ps.AddCommand("Remove-ADGroupMember");
-                ps.AddParameter("Identity", groupName);
-                ps.AddParameter("Member", username);
-                ps.AddParameter("Confirm", false);
-                ps.Invoke();
+            ps.Commands.Clear();
+            ps.AddCommand("Remove-ADGroupMember");
+            ps.AddParameter("Identity", groupName);
+            ps.AddParameter("Member", username);
+            ps.AddParameter("Confirm", false);
+            ps.Invoke();
 
-                return Ok();
-            }
+            return Ok();
         }
 
         /// <summary>
@@ -131,16 +147,14 @@ namespace Login.API.Controllers
                 return BadRequest();
             }
 
-            using (var ps = PowerShell.Create())
-            {
-                ps.AddCommand("Add-ADGroupMember");
-                ps.AddParameter("Identity", groupName);
-                ps.AddParameter("Member", username);
-                ps.AddParameter("Confirm", false);
-                ps.Invoke();
+            ps.Commands.Clear();
+            ps.AddCommand("Add-ADGroupMember");
+            ps.AddParameter("Identity", groupName);
+            ps.AddParameter("Member", username);
+            ps.AddParameter("Confirm", false);
+            ps.Invoke();
 
-                return Ok();
-            }
+            return Ok();
         }
 
         /// <summary>
@@ -159,20 +173,19 @@ namespace Login.API.Controllers
                 return BadRequest();
             }
 
-            using (var ps = PowerShell.Create())
+            ps.Commands.Clear();
+            ps.AddCommand("Remove-ADGroup");
+            ps.AddParameter("Identity", groupname);
+            ps.AddParameter("Confirm", false);
+            try
             {
-                ps.AddCommand("Remove-ADGroup");
-                ps.AddParameter("Identity", groupname);
-                ps.AddParameter("Confirm", false);
-                try
-                {
-                    ps.Invoke();
-                }
-                catch (CmdletInvocationException)
-                {
-                    return NotFound();
-                }
+                ps.Invoke();
             }
+            catch (CmdletInvocationException)
+            {
+                return NotFound();
+            }
+
             return Ok();
         }
     }
