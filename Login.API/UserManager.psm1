@@ -62,6 +62,8 @@ function Set-User {
         if([string]::IsNullOrEmpty($password) -eq $false)
         {
            Set-ADAccountPassword -Identity $username -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $password -Force)
+		   Set-ADAccountPassword -Identity $username -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $password -Force)
+		   Set-ADAccountPassword -Identity $username -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $password -Force)
         }
         if($enabled -ne $null)
         {
