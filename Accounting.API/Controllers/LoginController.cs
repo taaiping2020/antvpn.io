@@ -1,46 +1,125 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Accounting.API.Models;
-using Extensions;
-using System.Net.Http;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 using Accounting.API.Data;
+using Accounting.API.Models;
 
 namespace Accounting.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/Login")]
     public class LoginController : Controller
     {
-        public readonly LoginContext db;
-        public LoginController(LoginContext db)
+        private readonly LoginContext _context;
+        public LoginController(LoginContext context)
         {
-            this.db = db;
+            _context = context;
         }
+
+        // GET: api/Login
+        [HttpGet]
+        public IEnumerable<Login> GetLogins()
+        {
+            return _context.Logins;
+        }
+
+        // GET: api/Login/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetLogin([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var login = await _context.Logins.SingleOrDefaultAsync(m => m.Id == id);
+
+            if (login == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(login);
+        }
+
+        // PUT: api/Login/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutLogin([FromRoute] int id, [FromBody] Login login)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != login.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(login).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LoginExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Login
         [HttpPost]
-        public async Task<IActionResult> Backup([FromQuery]string groupname)
+        public async Task<IActionResult> PostLogin([FromBody] Login login)
         {
-            HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("http://dc.antvpn.io:5000/api");
-            var content = await client.GetStringAsync($"http://dc.antvpn.io:5000/api/Group/Members/{groupname}");
-            var aduser = JsonConvert.DeserializeObject<ADUser[]>(content);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            db.Logins.AddRange(aduser.Select(c => LoginFactory.Create(c)));
+            _context.Logins.Add(login);
+            await _context.SaveChangesAsync();
 
-            await db.SaveChangesAsync();
-            //var client = new RestClient("http://dc.antvpn.io:5000");
-            //var request = new RestRequest("api/Group/Members/{groupname}", Method.GET);
-            //request.AddUrlSegment("groupname", "VPN Group");
-            
-            return Ok(aduser);
+            return CreatedAtAction("GetLogin", new { id = login.Id }, login);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Creation()
-        //{
+        // DELETE: api/Login/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteLogin([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //}
+            var login = await _context.Logins.SingleOrDefaultAsync(m => m.Id == id);
+            if (login == null)
+            {
+                return NotFound();
+            }
+
+            _context.Logins.Remove(login);
+            await _context.SaveChangesAsync();
+
+            return Ok(login);
+        }
+
+        private bool LoginExists(int id)
+        {
+            return _context.Logins.Any(e => e.Id == id);
+        }
     }
 }

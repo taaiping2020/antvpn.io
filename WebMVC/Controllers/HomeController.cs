@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using WebMVC.Extensions;
 
 namespace WebMVC.Controllers
 {
@@ -16,6 +17,7 @@ namespace WebMVC.Controllers
 
         public IActionResult About()
         {
+            var userId = User.Identities.GetUserId();
             ViewData["Message"] = "Your application description page.";
 
             return View();

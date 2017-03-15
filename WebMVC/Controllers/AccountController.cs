@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.WebMVC.Services;
 using Microsoft.AspNetCore.Http.Authentication;
 using WebMVC.ViewModels;
+using System.Threading.Tasks;
 
 namespace WebMVC.Controllers
 {
@@ -47,6 +48,12 @@ namespace WebMVC.Controllers
             // https://github.com/aspnet/Mvc/issues/5853
             var homeUrl = Url.Action(nameof(HomeController.Index), "Home");
             return new SignOutResult("oidc", new AuthenticationProperties { RedirectUri = homeUrl });
+        }
+
+        public async Task<IActionResult> MyLogins()
+        {
+
+            return View();
         }
     }
 }

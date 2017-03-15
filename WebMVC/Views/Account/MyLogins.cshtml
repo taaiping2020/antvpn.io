@@ -1,0 +1,16 @@
+﻿@model IEnumerable<WebMVC.ViewModels.Login>
+@{
+    ViewData["Title"] = "My Logins";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (Model != null)
+{
+    <ul>
+        @foreach (var l in Model)
+        {
+            <li>@l.LoginName | @l.AllowDialIn | @l.Enabled</li>
+        }
+    </ul>
+}

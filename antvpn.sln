@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.Windows", "Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Extensions.csproj", "{F9861317-F53C-49EE-8639-3DD56493EE0E}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Login.Sqlserver", "Login.Sqlserver\Login.Sqlserver.sqlproj", "{CFF4994B-711A-4E96-B93F-38581180ACFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,12 @@ Global
 		{F9861317-F53C-49EE-8639-3DD56493EE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9861317-F53C-49EE-8639-3DD56493EE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9861317-F53C-49EE-8639-3DD56493EE0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFF4994B-711A-4E96-B93F-38581180ACFF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +108,6 @@ Global
 		{EFD31F25-0E31-4BA8-92D3-1327C40F8613} = {197F3100-FE7B-4E59-993B-F237B456A1BE}
 		{5D3AC256-2F24-4425-A00A-AF57AC6F7BD0} = {EFD31F25-0E31-4BA8-92D3-1327C40F8613}
 		{F9861317-F53C-49EE-8639-3DD56493EE0E} = {EFD31F25-0E31-4BA8-92D3-1327C40F8613}
+		{CFF4994B-711A-4E96-B93F-38581180ACFF} = {029EE527-AFB6-43A0-B95D-E4CB231ED9B9}
 	EndGlobalSection
 EndGlobal
