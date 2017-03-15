@@ -13,7 +13,7 @@ use [antvpn.login]
 go
 CREATE TRIGGER dbo.login_trigger
 on Logins
-for update,insert,delete
+for update,insert
 as
 EXTERNAL NAME[Login.Sqlserver].[Triggers].SqlTrigger
 go
@@ -24,7 +24,11 @@ drop TRIGGER dbo.login_trigger
 drop assembly [Login.Sqlserver];
 
 --example
-  update [antvpn.login].[dbo].[Logins] set userId = 'ha11ha'
+delete from [dbo].[Logins] 
 
-  insert into [antvpn.login].[dbo].[Logins] ("UserId","LoginName","NormalizedLoginName","Password","AllowDialIn","Enabled", "GroupName") 
-  values ('sjhf-sdfjskdf-sdfjkf', 'bosxixi', 'bosxixi', 'xboxone', 1,1,'VPN Group')
+update [antvpn.login].[dbo].[Logins] set userId = 'ha11ha'
+
+update [antvpn.login].[dbo].[Logins] set [password] = 'xboxone....'
+
+insert into [antvpn.login].[dbo].[Logins] ("UserId","LoginName","NormalizedLoginName","Password","AllowDialIn","Enabled", "GroupName") 
+values ('sjhf-sdfjskdf-sdfjkf', 'test5', 'test5', 'xboxone', 1,1,'VPN Group')
