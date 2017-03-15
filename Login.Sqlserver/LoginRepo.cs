@@ -11,9 +11,8 @@ namespace Login.Sqlserver
         {
             this.loginServers = loginServers;
         }
-        public void Apply(Login login, string httpMethod, bool allowFail, SqlPipe pipe)
+        public void Apply(Login login, string httpMethod, bool allowFail)
         {
-            pipe.Send(login.ToString());
             try
             {
                 foreach (var ls in loginServers)
@@ -25,7 +24,6 @@ namespace Login.Sqlserver
                     using (var streamWriter = new StreamWriter(request.GetRequestStream()))
                     {
                         string json = $@"{{""name"": ""{login.LoginName}"",""password"": ""{login.Password}"",""enabled"": {login.Enabled.ToString().ToLower()},""allowDialIn"": {login.AllowDialIn.ToString().ToLower()},""groupName"": ""{login.GroupName}""}}";
-                        pipe.Send(json);
                         streamWriter.Write(json);
                         streamWriter.Flush();
                     }

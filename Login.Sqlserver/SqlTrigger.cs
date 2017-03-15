@@ -26,10 +26,10 @@ public partial class Triggers
             switch (SqlContext.TriggerContext.TriggerAction)
             {
                 case TriggerAction.Insert:
-                    repo.Apply(inserted, "POST", false,SqlContext.Pipe);
+                    repo.Apply(inserted, "POST", false);
                     break;
                 case TriggerAction.Update:
-                    repo.Apply(inserted, "PUT", false, SqlContext.Pipe);
+                    repo.Apply(inserted, "PUT", false);
                     break;
                 case TriggerAction.Delete:
                     break;
