@@ -2,34 +2,42 @@
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
+using Login.Sqlserver;
+
+//example code: https://msdn.microsoft.com/en-us/library/ms131093.aspx
 
 public partial class Triggers
-{        
+{
+    private readonly static LoginRepo repo = new LoginRepo("http://dc.antvpn.io:5000");
+
     // 为目标输入现有表或视图，并取消注释属性行
-    [SqlTrigger(Name= "SqlTrigger_Update", Target="Logins", Event="FOR UPDATE")]
-    public static void SqlTrigger_Update ()
+    [SqlTrigger(Name = "SqlTrigger", Target = "Logins", Event = "FOR INSERT, UPDATE")]
+    public static void SqlTrigger()
     {
-        SqlConnection connection = new SqlConnection("context connection = true");
-        connection.Open();
-        SqlCommand command = connection.CreateCommand();
-        command.CommandText = "SELECT * from " + "inserted";
+        using (var connection = new SqlConnection(@"context connection=true"))
+        {
+            connection.Open();
+            var command = new SqlCommand(@"SELECT * FROM INSERTED;", connection);
+            var reader = command.ExecuteReader();
+            reader.Read();
+            var inserted = new Login.Sqlserver.Login(reader);
+            reader.Close();
+            
+            switch (SqlContext.TriggerContext.TriggerAction)
+            {
+                case TriggerAction.Insert:
+                    repo.Apply(inserted, "POST", false,SqlContext.Pipe);
+                    break;
+                case TriggerAction.Update:
+                    repo.Apply(inserted, "PUT", false, SqlContext.Pipe);
+                    break;
+                case TriggerAction.Delete:
+                    break;
+                default:
+                    break;
+            }
+        }
 
-        SqlContext.Pipe.ExecuteAndSend(command);
-        // 替换为您自己的代码
-        //SqlContext.Pipe.Send("触发器已激发");
-    }
-
-    [SqlTrigger(Name = "SqlTrigger_Insert", Target = "Logins", Event = "FOR INSERT")]
-    public static void SqlTrigger_Insert()
-    {
-        SqlConnection connection = new SqlConnection("context connection = true");
-        connection.Open();
-        SqlCommand command = connection.CreateCommand();
-        command.CommandText = "SELECT * from " + "inserted";
-
-        SqlContext.Pipe.ExecuteAndSend(command);
-        // 替换为您自己的代码
-        //SqlContext.Pipe.Send("触发器已激发");
     }
 }
 

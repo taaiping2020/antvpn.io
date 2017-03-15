@@ -20,7 +20,7 @@ namespace Accounting.API.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Login>().HasAlternateKey(c => c.LoginName);
+            builder.Entity<Login>().HasKey(c => c.LoginName);
             builder.Entity<Login>().HasAlternateKey(c => c.NormalizedLoginName);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.

@@ -1,0 +1,36 @@
+use AAA
+go
+-- setting up
+sp_configure 'clr enabled', 1
+GO
+RECONFIGURE
+GO
+EXEC sp_changedbowner 'sa'
+ALTER DATABASE AAA SET TRUSTWORTHY ON
+
+-- create
+use AAA
+go
+CREATE PROCEDURE report_event @doc nvarchar(max)
+AS
+EXTERNAL NAME[antvpn.io.sqlserver].[antvpn.io.sqlserver.StoredProcedures].EventReport
+
+-- drop
+use AAA
+drop PROCEDURE dbo.report_event
+drop assembly [antvpn.io.sqlserver];
+
+--example
+declare @p1 int
+set @p1=NULL
+exec sp_prepexecrpc @p1 output,N'dbo.report_event',@doc=N'<Event><Timestamp data_type="4">03/01/2017 15:05:18.663</Timestamp><Computer-Name data_type="1">DC</Computer-Name><Event-Source data_type="1">IAS</Event-Source><Acct-Session-Id 
+data_type="1">292</Acct-Session-Id><NAS-Identifier data_type = "1" > BOSXIXIHK </ NAS - Identifier >< Service - Type data_type="0">2</Service-Type><Framed-Protocol data_type = "0" > 1 </ Framed - Protocol >< NAS - Port data_type="0">260</NAS-Port><NAS-Port-Type data_type = "0" > 5 </ NAS - Port - Type >< Tunnel - Type data_type="0">9</Tunnel-Type><Tunnel-Medium-Type data_type = "0" > 1 </ Tunnel - Medium - Type >< Called - Station - Id data_type="1">10.3.1.4</Called-Station-Id><Tunnel-Server-Endpt data_type = "1" > 10.3.1.4</Tunnel-Server-Endpt><Calling-Station-Id data_type = "1" > 114.91.163.238</Calling-Station-Id><Tunnel-Client-Endpt data_type = "1" > 114.91.163.238</Tunnel-Client-Endpt><Framed-MTU data_type = "0" > 1400 </ Framed - MTU >< User - Name data_type="1">dsa</User-Name><Client-IP-Address data_type = "3" > 13.75.110.47</Client-IP-Address><Client-Vendor data_type = "0" > 0 </ Client - Vendor >< Client - Friendly - Name data_type="1">hk.antvpn.io</Client-Friendly-Name><MS-Network-Access-Server-Type data_type = "0" > 2 </ MS - Network - Access - Server - Type >< MS - RAS - Vendor data_type="0">311</MS-RAS-Vendor><MS-RAS-Version data_type = "1" > MSRASV5.20</MS-RAS-Version><MS-RAS-Correlation-ID data_type = "1" >{B0E3A95A-87C7-0C8C-CD5B-DA8C4E36282E}</MS-RAS-Correlation-ID><Proxy-Policy-Name data_type = "1" > Use Windows authentication for all users</Proxy-Policy-Name><Provider-Type data_type = "0" > 1 </ Provider - Type >< SAM - Account - Name data_type= "1" > ANTVPN\dsa</SAM-Account-Name><Class data_type = "1" > 311 1 172.31.21.122 01/11/2017 13:07:07 45980</Class><Authentication-Type data_type = "0" > 5 </ Authentication - Type >< NP - Policy - Name data_type= "1" > Connections to Microsoft Routing and Remote Access server</NP-Policy-Name><Quarantine-Update-Non-Compliant data_type = "0" > 1 </ Quarantine - Update - Non - Compliant >< Fully - Qualifed - User - Name data_type= "1" > antvpn.io / Users / dsa </ Fully - Qualifed - User - Name >< Packet - Type data_type= "0" > 1 </ Packet - Type >< Reason - Code data_type= "0" > 0 </ Reason - Code ></ Event > '
+                                                                                                                               select @p1
+
+--testing
+                                                                                                                               select * from eventlogs
+                                                                                                                               
+
+                                                                                                                               delete from eventlogs
+
+                                                                                                                               insert into[dbo].[EventLogs]("Xml", "Json", "Success", "Message", "StackTrace") values('kj', 'json', 'false', 'error occur.', 'hello')

@@ -68,5 +68,9 @@
   <ItemGroup>
     <Compile Include="SqlTrigger.cs" />
     <Compile Include="LoginRepo.cs" />
+    <Compile Include="Login.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="publish.txt" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,30 @@
+use [antvpn.login]
+go
+-- setting up
+sp_configure 'clr enabled', 1
+GO
+RECONFIGURE
+GO
+EXEC sp_changedbowner 'sa'
+ALTER DATABASE [antvpn.login] SET TRUSTWORTHY ON
+
+-- create
+use [antvpn.login]
+go
+CREATE TRIGGER dbo.login_trigger
+on Logins
+for update,insert,delete
+as
+EXTERNAL NAME[Login.Sqlserver].[Triggers].SqlTrigger
+go
+
+-- drop
+use [antvpn.login]
+drop TRIGGER dbo.login_trigger
+drop assembly [Login.Sqlserver];
+
+--example
+  update [antvpn.login].[dbo].[Logins] set userId = 'ha11ha'
+
+  insert into [antvpn.login].[dbo].[Logins] ("UserId","LoginName","NormalizedLoginName","Password","AllowDialIn","Enabled", "GroupName") 
+  values ('sjhf-sdfjskdf-sdfjkf', 'bosxixi', 'bosxixi', 'xboxone', 1,1,'VPN Group')

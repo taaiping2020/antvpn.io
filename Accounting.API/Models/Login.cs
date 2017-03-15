@@ -8,8 +8,8 @@ namespace Accounting.API.Models
 {
     public class Login
     {
-        public int Id { get; set; }
         [StringLength(450)]
+        [Required]
         public string UserId { get; set; }
         [Required]
         [StringLength(256)]
@@ -19,6 +19,7 @@ namespace Accounting.API.Models
         public string NormalizedLoginName { get; set; }
         [StringLength(100, MinimumLength = 6)]
         [DataType(DataType.Password)]
+        [Required]
         public string Password { get; set; }
         public bool AllowDialIn { get; set; }
         public bool Enabled { get; set; }

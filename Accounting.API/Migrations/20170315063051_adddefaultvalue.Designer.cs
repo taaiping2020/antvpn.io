@@ -8,9 +8,10 @@ using Accounting.API.Data;
 namespace Accounting.API.Migrations
 {
     [DbContext(typeof(LoginContext))]
-    partial class LoginContextModelSnapshot : ModelSnapshot
+    [Migration("20170315063051_adddefaultvalue")]
+    partial class adddefaultvalue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -34,11 +35,9 @@ namespace Accounting.API.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(100);
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasMaxLength(450);
 
                     b.HasKey("LoginName");

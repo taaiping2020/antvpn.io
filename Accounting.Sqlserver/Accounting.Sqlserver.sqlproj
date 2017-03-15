@@ -65,6 +65,7 @@
     <Compile Include="MongoDBRepository.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="EventReport.cs" />
+    <Content Include="publish.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dll\MongoDB.Bson.dll" />
