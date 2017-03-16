@@ -25,13 +25,28 @@ namespace Ordering.API.Models
         public OrderStatus OrderStatus { get; private set; }
         private int _orderStatusId;
 
-        //public GiftCard GiftCard { get; set; }
-        //public int _giftCardId { get; set; }
+        public GiftCard GiftCard { get; private set; }
 
         public Subscription Subscription { get; private set; }
         private int _subscriptionId;
 
         public PaymentMethod PaymentMethod { get; private set; }
         private int _paymentMethodId;
+
+        public void CompleteOrder(GiftCard giftCard)
+        {
+            if (this.OrderStatus != OrderStatus.InProcess)
+            {
+                throw new InvalidOperationException("OrderStatus is invalid.");
+            }
+            if (giftCard.Used == true)
+            {
+                throw new ArgumentException("GiftCard is used, try add new one.");
+            }
+
+            this.GiftCard = giftCard;
+            giftCard.Used = true;
+           
+        }
     }
 }

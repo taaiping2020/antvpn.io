@@ -9,9 +9,10 @@ using Ordering.API.Models;
 namespace Ordering.API.Migrations
 {
     [DbContext(typeof(OrderingContext))]
-    partial class OrderingContextModelSnapshot : ModelSnapshot
+    [Migration("20170316141547_relategiftcardtoorder")]
+    partial class relategiftcardtoorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -78,8 +79,6 @@ namespace Ordering.API.Migrations
                     b.Property<DateTimeOffset>("Created");
 
                     b.Property<string>("SubscriptionName");
-
-                    b.Property<bool>("Used");
 
                     b.HasKey("GiftCardKey");
 
