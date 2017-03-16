@@ -23,8 +23,8 @@ namespace Identity.API.Configuration
                 },
                 new Scope
                 {
-                    Name = "basket",
-                    Description = "Basket Service"
+                    Name = "accounting",
+                    Description = "Accounting Service"
                 }
             };
         }
@@ -100,7 +100,7 @@ namespace Identity.API.Configuration
                         StandardScopes.Profile.Name,
                         StandardScopes.OfflineAccess.Name,
                         "orders",
-                        "basket",
+                        "accounting",
                     },
                 }
             };

@@ -37,6 +37,15 @@ namespace Accounting.API
             services.AddMvc();
 
             services.AddSwaggerGen();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +54,19 @@ namespace Accounting.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc();
+            // Use frameworks
+            app.UseCors("CorsPolicy");
+
+            var identityUrl = Configuration.GetValue<string>("IdentityUrl");
+
+            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+            {
+                Authority = identityUrl.ToString(),
+                ScopeName = "accounting",
+                RequireHttpsMetadata = false
+            });
+
+            app.UseMvcWithDefaultRoute();
 
             //Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
