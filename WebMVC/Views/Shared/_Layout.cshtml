@@ -20,14 +20,14 @@
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
-    <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: #89BF04;">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top">
         <div class="container">
 
 
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">antvpn.io</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">antvpn.io</a>
 
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -45,11 +45,20 @@
                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Pricing</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Support</a>
+                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Download</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Logins</a>
+                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Support</a>
                     </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Logins</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Signout">Signout</a>
+                        </li>
+                    }
                     @*<li class="nav-item">
                             <a class="nav-link disabled" href="#">Disabled</a>
                         </li>*@
@@ -62,29 +71,6 @@
 
         </div>
     </nav>
-    @*<nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">WebMVC</a>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="MyLogins">MyLogins</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Signout">Signout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>*@
-
     @*<div class="container body-content">*@
     @RenderBody()
     <hr />

@@ -2,15 +2,42 @@
 @{
     ViewData["Title"] = "My Logins";
 }
-<h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
 
-@if (Model != null)
-{
-    <ul>
-        @foreach (var l in Model)
-        {
-            <li>@l.LoginName | @l.AllowDialIn | @l.Enabled | @(l.BasicAcct?.TotalInDisplay) | @(l.BasicAcct?.TotalOutDisplay)</li>
-        }
-    </ul>
-}
+<div class="container">
+    <br />
+    <h2>@ViewData["Title"].</h2>
+    <h3>@ViewData["Message"]</h3>
+
+    <div class="row">
+        <div class="col-4">
+            @if (Model != null)
+            {
+                <div class="list-group">
+                    @foreach (var l in Model)
+                    {
+                        @*<li>@l.LoginName | @l.AllowDialIn | @l.Enabled | @(l.BasicAcct?.TotalInDisplay) | @(l.BasicAcct?.TotalOutDisplay)</li>*@
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@l.LoginName</h5>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                            <p class="mb-1">
+                                Total In: @(l.BasicAcct?.TotalInDisplay)
+                            </p>
+                            <p class="mb-1">
+                                Total Out: @(l.BasicAcct?.TotalOutDisplay)
+                            </p>
+                            <small class="text-muted">Allow dialin: @(l.AllowDialIn ? "Yes" : "No")</small>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-6">
+
+        </div>
+    </div>
+  
+</div>
+
+

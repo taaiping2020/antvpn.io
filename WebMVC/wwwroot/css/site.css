@@ -1,9 +1,15 @@
-﻿a.navbar-brand {
-  color: white !important;
+﻿body {
+  padding-top: 50px;
+}
+a.navbar-brand {
+  color: #89BF04 !important;
 }
 #introduction {
-  background: url("/images/man-computer-headphones.jpg") no-repeat fixed top;
+  background: url("/images/man-computer-headphones.jpg") no-repeat;
   color: white;
+}
+#introduction .title {
+  color: #89BF04;
 }
 #introduction .container {
   padding-top: 8em;
@@ -15,6 +21,10 @@
 #introduction .container a.btn {
   border-radius: 0;
 }
+#overview {
+  padding-top: 2em;
+  background-color: #F4F4F4;
+}
 #global {
-  background-color: #DEDEDE;
+  background-color: #F2F2F2;
 }

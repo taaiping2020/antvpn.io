@@ -1,19 +1,28 @@
-﻿body {
-   
+﻿@base: #89BF04;
+@background: F4F4F4;
+
+body {
+    padding-top: 50px;
+    //padding-bottom: 20px;
 }
 
 a.navbar-brand {
-    color: white !important;
+    color: @base !important;
 }
 
 #introduction {
-    background: url("/images/man-computer-headphones.jpg") no-repeat fixed top;
+    background: url("/images/man-computer-headphones.jpg") no-repeat;
     color: white;
+
+    .title {
+        color: @base;
+    }
 
     .container {
         h1 {
             font-size: 4em;
         }
+
         padding-top: 8em;
         padding-bottom: 5em;
 
@@ -23,6 +32,11 @@ a.navbar-brand {
     }
 }
 
+#overview {
+    padding-top: 2em;
+    background-color: #F4F4F4;
+}
+
 #global {
-    background-color: #DEDEDE;
+    background-color: #F2F2F2;
 }
