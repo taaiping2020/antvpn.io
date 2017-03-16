@@ -1,37 +1,20 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿a.navbar-brand {
+  color: white !important;
 }
-
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+#introduction {
+  background: url("/images/man-computer-headphones.jpg") no-repeat fixed top;
+  color: white;
 }
-
-/* Set widths on the form inputs since otherwise they're 100% wide */
-input,
-select,
-textarea {
-    max-width: 280px;
+#introduction .container {
+  padding-top: 8em;
+  padding-bottom: 5em;
 }
-
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+#introduction .container h1 {
+  font-size: 4em;
 }
-
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
+#introduction .container a.btn {
+  border-radius: 0;
 }
-
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+#global {
+  background-color: #DEDEDE;
 }
