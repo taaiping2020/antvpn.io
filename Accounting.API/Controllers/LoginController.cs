@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Accounting.API.Data;
 using Accounting.API.Models;
+using Extensions;
 
 namespace Accounting.API.Controllers
 {
@@ -15,74 +16,48 @@ namespace Accounting.API.Controllers
     public class LoginController : Controller
     {
         private readonly LoginContext _context;
-
+        static AcctRepo repo = new AcctRepo();
         public LoginController(LoginContext context)
         {
             _context = context;
         }
 
-        // GET: api/Login
-        [HttpGet]
-        public IEnumerable<Login> GetLogins()
+        [HttpGet("{userId}")]
+        public IEnumerable<Login> GetLogins(string userId)
         {
-            return _context.Logins;
+            return _context.Logins.Where(c => c.UserId == userId);
         }
 
-        // GET: api/Login/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetLogin([FromRoute] string id)
+        [HttpGet("Status/{userId}")]
+        public async Task<IActionResult> GetLoginStatus(string userId)
         {
-            if (!ModelState.IsValid)
+            var logins = await _context.Logins.Where(c => c.UserId == userId).ToListAsync();
+            var loginNames = logins.Select(c => c.LoginName).ToArray();
+            var currentConnections = await repo.GetCurrentAsync();
+            var accts = await repo.GetStoppedAcctWithDocsByUserNamesAsync(loginNames, null, null);
+
+            var group = accts.GroupBy(c => c.UserName);
+            var basicAccts = new List<BasicAcct>();
+            foreach (var item in group)
             {
-                return BadRequest(ModelState);
+                basicAccts.Add(AccountingHelper.Statistics(item, currentConnections));
+            }
+            foreach (var item in currentConnections.Where(c => !accts.Any(d => d.UserName.ToLower() == c.UserName.ToLower())))
+            {
+                basicAccts.Add(AccountingHelper.Statistics(item));
             }
 
-            var login = await _context.Logins.SingleOrDefaultAsync(m => m.LoginName == id);
-
-            if (login == null)
+            var model = logins.Select(c => new LoginStatus
             {
-                return NotFound();
-            }
-
-            return Ok(login);
+                AllowDialIn = c.AllowDialIn,
+                Enabled = c.Enabled,
+                LoginName = c.LoginName,
+                UserId = c.UserId,
+                BasicAcct = basicAccts.FirstOrDefault(u => u.UserName == c.LoginName)
+            });
+            return Ok(model);
         }
 
-        // PUT: api/Login/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLogin([FromRoute] string id, [FromBody] Login login)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != login.LoginName)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(login).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LoginExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Login
         [HttpPost]
         public async Task<IActionResult> PostLogin([FromBody] Login login)
         {
@@ -94,8 +69,63 @@ namespace Accounting.API.Controllers
             _context.Logins.Add(login);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLogin", new { id = login.LoginName }, login);
+            return Ok();
         }
+
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutLogin([FromRoute] string id, [FromBody] Login login)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    if (id != login.LoginName)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(login).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!LoginExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
+
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetLogin([FromRoute] string id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    var login = await _context.Logins.SingleOrDefaultAsync(m => m.LoginName == id);
+
+        //    if (login == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(login);
+        //}
+
+
+
 
         //// DELETE: api/Login/5
         //[HttpDelete("{id}")]

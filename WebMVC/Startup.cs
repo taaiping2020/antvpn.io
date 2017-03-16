@@ -91,7 +91,7 @@ namespace WebMVC
             oidcOptions.Scope.Add("openid");
             oidcOptions.Scope.Add("profile");
             oidcOptions.Scope.Add("orders");
-            oidcOptions.Scope.Add("basket");
+            oidcOptions.Scope.Add("accounting");
 
             //Wait untill identity service is ready on compose. 
             app.UseOpenIdConnectAuthentication(oidcOptions);

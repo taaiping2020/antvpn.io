@@ -5,6 +5,10 @@ using Microsoft.eShopOnContainers.WebMVC.Services;
 using Microsoft.AspNetCore.Http.Authentication;
 using WebMVC.ViewModels;
 using System.Threading.Tasks;
+using System.Net.Http;
+using WebMVC.Extensions;
+using Newtonsoft.Json;
+using Extensions;
 
 namespace WebMVC.Controllers
 {
@@ -52,8 +56,11 @@ namespace WebMVC.Controllers
 
         public async Task<IActionResult> MyLogins()
         {
-
-            return View();
+            HttpClient client = new HttpClient();
+            var userId = User.Identities.GetUserId();
+            var json = await client.GetStringAsync($"http://localhost:64347/api/login/status/{userId}");
+            var logins = JsonConvert.DeserializeObject<LoginStatus[]>(json);
+            return View(logins);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebMVC.ViewModels.Login>
+﻿@model IEnumerable<Extensions.LoginStatus>
 @{
     ViewData["Title"] = "My Logins";
 }
@@ -10,7 +10,7 @@
     <ul>
         @foreach (var l in Model)
         {
-            <li>@l.LoginName | @l.AllowDialIn | @l.Enabled</li>
+            <li>@l.LoginName | @l.AllowDialIn | @l.Enabled | @(l.BasicAcct?.TotalInDisplay) | @(l.BasicAcct?.TotalOutDisplay)</li>
         }
     </ul>
 }
