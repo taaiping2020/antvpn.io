@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ordering.API.Models;
 using System;
 using System.Collections.Generic;
@@ -11,209 +13,224 @@ namespace Ordering.API.Data
       : DbContext
 
     {
-        //const string DEFAULT_SCHEMA = "ordering";
+        const string DEFAULT_SCHEMA = "ordering";
 
         public DbSet<Subscription> Subscriptions { get; set; }
 
-        //public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<GiftCard> GiftCards { get; set; }
 
-        //public DbSet<PaymentMethod> Payments { get; set; }
+        public DbSet<PaymentMethod> Payments { get; set; }
 
-        //public DbSet<Buyer> Buyers { get; set; }
+        public DbSet<Buyer> Buyers { get; set; }
 
-        //public DbSet<CardType> CardTypes { get; set; }
+        public DbSet<CardType> CardTypes { get; set; }
 
-        //public DbSet<OrderStatus> OrderStatus { get; set; }
+        public DbSet<OrderStatus> OrderStatus { get; set; }
+
+        public DbSet<AvailableTime> AvailableTime { get; set; }
 
         public OrderingContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Subscription>().HasKey(c => c.Name);
-
-            //modelBuilder.Entity<ClientRequest>(ConfigureRequests);
-            //modelBuilder.Entity<Address>(ConfigureAddress);
-            //modelBuilder.Entity<PaymentMethod>(ConfigurePayment);
-            //modelBuilder.Entity<Order>(ConfigureOrder);
-            //modelBuilder.Entity<OrderItem>(ConfigureOrderItems);
-            //modelBuilder.Entity<CardType>(ConfigureCardTypes);
-            //modelBuilder.Entity<OrderStatus>(ConfigureOrderStatus);
-            //modelBuilder.Entity<Buyer>(ConfigureBuyer);
+            //modelBuilder.Entity<Subscription>().HasKey(c => c.Name);
+            modelBuilder.Entity<Subscription>(ConfigureSubscription);
+            modelBuilder.Entity<GiftCard>(ConfigureGiftCard);
+            //modelBuilder.Entity<GiftCard>().HasKey(c => c.Id);
+            modelBuilder.Entity<AvailableTime>(ConfigureOrderAvailableTime);
+            modelBuilder.Entity<PaymentMethod>(ConfigurePayment);
+            modelBuilder.Entity<Order>(ConfigureOrder);
+            modelBuilder.Entity<CardType>(ConfigureCardTypes);
+            modelBuilder.Entity<OrderStatus>(ConfigureOrderStatus);
+            modelBuilder.Entity<Buyer>(ConfigureBuyer);
         }
 
-        //private void ConfigureRequests(EntityTypeBuilder<ClientRequest> requestConfiguration)
-        //{
-        //    requestConfiguration.ToTable("requests", DEFAULT_SCHEMA);
-        //    requestConfiguration.HasKey(cr => cr.Id);
-        //    requestConfiguration.Property(cr => cr.Name).IsRequired();
-        //    requestConfiguration.Property(cr => cr.Time).IsRequired();
-        //}
+        void ConfigureSubscription(EntityTypeBuilder<Subscription> subscriptionConfiguration)
+        {
+            subscriptionConfiguration.ToTable("subscriptions", DEFAULT_SCHEMA);
 
-        //void ConfigureAddress(EntityTypeBuilder<Address> addressConfiguration)
-        //{
-        //    addressConfiguration.ToTable("address", DEFAULT_SCHEMA);
+            subscriptionConfiguration.HasKey(b => b.Name);
 
-        //    addressConfiguration.Property<int>("Id")
-        //        .IsRequired();
+            //subscriptionConfiguration.Property(o => o.Id)
+            //     .ForSqlServerUseSequenceHiLo("giftcardseq", DEFAULT_SCHEMA);
 
-        //    addressConfiguration.HasKey("Id");
-        //}
+            subscriptionConfiguration.HasMany(o => o.Orders)
+                .WithOne()
+                .HasForeignKey("OrderId");
 
-        //void ConfigureBuyer(EntityTypeBuilder<Buyer> buyerConfiguration)
-        //{
-        //    buyerConfiguration.ToTable("buyers", DEFAULT_SCHEMA);
+            var navigation = subscriptionConfiguration.Metadata.FindNavigation(nameof(Subscription.Orders));
 
-        //    buyerConfiguration.HasKey(b => b.Id);
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        //    buyerConfiguration.Property(b => b.Id)
-        //        .ForSqlServerUseSequenceHiLo("buyerseq", DEFAULT_SCHEMA);
+            //subscriptionConfiguration.HasOne(o => o.GiftCard)
+            //    .WithOne()
+            //    .HasForeignKey("GiftCardId");
+        }
 
-        //    buyerConfiguration.Property(b => b.IdentityGuid)
-        //        .HasMaxLength(200)
-        //        .IsRequired();
+        void ConfigureGiftCard(EntityTypeBuilder<GiftCard> giftCardConfiguration)
+        {
+            giftCardConfiguration.ToTable("giftcards", DEFAULT_SCHEMA);
 
-        //    buyerConfiguration.HasIndex("IdentityGuid")
-        //      .IsUnique(true);
+            giftCardConfiguration.HasKey(b => b.GiftCardKey);
 
-        //    buyerConfiguration.HasMany(b => b.PaymentMethods)
-        //       .WithOne()
-        //       .HasForeignKey("BuyerId")
-        //       .OnDelete(DeleteBehavior.Cascade);
+            //giftCardConfiguration.Property(o => o.Id)
+            //     .ForSqlServerUseSequenceHiLo("giftcardseq", DEFAULT_SCHEMA);
 
-        //    var navigation = buyerConfiguration.Metadata.FindNavigation(nameof(Buyer.PaymentMethods));
+            //giftCardConfiguration.HasOne(o => o.Order)
+            //    .WithOne()
+            //    .HasForeignKey("OrderId");
 
-        //    navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-        //}
+            //giftCardConfiguration.HasOne(o => o.Subscription)
+            //    .WithMany()
+            //    .HasForeignKey("SubscriptionId");
+        }
 
-        //void ConfigurePayment(EntityTypeBuilder<PaymentMethod> paymentConfiguration)
-        //{
-        //    paymentConfiguration.ToTable("paymentmethods", DEFAULT_SCHEMA);
+        void ConfigureOrderAvailableTime(EntityTypeBuilder<AvailableTime> availableTimeConfiguration)
+        {
+            availableTimeConfiguration.ToTable("availabletime", DEFAULT_SCHEMA);
 
-        //    paymentConfiguration.HasKey(b => b.Id);
+            availableTimeConfiguration.HasKey(o => o.Id);
 
-        //    paymentConfiguration.Property(b => b.Id)
-        //        .ForSqlServerUseSequenceHiLo("paymentseq", DEFAULT_SCHEMA);
+            availableTimeConfiguration.Property(o => o.Id)
+                .HasDefaultValue(1)
+                .ValueGeneratedNever()
+                .IsRequired();
 
-        //    paymentConfiguration.Property<int>("BuyerId")
-        //        .IsRequired();
+            availableTimeConfiguration.Property(o => o.Name)
+                //.HasMaxLength(200)
+                .IsRequired();
+        }
 
-        //    paymentConfiguration.Property<string>("CardHolderName")
-        //        .HasMaxLength(200)
-        //        .IsRequired();
+        void ConfigureBuyer(EntityTypeBuilder<Buyer> buyerConfiguration)
+        {
+            buyerConfiguration.ToTable("buyers", DEFAULT_SCHEMA);
 
-        //    paymentConfiguration.Property<string>("Alias")
-        //        .HasMaxLength(200)
-        //        .IsRequired();
+            buyerConfiguration.HasKey(b => b.Id);
 
-        //    paymentConfiguration.Property<string>("CardNumber")
-        //        .HasMaxLength(25)
-        //        .IsRequired();
+            buyerConfiguration.Property(b => b.Id)
+                .ForSqlServerUseSequenceHiLo("buyerseq", DEFAULT_SCHEMA);
 
-        //    paymentConfiguration.Property<DateTime>("Expiration")
-        //        .IsRequired();
+            buyerConfiguration.Property(b => b.IdentityGuid)
+                .HasMaxLength(200)
+                .IsRequired();
 
-        //    paymentConfiguration.Property<int>("CardTypeId")
-        //        .IsRequired();
+            buyerConfiguration.HasIndex("IdentityGuid")
+              .IsUnique(true);
 
-        //    paymentConfiguration.HasOne(p => p.CardType)
-        //        .WithMany()
-        //        .HasForeignKey("CardTypeId");
-        //}
+            buyerConfiguration.HasMany(b => b.PaymentMethods)
+               .WithOne()
+               .HasForeignKey("BuyerId")
+               .OnDelete(DeleteBehavior.Cascade);
 
-        //void ConfigureOrder(EntityTypeBuilder<Order> orderConfiguration)
-        //{
-        //    orderConfiguration.ToTable("orders", DEFAULT_SCHEMA);
+            var navigation = buyerConfiguration.Metadata.FindNavigation(nameof(Buyer.PaymentMethods));
 
-        //    orderConfiguration.HasKey(o => o.Id);
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+        }
 
-        //    orderConfiguration.Property(o => o.Id)
-        //        .ForSqlServerUseSequenceHiLo("orderseq", DEFAULT_SCHEMA);
+        void ConfigurePayment(EntityTypeBuilder<PaymentMethod> paymentConfiguration)
+        {
+            paymentConfiguration.ToTable("paymentmethods", DEFAULT_SCHEMA);
 
-        //    orderConfiguration.Property<DateTime>("OrderDate").IsRequired();
-        //    orderConfiguration.Property<int>("BuyerId").IsRequired();
-        //    orderConfiguration.Property<int>("OrderStatusId").IsRequired();
-        //    orderConfiguration.Property<int>("PaymentMethodId").IsRequired();
+            paymentConfiguration.HasKey(b => b.Id);
 
-        //    var navigation = orderConfiguration.Metadata.FindNavigation(nameof(Order.OrderItems));
-        //    // DDD Patterns comment:
-        //    //Set as Field (New since EF 1.1) to access the OrderItem collection property through its field
-        //    navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+            paymentConfiguration.Property(b => b.Id)
+                .ForSqlServerUseSequenceHiLo("paymentseq", DEFAULT_SCHEMA);
 
-        //    orderConfiguration.HasOne(o => o.PaymentMethod)
-        //        .WithMany()
-        //        .HasForeignKey("PaymentMethodId")
-        //        .OnDelete(DeleteBehavior.Restrict);
+            paymentConfiguration.Property<int>("BuyerId")
+                .IsRequired();
 
-        //    orderConfiguration.HasOne(o => o.Buyer)
-        //        .WithMany()
-        //        .HasForeignKey("BuyerId");
+            paymentConfiguration.Property<string>("CardHolderName")
+                .HasMaxLength(200)
+                .IsRequired();
 
-        //    orderConfiguration.HasOne(o => o.OrderStatus)
-        //        .WithMany()
-        //        .HasForeignKey("OrderStatusId");
-        //}
+            paymentConfiguration.Property<string>("Alias")
+                .HasMaxLength(200)
+                .IsRequired();
 
-        //void ConfigureOrderItems(EntityTypeBuilder<OrderItem> orderItemConfiguration)
-        //{
-        //    orderItemConfiguration.ToTable("orderItems", DEFAULT_SCHEMA);
+            paymentConfiguration.Property<string>("CardNumber")
+                .HasMaxLength(25)
+                .IsRequired();
 
-        //    orderItemConfiguration.HasKey(o => o.Id);
+            paymentConfiguration.Property<DateTimeOffset>("Expiration")
+                .IsRequired();
 
-        //    orderItemConfiguration.Property(o => o.Id)
-        //        .ForSqlServerUseSequenceHiLo("orderitemseq");
+            paymentConfiguration.Property<int>("CardTypeId")
+                .IsRequired();
 
-        //    orderItemConfiguration.Property<int>("OrderId")
-        //        .IsRequired();
+            paymentConfiguration.HasOne(p => p.CardType)
+                .WithMany()
+                .HasForeignKey("CardTypeId");
+        }
 
-        //    orderItemConfiguration.Property<decimal>("Discount")
-        //        .IsRequired();
+        void ConfigureOrder(EntityTypeBuilder<Order> orderConfiguration)
+        {
+            orderConfiguration.ToTable("orders", DEFAULT_SCHEMA);
 
-        //    orderItemConfiguration.Property<int>("ProductId")
-        //        .IsRequired();
+            orderConfiguration.HasKey(o => o.Id);
 
-        //    orderItemConfiguration.Property<string>("ProductName")
-        //        .IsRequired();
+            orderConfiguration.Property(o => o.Id)
+                .ForSqlServerUseSequenceHiLo("orderseq", DEFAULT_SCHEMA);
 
-        //    orderItemConfiguration.Property<decimal>("UnitPrice")
-        //        .IsRequired();
+            orderConfiguration.Property<DateTime>("OrderDate").IsRequired();
+            orderConfiguration.Property<int>("BuyerId").IsRequired();
+            orderConfiguration.Property<int>("OrderStatusId").IsRequired();
+            orderConfiguration.Property<int>("PaymentMethodId").IsRequired();
 
-        //    orderItemConfiguration.Property<int>("Units")
-        //        .IsRequired();
+            //orderConfiguration.HasOne(o => o.GiftCard)
+            //    .WithOne()
+            //    .HasForeignKey("GiftCardId")
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-        //    orderItemConfiguration.Property<string>("PictureUrl")
-        //        .IsRequired(false);
-        //}
+            orderConfiguration.HasOne(o => o.PaymentMethod)
+                .WithMany()
+                .HasForeignKey("PaymentMethodId")
+                .OnDelete(DeleteBehavior.Restrict);
 
-        //void ConfigureOrderStatus(EntityTypeBuilder<OrderStatus> orderStatusConfiguration)
-        //{
-        //    orderStatusConfiguration.ToTable("orderstatus", DEFAULT_SCHEMA);
+            orderConfiguration.HasOne(o => o.Buyer)
+                .WithMany()
+                .HasForeignKey("BuyerId");
 
-        //    orderStatusConfiguration.HasKey(o => o.Id);
+            orderConfiguration.HasOne(o => o.OrderStatus)
+                .WithMany()
+                .HasForeignKey("OrderStatusId");
 
-        //    orderStatusConfiguration.Property(o => o.Id)
-        //        .HasDefaultValue(1)
-        //        .ValueGeneratedNever()
-        //        .IsRequired();
 
-        //    orderStatusConfiguration.Property(o => o.Name)
-        //        .HasMaxLength(200)
-        //        .IsRequired();
-        //}
+            //orderConfiguration.HasOne(o => o.Subscription)
+            //    .WithMany()
+            //    .HasForeignKey("SubscriptionId");
+        }
 
-        //void ConfigureCardTypes(EntityTypeBuilder<CardType> cardTypesConfiguration)
-        //{
-        //    cardTypesConfiguration.ToTable("cardtypes", DEFAULT_SCHEMA);
 
-        //    cardTypesConfiguration.HasKey(ct => ct.Id);
+        void ConfigureOrderStatus(EntityTypeBuilder<OrderStatus> orderStatusConfiguration)
+        {
+            orderStatusConfiguration.ToTable("orderstatus", DEFAULT_SCHEMA);
 
-        //    cardTypesConfiguration.Property(ct => ct.Id)
-        //        .HasDefaultValue(1)
-        //        .ValueGeneratedNever()
-        //        .IsRequired();
+            orderStatusConfiguration.HasKey(o => o.Id);
 
-        //    cardTypesConfiguration.Property(ct => ct.Name)
-        //        .HasMaxLength(200)
-        //        .IsRequired();
-        //}
+            orderStatusConfiguration.Property(o => o.Id)
+                .HasDefaultValue(1)
+                .ValueGeneratedNever()
+                .IsRequired();
+
+            orderStatusConfiguration.Property(o => o.Name)
+                .HasMaxLength(200)
+                .IsRequired();
+        }
+
+        void ConfigureCardTypes(EntityTypeBuilder<CardType> cardTypesConfiguration)
+        {
+            cardTypesConfiguration.ToTable("cardtypes", DEFAULT_SCHEMA);
+
+            cardTypesConfiguration.HasKey(ct => ct.Id);
+
+            cardTypesConfiguration.Property(ct => ct.Id)
+                .HasDefaultValue(1)
+                .ValueGeneratedNever()
+                .IsRequired();
+
+            cardTypesConfiguration.Property(ct => ct.Name)
+                .HasMaxLength(200)
+                .IsRequired();
+        }
     }
 }
