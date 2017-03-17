@@ -18,5 +18,6 @@ namespace Extensions
 
         public string TotalInDisplay => ToMegaByte(TotalIn);
         public string TotalOutDisplay => ToMegaByte(TotalOut);
+        public string TotalInOutDisplay => ToMegaByte(TotalOut + TotalIn);
     }
 }

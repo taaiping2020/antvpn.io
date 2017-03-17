@@ -7,8 +7,8 @@
     <title>@ViewData["Title"] - antvpn.io</title>
 
     @*<environment names="Development">*@
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-reboot.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/Winstrap/dist/css/winstrap.css" />
+    <link rel="stylesheet" href="~/lib/Winstrap/dist/css/winstrap-optional.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     @*</environment>*@
     @*<environment names="Staging,Production">
@@ -20,71 +20,23 @@
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
-    <nav class="navbar navbar-toggleable-md navbar-light bg-faded fixed-top">
-        <div class="container">
 
+    @{await Html.RenderPartialAsync("_Navbar");}
 
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">antvpn.io</a>
-
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Product</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Documentation</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Download</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Support</a>
-                    </li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyLogins">Logins</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Signout">Signout</a>
-                        </li>
-                    }
-                    @*<li class="nav-item">
-                            <a class="nav-link disabled" href="#">Disabled</a>
-                        </li>*@
-                </ul>
-                @*<form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                    </form>*@
-            </div>
-
-        </div>
-    </nav>
     @*<div class="container body-content">*@
-    @RenderBody()
-    <hr />
-    <footer class="footer">
-        <div class="container">
-            <span class="text-muted">&copy; 2017 - antvpn.io</span>
-        </div>
-    </footer>
+        @RenderBody()
+        <hr />
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">&copy; 2017 - antvpn.io</span>
+            </div>
+        </footer>
     @*</div>*@
 
     @*<environment names="Development">*@
     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/tether/dist/js/tether.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/Winstrap/dist/js/vendor/bootstrap.min.js"></script>
+    <script src="~/lib/Winstrap/src/js/app.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @*</environment>*@
     @*<environment names="Staging,Production">
@@ -102,6 +54,11 @@
             </script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
         </environment>*@
+
+    <a href="#top" class="back-to-top">
+        <i class="glyph glyph-up"></i>
+        <span class="sr-only">Back to top</span>
+    </a>
 
     @RenderSection("Scripts", required: false)
 </body>

@@ -1,7 +1,4 @@
-﻿body {
-  padding-top: 50px;
-}
-a.navbar-brand {
+﻿a.navbar-brand {
   color: #89BF04 !important;
 }
 #introduction {
@@ -10,16 +7,6 @@ a.navbar-brand {
 }
 #introduction .title {
   color: #89BF04;
-}
-#introduction .container {
-  padding-top: 8em;
-  padding-bottom: 5em;
-}
-#introduction .container h1 {
-  font-size: 4em;
-}
-#introduction .container a.btn {
-  border-radius: 0;
 }
 #overview {
   padding-top: 2em;

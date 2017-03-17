@@ -1,0 +1,77 @@
+<nav class="navbar navbar-default">
+
+    <div class="navbar-global theme-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="http://www.microsoft.com" class="navbar-brand">
+                    <img src="https://assets.onestore.ms/cdnfiles/onestorerolling-1511-11008/shell/v3/images/logo/microsoft.png" alt="Microsoft" height="23">
+                </a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Sign In</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="navbar-local color-accent theme-dark">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                    <span class="sr-only">Toggle navigation</span>
+                    <i class="glyph glyph-hamburger"></i>
+                </button>
+
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand">
+                    @*<img src="images/winstrap_white.svg" alt="antvpn.io" height="29">*@
+                    <img src="https://assets.onestore.ms/cdnfiles/onestorerolling-1511-11008/shell/v3/images/logo/microsoft.png" alt="Microsoft" height="29">
+                </a>
+
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                <ul class="nav navbar-nav">
+                    @*<li class="dropdown">
+                        <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Colors<i class="glyph glyph-chevron-down-2"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="colors.html">All colors</a></li>
+                            <li class="divider"></li>
+                            <li><a href="colors.html#bootstrap-colors">Bootstrap colors</a></li>
+                            <li><a href="colors.html#mdl-colors">MDL colors</a></li>
+                            <li><a href="colors.html#mdl-alt-colors">MDL alt colors</a></li>
+                        </ul>
+                    </li>*@
+
+                    <li>
+                        <a class="color-type-secondary" href="#" data-toggle="modal">Pricing</a>
+                    </li>
+                    <li>
+                        <a class="color-type-secondary" href="#" data-toggle="modal">Documentation</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Download<i class="glyph glyph-chevron-down-2"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="colors.html">Windows</a></li>
+                            <li class="divider"></li>
+                            <li><a href="colors.html#bootstrap-colors">Android</a></li>
+                            <li><a href="colors.html#mdl-colors">iOS</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="color-type-secondary" href="#" data-toggle="modal">Support</a>
+                    </li>
+
+
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="color-type-secondary" asp-area="" asp-controller="Account" asp-action="MyLogins" data-toggle="modal">Logins</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
