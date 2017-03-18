@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Accounting.API.Data;
 using Accounting.API.Models;
 using Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Accounting.API.Controllers
 {

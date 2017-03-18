@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
+using WebMVC.Services;
 
 namespace WebMVC
 {
@@ -37,7 +38,8 @@ namespace WebMVC
             // Add application services.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            //services.AddTransient<ICatalogService, CatalogService>();
+            services.AddTransient<ILoginService, LoginService>();
+
             //services.AddTransient<IOrderingService, OrderingService>();
             //services.AddTransient<IBasketService, BasketService>();
             //services.AddTransient<IIdentityParser<ApplicationUser>, IdentityParser>();

@@ -9,6 +9,7 @@ namespace WebMVC
     {
         public Connectionstrings ConnectionStrings { get; set; }
         public string CatalogUrl { get; set; }
+        public string AccountingUrl { get; set; }
         public string OrderingUrl { get; set; }
         public string BasketUrl { get; set; }
         public Logging Logging { get; set; }

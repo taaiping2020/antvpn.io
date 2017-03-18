@@ -9,17 +9,18 @@ using System.Net.Http;
 using WebMVC.Extensions;
 using Newtonsoft.Json;
 using Extensions;
+using WebMVC.Services;
 
 namespace WebMVC.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        //private readonly IIdentityParser<ApplicationUser> _identityParser;
-        //public AccountController(IIdentityParser<ApplicationUser> identityParser)
-        //{
-        //    _identityParser = identityParser;
-        //}
+        private readonly ILoginService _loginService;
+        public AccountController(ILoginService loginService)
+        {
+            _loginService = loginService;
+        }
 
         public ActionResult Index()
         {
@@ -56,10 +57,10 @@ namespace WebMVC.Controllers
 
         public async Task<IActionResult> MyLogins()
         {
-            HttpClient client = new HttpClient();
             var userId = User.Identities.GetUserId();
-            var json = await client.GetStringAsync($"http://localhost:64347/api/login/status/{userId}");
-            var logins = JsonConvert.DeserializeObject<LoginStatus[]>(json);
+
+            var logins = await _loginService.GetWithStatusAsync(userId);
+
             return View(logins);
         }
     }
