@@ -73,6 +73,27 @@ namespace Accounting.API.Controllers
             return Ok();
         }
 
+        [HttpPost("Reset/{userId}")]
+        public async Task<IActionResult> PutLogin([FromRoute] string userId, [FromBody] LoginBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var login = await _context.Logins.FindAsync(model.UserName);
+            if (login == null)
+            {
+                return NotFound();
+            }
+            login.Password = model.Password;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutLogin([FromRoute] string id, [FromBody] Login login)
         //{

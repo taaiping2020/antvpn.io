@@ -81,5 +81,23 @@ namespace WebMVC.Controllers
             }
             return RedirectToAction(nameof(MyLogins));
         }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reset(LoginBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(MyLogins));
+            }
+
+            var userId = User.Identities.GetUserId();
+
+            var result = await _loginService.ResetPasswordAsync(userId, model);
+            if (result == false)
+            {
+                //
+            }
+            return RedirectToAction(nameof(MyLogins));
+        }
     }
 }

@@ -17,7 +17,7 @@
     {
         <div class="entity-list entity-list-expandable">
             @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
-            {
+                {
                 <div class="entity-list-item">
                     <div class="item-icon">
                         <span class="glyph glyph-people"></span>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="item-content-expanded">
                         <button class="btn btn-default" disabled="disabled">Configure</button>
-                        <button class="btn btn-default" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
+                        <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
                     </div>
                 </div>
             }
@@ -63,13 +63,13 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="UserName">Username</label>
-                        <input asp-for="UserName" class="form-control" >
+                        <input asp-for="UserName" class="form-control">
                         <span asp-validation-for="UserName"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="Password">Password</label>
-                        <input asp-for="Password" class="form-control" >
+                        <input asp-for="Password" class="form-control">
                         <span asp-validation-for="Password"></span>
                     </div>
 
@@ -96,38 +96,49 @@
 
 <div class="modal" id="modal-resetpassword" tabindex="-1" role="dialog" aria-labelledby="modal-sample-label" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal-sample-label">
-                    Reset VPN Server Login Password
-                </h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="UserName">New Password</label>
-                    <input asp-for="UserName" class="form-control">
+        <form asp-controller="Account" asp-action="Reset" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-sample-label">
+                        Reset VPN Server Login <span><strong id="showloginname">cyahto</strong>'s</span> password
+                    </h4>
                 </div>
-                <div class="form-group">
-                    <label for="Password">New Password</label>
-                    <input asp-for="Password" class="form-control">
-                    <span asp-validation-for="Password"></span>
-                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="UserName" id="resetusername" class="form-control">
+                    <div class="form-group">
+                        <label for="Password">New Password</label>
+                        <input asp-for="Password" class="form-control">
+                        <span asp-validation-for="Password"></span>
+                    </div>
 
-                <div class="form-group">
-                    <label for="ConfirmPassword">Confirm Password</label>
-                    <input asp-for="ConfirmPassword" class="form-control">
-                    <span asp-validation-for="ConfirmPassword"></span>
+                    <div class="form-group">
+                        <label for="ConfirmPassword">Confirm Password</label>
+                        <input asp-for="ConfirmPassword" class="form-control">
+                        <span asp-validation-for="ConfirmPassword"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-info"
+                            data-dismiss="modal">
+                        Cancel
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">
-                    Submit
-                </button>
-                <button type="button" class="btn btn-info"
-                        data-dismiss="modal">
-                    Cancel
-                </button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        $(function () {
+            $(".reset-password").on("click", e => {
+                var l = e.currentTarget.attributes["data-loginname"].value;
+                $("#showloginname").text(l);
+                $('#resetusername').val(l);
+            })
+        })
+    </script>
+}

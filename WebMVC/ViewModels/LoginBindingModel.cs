@@ -15,10 +15,12 @@ namespace WebMVC.ViewModels
         public string UserName { get; set; }
         [Required]
         [DataType(DataType.Password)]
+        [StringLength(maximumLength: 100, MinimumLength = 6)]
         public string Password { get; set; }
         [Required]
         [Compare(nameof(Password))]
         [DataType(DataType.Password)]
+        [StringLength(maximumLength: 100, MinimumLength = 6)]
         public string ConfirmPassword { get; set; }
     }
 }

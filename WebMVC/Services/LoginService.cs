@@ -73,9 +73,24 @@ namespace WebMVC.Services
             return response;
         }
 
-        public async Task ResetPasswordAsync(string userId, string loginName)
+        public async Task<bool> ResetPasswordAsync(string userId, LoginBindingModel model)
         {
-            throw new NotImplementedException();
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}/Reset/{userId}";
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json");
+
+            var response = await _apiClient.PostAsync(loginsUrl, content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return false;
+
+            return true;
         }
     }
 }
