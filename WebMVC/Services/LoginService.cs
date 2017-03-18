@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
+using WebMVC.ViewModels;
 
 namespace WebMVC.Services
 {
@@ -25,9 +26,35 @@ namespace WebMVC.Services
             _httpContextAccesor = httpContextAccesor;
         }
 
-        public async Task CreateNewLoginAsync(string userId, string loginName, string password)
+        public async Task<bool> CreateNewLoginAsync(string userId, string loginName, string password)
         {
-            throw new NotImplementedException();
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}";
+
+            Login login = new Login()
+            {
+                AllowDialIn = true,
+                Enabled = true,
+                GroupName = "VPN Group",
+                LoginName = loginName,
+                NormalizedLoginName = loginName.ToLower(),
+                Password = password,
+                UserId = userId
+            };
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(login), System.Text.Encoding.UTF8, "application/json");
+
+            var response = await _apiClient.PostAsync(loginsUrl, content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                return false;
+
+            return true;
         }
 
         public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId)

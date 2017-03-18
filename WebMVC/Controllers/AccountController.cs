@@ -59,9 +59,27 @@ namespace WebMVC.Controllers
         {
             var userId = User.Identities.GetUserId();
 
-            var logins = await _loginService.GetWithStatusAsync(userId);
+            ViewData["logins"] = await _loginService.GetWithStatusAsync(userId);
 
-            return View(logins);
+            return View();
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LoginBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(MyLogins));
+            }
+
+            var userId = User.Identities.GetUserId();
+
+            var result = await _loginService.CreateNewLoginAsync(userId, model.UserName, model.Password);
+            if (result == false)
+            {
+                //
+            }
+            return RedirectToAction(nameof(MyLogins));
         }
     }
 }
