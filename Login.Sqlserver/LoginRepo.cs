@@ -44,5 +44,37 @@ namespace Login.Sqlserver
             }
          
         }
+
+        public void Delete(Login login, bool allowFail)
+        {
+            try
+            {
+                foreach (var ls in loginServers)
+                {
+                    var request = (HttpWebRequest)WebRequest.Create(ls + $"/api/users/{login.LoginName}");
+                    request.ContentType = "application/json; charset=utf-8";
+                    request.Method = "DELETE";
+
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        streamWriter.Flush();
+                    }
+
+                    var httpResponse = (HttpWebResponse)request.GetResponse();
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        var result = streamReader.ReadToEnd();
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                if (!allowFail)
+                {
+                    throw ex;
+                }
+            }
+
+        }
     }
 }

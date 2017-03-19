@@ -13,7 +13,7 @@ use [antvpn.accounting]
 go
 CREATE TRIGGER dbo.login_trigger
 on Logins
-for update,insert
+for update,insert, delete
 as
 EXTERNAL NAME[Login.Sqlserver].[Triggers].SqlTrigger
 go
