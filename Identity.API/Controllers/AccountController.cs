@@ -253,6 +253,7 @@ namespace IdentityServer4.Quickstart.UI.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
+            returnUrl = returnUrl ?? Url.Action(nameof(HomeController.Index), "Home");
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
