@@ -52,6 +52,8 @@ namespace Identity.API
 
             services.AddMvc();
 
+            services.Configure<AppSettings>(Configuration);
+
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -101,6 +103,7 @@ namespace Identity.API
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+           // loggerFactory.AddProvider();
 
             if (env.IsDevelopment())
             {

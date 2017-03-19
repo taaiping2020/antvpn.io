@@ -11,6 +11,8 @@ namespace WebMVC
         public string CatalogUrl { get; set; }
         public string AccountingUrl { get; set; }
         public string OrderingUrl { get; set; }
+        public string IdentityUrl { get; set; }
+        public string MvcClient { get; set; }
         public string BasketUrl { get; set; }
         public Logging Logging { get; set; }
     }

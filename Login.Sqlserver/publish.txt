@@ -1,4 +1,4 @@
-use [antvpn.login]
+use [antvpn.accounting]
 go
 -- setting up
 sp_configure 'clr enabled', 1
@@ -6,10 +6,10 @@ GO
 RECONFIGURE
 GO
 EXEC sp_changedbowner 'sa'
-ALTER DATABASE [antvpn.login] SET TRUSTWORTHY ON
+ALTER DATABASE [antvpn.accounting] SET TRUSTWORTHY ON
 
 -- create
-use [antvpn.login]
+use [antvpn.accounting]
 go
 CREATE TRIGGER dbo.login_trigger
 on Logins
@@ -19,16 +19,16 @@ EXTERNAL NAME[Login.Sqlserver].[Triggers].SqlTrigger
 go
 
 -- drop
-use [antvpn.login]
+use [antvpn.accounting]
 drop TRIGGER dbo.login_trigger
 drop assembly [Login.Sqlserver];
 
 --example
 delete from [dbo].[Logins] 
 
-update [antvpn.login].[dbo].[Logins] set userId = 'ha11ha'
+update [antvpn.accounting].[dbo].[Logins] set userId = 'ha11ha'
 
-update [antvpn.login].[dbo].[Logins] set [password] = 'xboxone....'
+update [antvpn.accounting].[dbo].[Logins] set [password] = 'xboxone....'
 
-insert into [antvpn.login].[dbo].[Logins] ("UserId","LoginName","NormalizedLoginName","Password","AllowDialIn","Enabled", "GroupName") 
+insert into [antvpn.accounting].[dbo].[Logins] ("UserId","LoginName","NormalizedLoginName","Password","AllowDialIn","Enabled", "GroupName") 
 values ('sjhf-sdfjskdf-sdfjkf', 'test5', 'test5', 'xboxone', 1,1,'VPN Group')

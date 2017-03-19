@@ -9,9 +9,11 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 using WebMVC.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebMVC.Services
 {
+    [Authorize]
     public class LoginService : ILoginService
     {
         private HttpClient _apiClient;

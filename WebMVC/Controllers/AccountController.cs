@@ -10,6 +10,7 @@ using WebMVC.Extensions;
 using Newtonsoft.Json;
 using Extensions;
 using WebMVC.Services;
+using Microsoft.Extensions.Options;
 
 namespace WebMVC.Controllers
 {
@@ -17,9 +18,11 @@ namespace WebMVC.Controllers
     public class AccountController : Controller
     {
         private readonly ILoginService _loginService;
-        public AccountController(ILoginService loginService)
+        private readonly IOptionsSnapshot<AppSettings> _settings;
+        public AccountController(ILoginService loginService, IOptionsSnapshot<AppSettings> settings)
         {
             _loginService = loginService;
+            _settings = settings;
         }
 
         public ActionResult Index()
@@ -28,10 +31,10 @@ namespace WebMVC.Controllers
         }
 
         [Authorize]
-        public IActionResult SignIn(string returnUrl)
+        public IActionResult SignIn()
         {
             var user = User as ClaimsPrincipal;
-            
+
             //TODO - Not retrieving AccessToken yet
             var token = user.FindFirst("access_token");
             if (token != null)
@@ -55,7 +58,7 @@ namespace WebMVC.Controllers
             return new SignOutResult("oidc", new AuthenticationProperties { RedirectUri = homeUrl });
         }
 
-        public async Task<IActionResult> MyLogins()
+        public async Task<IActionResult> Dashboard()
         {
             var userId = User.Identities.GetUserId();
 
@@ -69,7 +72,7 @@ namespace WebMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(MyLogins));
+                return RedirectToAction(nameof(Dashboard));
             }
 
             var userId = User.Identities.GetUserId();
@@ -79,7 +82,7 @@ namespace WebMVC.Controllers
             {
                 //
             }
-            return RedirectToAction(nameof(MyLogins));
+            return RedirectToAction(nameof(Dashboard));
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -87,7 +90,7 @@ namespace WebMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(MyLogins));
+                return RedirectToAction(nameof(Dashboard));
             }
 
             var userId = User.Identities.GetUserId();
@@ -97,7 +100,7 @@ namespace WebMVC.Controllers
             {
                 //
             }
-            return RedirectToAction(nameof(MyLogins));
+            return RedirectToAction(nameof(Dashboard));
         }
     }
 }
