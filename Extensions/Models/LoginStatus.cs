@@ -12,5 +12,6 @@ namespace Extensions
         public bool AllowDialIn { get; set; }
         public bool Enabled { get; set; }
         public BasicAcct BasicAcct { get; set; }
+        public DateTimeOffset? LastUpdated { get; set; }
     }
 }

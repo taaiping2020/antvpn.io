@@ -54,6 +54,7 @@ namespace Accounting.API.Controllers
                 Enabled = c.Enabled,
                 LoginName = c.LoginName,
                 UserId = c.UserId,
+                LastUpdated = group.FirstOrDefault(k => k.Key == c.LoginName)?.Max(t => t.EventTimestampUtc),
                 BasicAcct = basicAccts.FirstOrDefault(u => u.UserName == c.LoginName)
             });
             return Ok(model);
