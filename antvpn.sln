@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Accounting", "Accounting", 
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Accounting.Sqlserver", "Accounting.Sqlserver\Accounting.Sqlserver.sqlproj", "{5C64EF9D-0D14-4599-A0A5-E330F2BAD134}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Accounting.RouterReporter", "Accounting.RouterReporter\Accounting.RouterReporter.csproj", "{C278AED6-63E4-4D50-8069-04155E5E183E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Accounting.Distributed.RouterReporter", "Accounting.RouterReporter\Accounting.Distributed.RouterReporter.csproj", "{C278AED6-63E4-4D50-8069-04155E5E183E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Accounting.Distributed.LoginManagement.API", "Login.API\Accounting.Distributed.LoginManagement.API.csproj", "{7C87311A-F621-47B9-9E29-05273866B600}"
 EndProject
