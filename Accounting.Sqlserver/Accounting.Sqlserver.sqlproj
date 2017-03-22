@@ -59,18 +59,18 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MongoDBRepository.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="EventReport.cs" />
     <Content Include="publish.txt" />
+    <Compile Include="SqlTrigger.cs" />
+    <Compile Include="Login.cs" />
+    <Compile Include="LoginRepo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dll\MongoDB.Bson.dll" />
-    <None Include="dll\MongoDB.Driver.Core.dll" />
-    <None Include="dll\MongoDB.Driver.dll" />
+    <Content Include="Copy of publish.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MongoDB.Bson">
