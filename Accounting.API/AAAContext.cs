@@ -9,7 +9,7 @@ namespace Accounting.API
     {
         public virtual DbSet<Eventraw> Eventraw { get; set; }
         public virtual DbSet<Current> Current { get; set; }
-
+        public virtual DbSet<CurrentMeta> CurrentMeta { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
@@ -30,6 +30,13 @@ namespace Accounting.API
             modelBuilder.Entity<Current>(entity =>
             {
                 entity.ToTable("current");
+            });
+
+            modelBuilder.Entity<CurrentMeta>(entity =>
+            {
+                entity.ToTable("currentmeta");
+
+                entity.HasKey(c => c.MachineName);
             });
         }
     }

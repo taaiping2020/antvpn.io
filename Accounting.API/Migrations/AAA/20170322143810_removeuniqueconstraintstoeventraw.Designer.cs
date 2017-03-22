@@ -9,9 +9,10 @@ using Extensions;
 namespace Accounting.API.Migrations.AAA
 {
     [DbContext(typeof(AAAContext))]
-    partial class AAAContextModelSnapshot : ModelSnapshot
+    [Migration("20170322143810_removeuniqueconstraintstoeventraw")]
+    partial class removeuniqueconstraintstoeventraw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

@@ -25,3 +25,10 @@ group by username;
 --proc
 go
 select * from dbo.GetAccountings('20150101','20180101'); 
+
+
+ALTER TABLE [dbo].[eventraw]  WITH CHECK ADD  CONSTRAINT [Content should be formatted as JSON] CHECK  ((isjson([InfoJSON])>(0)))
+GO
+
+ALTER TABLE [dbo].[eventraw] CHECK CONSTRAINT [Content should be formatted as JSON]
+GO

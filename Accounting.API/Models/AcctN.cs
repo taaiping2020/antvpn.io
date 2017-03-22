@@ -14,12 +14,25 @@ namespace Accounting.API.Models
             this.TotalOutput = reader.GetInt64(1);
             this.UserName = reader.GetString(2);
         }
-        public long TotalInput { get; set; }
-        public long TotalOutput { get; set; }
-        public string UserName { get; set; }
+        public readonly long TotalInput;
+        public readonly long TotalOutput;
+        public readonly string UserName;
+
+        public string TotalInDisplay => ToMegaByte(TotalInput);
+        public string TotalOutDisplay => ToMegaByte(TotalOutput);
+        public string TotalInOutDisplay => ToMegaByte(TotalOutput + TotalInput);
+
+        private static string ToMegaByte(double inputTraffic)
+        {
+            return (inputTraffic / 1024d / 1024d).ToString("0.00") + " MB";
+        }
 
         public static IEnumerable<AcctN> GetFromReader(DbDataReader reader)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
             if (reader.IsClosed)
             {
                 throw new InvalidOperationException("DbDataReader is closed.");

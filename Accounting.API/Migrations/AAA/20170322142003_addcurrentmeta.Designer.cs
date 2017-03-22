@@ -9,9 +9,10 @@ using Extensions;
 namespace Accounting.API.Migrations.AAA
 {
     [DbContext(typeof(AAAContext))]
-    partial class AAAContextModelSnapshot : ModelSnapshot
+    [Migration("20170322142003_addcurrentmeta")]
+    partial class addcurrentmeta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

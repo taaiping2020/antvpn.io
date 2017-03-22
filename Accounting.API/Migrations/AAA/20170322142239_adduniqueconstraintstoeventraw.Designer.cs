@@ -9,9 +9,10 @@ using Extensions;
 namespace Accounting.API.Migrations.AAA
 {
     [DbContext(typeof(AAAContext))]
-    partial class AAAContextModelSnapshot : ModelSnapshot
+    [Migration("20170322142239_adduniqueconstraintstoeventraw")]
+    partial class adduniqueconstraintstoeventraw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -23,12 +24,19 @@ namespace Accounting.API.Migrations.AAA
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("InfoJson")
+                        .IsRequired()
                         .HasColumnName("InfoJSON");
 
                     b.Property<string>("InfoXml")
+                        .IsRequired()
                         .HasColumnName("InfoXML");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("InfoJson");
+
+
+                    b.HasAlternateKey("InfoXml");
 
                     b.ToTable("eventraw");
                 });
