@@ -1,0 +1,27 @@
+﻿--store
+DROP FUNCTION IF EXISTS	dbo.GetAccountings; 
+GO
+
+CREATE FUNCTION dbo.GetAccountings
+	(@begintime AS date,
+	@endtime AS date) 
+	returns table
+AS
+return
+
+with eventtables(computername, inputoctets,outputoctes, username, clientaddress, eventtimestamp) as
+(
+	select JSON_VALUE(InfoJSON, '$.Computer_Name'),  cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
+	JSON_VALUE(InfoJSON, '$.User_Name'),  JSON_VALUE(InfoJSON, '$.Tunnel_Client_Endpt'),  cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as datetime)
+	from dbo.eventraw
+	where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 
+	  --and JSON_VALUE(InfoJSON, '$.User_Name') in( 'bosxixi', 'c01')
+	  --and JSON_VALUE(InfoJSON, '$.User_Name') in(SELECT * FROM OPENXML (@handle, '/usernames/username') WITH (username nvarchar '.'))
+	  and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
+)
+select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, username from eventtables
+group by username;
+
+--proc
+go
+select * from dbo.GetAccountings('20150101','20180101'); 

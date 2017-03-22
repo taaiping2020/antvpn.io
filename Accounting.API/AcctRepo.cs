@@ -293,5 +293,15 @@ namespace Accounting.API
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<AcctN>> GetAcctNAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

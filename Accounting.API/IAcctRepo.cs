@@ -19,6 +19,9 @@ namespace Accounting.API
         IEnumerable<Acct> GetStoppedAcct(IEnumerable<string> userNames);
         IEnumerable<Acct> GetStoppedAcctWithDocs(IEnumerable<Acct> accts, DateTime? beginTime, DateTime? endTime);
         Task<IEnumerable<Acct>> GetStoppedAcctWithDocsByUserNamesAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime);
+
+        Task<IEnumerable<AcctN>> GetAcctNAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime);
+        Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime);
         //Acct ToAcct(BsonDocument c);
     }
 }

@@ -76,22 +76,49 @@ namespace Accounting.API
         {
             using (var db = new AAAContext())
             {
-                var username = usernames.First();
-                var sql = @"select *
-                        from eventraw
-                        where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 and JSON_VALUE(InfoJSON, '$.User_Name') = @username";
+                //var username = usernames.First();
+                //var sql = @"select *
+                //        from eventraw
+                //        where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 and JSON_VALUE(InfoJSON, '$.User_Name') = @username";
+                var connection = db.Database.GetDbConnection();
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandText = "select totalinput, totaloutput,username from dbo.GetAccountings(@begintime, @endtime)";
+                command.Parameters.Add(new SqlParameter("@begintime", DateTime.Parse("1753-1-1")));
+                command.Parameters.Add(new SqlParameter("@endtime", DateTime.MaxValue));
+                var reader = await command.ExecuteReaderAsync();
 
-                var result = await db.Eventraw.FromSql(sql, new SqlParameter("@username", username)).ToListAsync();
+                var acctns = AcctN.GetFromReader(reader).ToArray();
+                
 
-                List<Acct> accts = new List<Acct>();
-                foreach (var item in result)
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime)
+        {
+            return await GetAcctNAsync(null, beginTime, endTime);
+        }
+
+        public async Task<IEnumerable<AcctN>> GetAcctNAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime)
+        {
+            using (var db = new AAAContext())
+            {
+                beginTime = beginTime ?? DateTime.Parse("1753-1-1");
+                endTime = beginTime ?? DateTime.MaxValue;
+                var connection = db.Database.GetDbConnection();
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandText = "select totalinput, totaloutput,username from dbo.GetAccountings(@begintime, @endtime)";
+                command.Parameters.Add(new SqlParameter("@begintime", beginTime));
+                command.Parameters.Add(new SqlParameter("@endtime", endTime));
+                var reader = await command.ExecuteReaderAsync();
+                var acctns = AcctN.GetFromReader(reader).ToArray();
+                if (usernames != null)
                 {
-                    var acct = JsonConvert.DeserializeObject<Acct>(result.First().InfoJson);
-                    accts.Add(acct);
+                    return acctns.Where(c => usernames.Contains(c.UserName)).ToArray();
                 }
-
-
-                return accts;
+                return acctns;
             }
         }
     }
