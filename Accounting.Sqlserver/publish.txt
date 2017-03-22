@@ -1,4 +1,4 @@
-use AAA
+USE [antvpn.accounting]
 go
 -- setting up
 sp_configure 'clr enabled', 1
@@ -9,20 +9,21 @@ EXEC sp_changedbowner 'sa'
 ALTER DATABASE AAA SET TRUSTWORTHY ON
 
 -- create
-use AAA
+USE [antvpn.accounting]
 go
 CREATE PROCEDURE report_event @doc nvarchar(max)
 AS
-EXTERNAL NAME[antvpn.io.sqlserver].[antvpn.io.sqlserver.StoredProcedures].EventReport
+EXTERNAL NAME[Accounting.Sqlserver].[Accounting.Sqlserver.StoredProcedures].EventReport
+
 
 -- drop
-use AAA
+USE [antvpn.accounting]
 drop PROCEDURE dbo.report_event
 drop assembly [antvpn.io.sqlserver];
 
 
 //
-use AAA
+USE [antvpn.accounting]
 CREATE TABLE eventraw (
  Id int IDENTITY PRIMARY KEY NONCLUSTERED,
  InfoJSON nvarchar(max)

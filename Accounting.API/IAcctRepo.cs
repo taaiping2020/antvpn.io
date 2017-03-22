@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Accounting.API.Models;
 using MongoDB.Bson;
+using Accounting.API.Data;
 
 namespace Accounting.API
 {
     public interface IAcctRepo
     {
+        AccountingContext Context { get; }
         //IEnumerable<BsonDocument> Get(string userName, bool getStart, bool getStop);
         //IEnumerable<BsonDocument> GetAll();
         IEnumerable<Acct> GetAllAcct(IEnumerable<string> userNames);

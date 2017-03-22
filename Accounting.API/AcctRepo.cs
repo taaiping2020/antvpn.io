@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Accounting.API.Data;
 
 namespace Accounting.API
 {
@@ -33,6 +34,9 @@ namespace Accounting.API
 
         private readonly MongoClient client;
         private readonly JsonWriterSettings formatter;
+
+        public AccountingContext Context => throw new NotImplementedException();
+
         public IEnumerable<BsonDocument> GetAll()
         {
             var database = client.GetDatabase("accountingdata");

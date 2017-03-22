@@ -30,7 +30,7 @@ namespace Accounting.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<LoginContext>(options =>
+            services.AddDbContext<AccountingContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // Add framework services.

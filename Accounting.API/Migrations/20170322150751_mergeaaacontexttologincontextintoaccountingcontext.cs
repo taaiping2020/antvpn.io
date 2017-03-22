@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Accounting.API.Migrations.AAA
+namespace Accounting.API.Migrations
 {
-    public partial class addcurrent : Migration
+    public partial class mergeaaacontexttologincontextintoaccountingcontext : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,6 +49,18 @@ namespace Accounting.API.Migrations.AAA
                 {
                     table.PrimaryKey("PK_current", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "currentmeta",
+                columns: table => new
+                {
+                    MachineName = table.Column<string>(maxLength: 100, nullable: false),
+                    TimeStamp = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_currentmeta", x => x.MachineName);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -58,6 +70,9 @@ namespace Accounting.API.Migrations.AAA
 
             migrationBuilder.DropTable(
                 name: "current");
+
+            migrationBuilder.DropTable(
+                name: "currentmeta");
         }
     }
 }

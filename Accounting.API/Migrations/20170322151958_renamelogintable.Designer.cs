@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Accounting.API;
+using Accounting.API.Data;
 using Extensions;
 
-namespace Accounting.API.Migrations.AAA
+namespace Accounting.API.Migrations
 {
-    [DbContext(typeof(AAAContext))]
-    [Migration("20170322072754_addcurrent")]
-    partial class addcurrent
+    [DbContext(typeof(AccountingContext))]
+    [Migration("20170322151958_renamelogintable")]
+    partial class renamelogintable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,6 +72,51 @@ namespace Accounting.API.Migrations.AAA
                     b.HasKey("Id");
 
                     b.ToTable("current");
+                });
+
+            modelBuilder.Entity("Accounting.API.Models.CurrentMeta", b =>
+                {
+                    b.Property<string>("MachineName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("TimeStamp");
+
+                    b.HasKey("MachineName");
+
+                    b.ToTable("currentmeta");
+                });
+
+            modelBuilder.Entity("Accounting.API.Models.Login", b =>
+                {
+                    b.Property<string>("LoginName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("AllowDialIn");
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("GroupName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedLoginName")
+                        .IsRequired()
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450);
+
+                    b.HasKey("LoginName");
+
+                    b.HasAlternateKey("NormalizedLoginName");
+
+                    b.ToTable("logins");
                 });
         }
     }

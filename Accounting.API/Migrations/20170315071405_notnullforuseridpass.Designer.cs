@@ -7,7 +7,7 @@ using Accounting.API.Data;
 
 namespace Accounting.API.Migrations
 {
-    [DbContext(typeof(LoginContext))]
+    [DbContext(typeof(AccountingContext))]
     [Migration("20170315071405_notnullforuseridpass")]
     partial class notnullforuseridpass
     {
