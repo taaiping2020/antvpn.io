@@ -13,7 +13,7 @@ namespace Accounting.API.Controllers
     //[Authorize]
     public class AcctController : Controller
     {
-        static AcctRepo repo = new AcctRepo();
+        static IAcctRepo repo = new AcctRepo();
         // GET api/values
         [HttpGet]
         public async Task<IActionResult> Get()

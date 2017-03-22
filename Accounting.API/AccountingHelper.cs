@@ -9,7 +9,7 @@ namespace Accounting.API
 {
     public static class AccountingHelper
     {
-        public static BasicAcct Statistics(IGrouping<string, Acct> item, IEnumerable<RemoteAccessConnectionObjectId> connections)
+        public static BasicAcct Statistics(IGrouping<string, Acct> item, IEnumerable<Current> connections)
         {
             var input = connections?.FirstOrDefault(c => c.UserName == item.Key)?.TotalBytesIn ?? 0;
             var outpub = connections?.FirstOrDefault(c => c.UserName == item.Key)?.TotalBytesOut ?? 0;
@@ -23,7 +23,7 @@ namespace Accounting.API
                 TotalOut = outputTraffic
             };
         }
-        public static BasicAcct Statistics(RemoteAccessConnectionObjectId item)
+        public static BasicAcct Statistics(Current item)
         {
             return new BasicAcct
             {

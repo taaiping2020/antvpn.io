@@ -20,6 +20,23 @@ use AAA
 drop PROCEDURE dbo.report_event
 drop assembly [antvpn.io.sqlserver];
 
+
+//
+use AAA
+CREATE TABLE eventraw (
+ Id int IDENTITY PRIMARY KEY NONCLUSTERED,
+ InfoJSON nvarchar(max)
+
+ 
+ CONSTRAINT [Content should be formatted as JSON]
+ CHECK ( ISJSON( InfoJSON )> 0 )
+)
+
+
+
+
+
+
 --example
 declare @p1 int
 set @p1=NULL

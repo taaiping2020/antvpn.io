@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Accounting.API
 {
-    public class AcctRepo
+    public class AcctRepo : IAcctRepo
     {
         public AcctRepo() : this(null)
         {
@@ -287,6 +287,11 @@ namespace Accounting.API
             acct.TunnelType = c["Tunnel_Type"].AsDouble;
 
             return acct;
+        }
+
+        Task<IEnumerable<Current>> IAcctRepo.GetCurrentAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

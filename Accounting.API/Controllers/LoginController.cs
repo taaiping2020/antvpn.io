@@ -17,7 +17,7 @@ namespace Accounting.API.Controllers
     public class LoginController : Controller
     {
         private readonly LoginContext _context;
-        static AcctRepo repo = new AcctRepo();
+        static IAcctRepo repo = new AcctRepoSqlServer();
         public LoginController(LoginContext context)
         {
             _context = context;
@@ -43,9 +43,12 @@ namespace Accounting.API.Controllers
             {
                 basicAccts.Add(AccountingHelper.Statistics(item, currentConnections));
             }
-            foreach (var item in currentConnections.Where(c => !accts.Any(d => d.UserName.ToLower() == c.UserName.ToLower())))
+            if (currentConnections != null)
             {
-                basicAccts.Add(AccountingHelper.Statistics(item));
+                foreach (var item in currentConnections.Where(c => !accts.Any(d => d.UserName.ToLower() == c.UserName.ToLower())))
+                {
+                    basicAccts.Add(AccountingHelper.Statistics(item));
+                }
             }
 
             var model = logins.Select(c => new LoginStatus

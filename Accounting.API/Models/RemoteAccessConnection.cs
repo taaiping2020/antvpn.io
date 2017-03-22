@@ -11,4 +11,9 @@ namespace Accounting.API.Models
     {
         public ObjectId _id { get; set; }
     }
+
+    public class Current : RemoteAccessConnection
+    {
+        public int Id { get; set; }
+    }
 }

@@ -1,4 +1,4 @@
-using MongoDB.Bson;
+//using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,22 +8,90 @@ namespace Accounting.Sqlserver
 {
     public static class XmlMapper
     {
-        public static BsonDocument MapToBson(this XmlDocument xDom)
+        //public static BsonDocument MapToBson(this XmlDocument xDom)
+        //{
+        //    var eventNode = xDom["Event"];
+        //    var doc = new BsonDocument();
+
+
+        //    foreach (XmlElement c in eventNode.ChildNodes)
+        //    {
+        //        var dataType = (DataType)int.Parse(c.GetAttribute("data_type"));
+
+        //        doc.Add(GetBsonElement(dataType, c.Name, c.InnerText));
+        //    }
+        //    return doc;
+        //}
+
+        //private static BsonElement GetBsonElement(DataType datatype, string name, object value)
+        //{
+        //    if (!String.IsNullOrEmpty(name) && name.Contains("-"))
+        //    {
+        //        name = name.Replace("-", "_");
+        //    }
+        //    if (Enum.IsDefined(typeof(DataType), datatype))
+        //    {
+        //        switch (datatype)
+        //        {
+        //            case DataType.NonNegativeIntegers:
+        //                if (value != null)
+        //                {
+        //                    return new BsonElement(name, ulong.Parse(value.ToString()));
+        //                }
+        //                break;
+        //            case DataType.Strings:
+        //                if (name == "User_Name" || name == "SAM_Account_Name")
+        //                {
+        //                    return new BsonElement(name, value?.ToString().ToLower());
+        //                }
+        //                return new BsonElement(name, value?.ToString());
+        //            case DataType.HexadecimalNumbers:
+        //                return new BsonElement(name, value?.ToString());
+        //            case DataType.IPv4Addresses:
+        //                return new BsonElement(name, value?.ToString());
+        //            case DataType.DateAndTime:
+        //                if (value != null)
+        //                {
+        //                    return new BsonElement(name, DateTime.Parse(value.ToString()));
+        //                }
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //    return new BsonElement(name + "_unknown_" + datatype.ToString(), value?.ToString());
+        //}
+
+        public static string MapToJsonString(this XmlDocument xDom)
         {
             var eventNode = xDom["Event"];
-            var doc = new BsonDocument();
+            //var doc = new BsonDocument();
+            var doc = new StringBuilder();
 
+            var count = eventNode.ChildNodes.Count;
+            var i = 1;
 
+            doc.Append('{');
             foreach (XmlElement c in eventNode.ChildNodes)
             {
                 var dataType = (DataType)int.Parse(c.GetAttribute("data_type"));
 
-                doc.Add(GetBsonElement(dataType, c.Name, c.InnerText));
+
+                if (i++ == count)
+                {
+                    doc.AppendLine(GetJsonKeyValue(dataType, c.Name, c.InnerText));
+                }
+                else
+                {
+                    doc.AppendLine(GetJsonKeyValue(dataType, c.Name, c.InnerText) + ",");
+                }
             }
-            return doc;
+
+            doc.Append('}');
+            return doc.ToString();
         }
 
-        private static BsonElement GetBsonElement(DataType datatype, string name, object value)
+        private static string GetJsonKeyValue(DataType datatype, string name, object value)
         {
             if (!String.IsNullOrEmpty(name) && name.Contains("-"))
             {
@@ -36,30 +104,37 @@ namespace Accounting.Sqlserver
                     case DataType.NonNegativeIntegers:
                         if (value != null)
                         {
-                            return new BsonElement(name, ulong.Parse(value.ToString()));
+                            return $@"""{name}"": {value.ToString()}";
+                            //return new BsonElement(name, ulong.Parse(value.ToString()));
                         }
                         break;
                     case DataType.Strings:
                         if (name == "User_Name" || name == "SAM_Account_Name")
                         {
-                            return new BsonElement(name, value?.ToString().ToLower());
+                            return $@"""{name}"": ""{value?.ToString().ToLower()}""";
+                            //return new BsonElement(name, value?.ToString().ToLower());
                         }
-                        return new BsonElement(name, value?.ToString());
+                        return $@"""{name}"": ""{value?.ToString()}""";
+                    //return new BsonElement(name, value?.ToString());
                     case DataType.HexadecimalNumbers:
-                        return new BsonElement(name, value?.ToString());
+                        return $@"""{name}"": ""{value?.ToString()}""";
+                    //return new BsonElement(name, value?.ToString());
                     case DataType.IPv4Addresses:
-                        return new BsonElement(name, value?.ToString());
+                        return $@"""{name}"": ""{value?.ToString()}""";
+                    //return new BsonElement(name, value?.ToString());
                     case DataType.DateAndTime:
                         if (value != null)
                         {
-                            return new BsonElement(name, DateTime.Parse(value.ToString()));
+                            return $@"""{name}"": ""{DateTime.Parse(value.ToString())}""";
+                            //return new BsonElement(name, DateTime.Parse(value.ToString()));
                         }
                         break;
                     default:
                         break;
                 }
             }
-            return new BsonElement(name + "_unknown_" + datatype.ToString(), value?.ToString());
+            return $@"""{name}_unknown_{datatype.ToString()}"": ""{value?.ToString()}""";
+            //return new BsonElement(name + "_unknown_" + datatype.ToString(), value?.ToString());
         }
 
         public enum DataType
