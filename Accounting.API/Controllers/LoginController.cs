@@ -33,22 +33,8 @@ namespace Accounting.API.Controllers
         {
             var logins = await _repo.Context.Logins.Where(c => c.UserId == userId).ToListAsync();
             var loginNames = logins.Select(c => c.LoginName).ToArray();
-            var currentConnections = await _repo.GetCurrentAsync();
-            var accts = await _repo.GetStoppedAcctWithDocsByUserNamesAsync(loginNames, null, null);
-
-            var group = accts.GroupBy(c => c.UserName);
-            var basicAccts = new List<BasicAcct>();
-            foreach (var item in group)
-            {
-                basicAccts.Add(AccountingHelper.Statistics(item, currentConnections));
-            }
-            if (currentConnections != null)
-            {
-                foreach (var item in currentConnections.Where(c => !accts.Any(d => d.UserName.ToLower() == c.UserName.ToLower())))
-                {
-                    basicAccts.Add(AccountingHelper.Statistics(item));
-                }
-            }
+            var currentaccts = await _repo.GetCurrentAcctNAsync();
+            var accts = await _repo.GetAcctNAsync(loginNames, null, null);
 
             var model = logins.Select(c => new LoginStatus
             {
@@ -56,8 +42,13 @@ namespace Accounting.API.Controllers
                 Enabled = c.Enabled,
                 LoginName = c.LoginName,
                 UserId = c.UserId,
-                LastUpdated = group.FirstOrDefault(k => k.Key == c.LoginName)?.Max(t => t.EventTimestampUtc),
-                BasicAcct = basicAccts.FirstOrDefault(u => u.UserName == c.LoginName)
+                LastUpdated = DateTimeOffset.UtcNow,
+                BasicAcct = new BasicAcct()
+                {
+                    TotalIn = (currentaccts.FirstOrDefault(d => d.UserName == c.LoginName) + accts.FirstOrDefault(d => d.UserName == c.LoginName))?.TotalInput ?? 0,
+                    TotalOut = (currentaccts.FirstOrDefault(d => d.UserName == c.LoginName) + accts.FirstOrDefault(d => d.UserName == c.LoginName))?.TotalOutput ?? 0,
+                    UserName = c.LoginName
+                }
             });
             return Ok(model);
         }

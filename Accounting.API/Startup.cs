@@ -46,6 +46,8 @@ namespace Accounting.API
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+
+            services.AddTransient<IAcctRepo, AcctRepoSqlServer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

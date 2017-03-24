@@ -307,5 +307,15 @@ namespace Accounting.API
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<AcctN>> GetCurrentAcctNAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DateTimeOffset?> GetLastUpdateAsync(string username)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

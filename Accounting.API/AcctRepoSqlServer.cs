@@ -35,24 +35,20 @@ namespace Accounting.API
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Current>> GetCurrentAsync()
+        public async Task<IEnumerable<AcctN>> GetCurrentAcctNAsync()
         {
-            return null;
+            var currentMeta = await _context.CurrentMeta.ToListAsync();
+            var timestamps = currentMeta.Select(c => c.TimeStamp).ToArray();
 
-                var current = await _context.Current.GroupBy(c => c.TimeStamp)?.OrderByDescending(c => c.Key)?.FirstOrDefaultAsync();
+            var currents = await _context.Current.Where(c => timestamps.Contains(c.TimeStamp)).ToListAsync();
+            var g = currents.GroupBy(c => c.UserName).Select(c => new AcctN(c.Key, c.Sum(i => i.TotalBytesIn), c.Sum(o => o.TotalBytesOut)));
+            return g;
+        }
 
-                if (current == null)
-                {
-                    return null;
-                }
-
-                if (current.Any())
-                {
-                    return current;
-                }
-
-                return null;
-        
+        public async Task<DateTimeOffset?> GetLastUpdateAsync(string username)
+        {
+            var time = await _context.Current.Where(c => c.UserName == username).OrderByDescending(c => c.TimeStamp).Select(c => c.TimeStamp).FirstOrDefaultAsync();
+            return time;
         }
 
         public IEnumerable<Acct> GetLastedAcct(IEnumerable<string> strings)
@@ -82,18 +78,7 @@ namespace Accounting.API
 
         public async Task<IEnumerable<Acct>> GetStoppedAcctWithDocsByUserNamesAsync(IEnumerable<string> usernames, DateTime? beginTime, DateTime? endTime)
         {
-                var connection = _context.Database.GetDbConnection();
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "select totalinput, totaloutput,username from dbo.GetAccountings(@begintime, @endtime)";
-                command.Parameters.Add(new SqlParameter("@begintime", DateTime.Parse("1753-1-1")));
-                command.Parameters.Add(new SqlParameter("@endtime", DateTime.MaxValue));
-                var reader = await command.ExecuteReaderAsync();
-
-                var acctns = AcctN.GetFromReader(reader).ToArray();
-                
-
-                return null;
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime)
@@ -105,7 +90,7 @@ namespace Accounting.API
         {
     
                 beginTime = beginTime ?? DateTime.Parse("1753-1-1");
-                endTime = beginTime ?? DateTime.MaxValue;
+                endTime = endTime ?? DateTime.MaxValue;
                 var connection = _context.Database.GetDbConnection();
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
@@ -120,6 +105,11 @@ namespace Accounting.API
                 }
                 return acctns;
         
+        }
+
+        public Task<IEnumerable<Current>> GetCurrentAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
