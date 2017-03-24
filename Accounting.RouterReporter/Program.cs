@@ -2,19 +2,17 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
-using MongoDB.Driver;
-using MongoDB.Bson;
 using System.ServiceProcess;
 using System.Diagnostics;
 using Extensions.Windows;
+using System.Data;
+using System.Configuration;
 
 namespace Accounting.RouterReporter
 {
     class Program
     {
         #region Nested classes to support running as service
-        public const string ServiceName = "RouterReporter";
-
         public class Service : ServiceBase
         {
             public Service()
@@ -41,34 +39,20 @@ namespace Accounting.RouterReporter
         private static void Start(string[] args)
         {
             var autoEvent = new AutoResetEvent(false);
-
-            int interval = 30;
-            if (args.Length > 0)
-                interval = int.Parse(args[0]);
-
-            if (args.Length == 2)
-                uri = $"{args[1]}";
-            else
-                uri = "mongodb://104.160.35.172:27017";
-
-            Log(EventLogEntryType.Information, $"connectionString: {uri}, uploads interval: {interval}");
-
-            client = new MongoClient(uri);
-
-            t = new Timer(ReportRouterInfo, autoEvent, TimeSpan.FromSeconds(interval), TimeSpan.FromSeconds(interval));
-            t2 = new Timer(DisconnectVpnUser, autoEvent, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(interval));
-
-            //collectiontime.InsertOne(new BsonDocument() { new BsonElement("name", "currenttimestamp"), new BsonElement("timestamp", DateTime.UtcNow) });
-            //collectiontime.InsertOne(new BsonDocument() { new BsonElement("name", "disconnectusers"), });
+            t = new Timer(ReportRouterInfo, autoEvent, TimeSpan.FromSeconds(_interval), TimeSpan.FromSeconds(_interval));
+            t2 = new Timer(DisconnectVpnUser, autoEvent, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(_interval));
         }
         #endregion
 
         static PowerShell ps = PowerShell.Create();
-        static MongoClient client;
-        static string uri;
         static string machineName = Environment.MachineName;
+        public const string ServiceName = "RouterReporter";
         static Timer t;
         static Timer t2;
+
+        static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
+        static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"]);
+
         static void Main(string[] args)
         {
             if (!Environment.UserInteractive)
@@ -86,14 +70,11 @@ namespace Accounting.RouterReporter
                 Stop();
             }
         }
+
         public static void ReportRouterInfo(object state)
         {
             try
             {
-                var database = client.GetDatabase("accountingdata");
-                var collection = database.GetCollection<BsonDocument>("current");
-                var meta = database.GetCollection<Meta>("meta");
-
                 ps.Commands.Clear();
                 ps.AddCommand("Get-RemoteAccessConnectionStatistics");
                 var psos = ps.Invoke();
@@ -105,15 +86,8 @@ namespace Accounting.RouterReporter
                 {
                     var now = DateTime.UtcNow;
                     var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
-                    collection.InsertMany(racs.Select(c => c.ToBsonDocument()));
-
-                    var filterBuilder = Builders<Meta>.Filter;
-                    var updateBuilder = Builders<Meta>.Update;
-                    var filter = filterBuilder.Eq(c => c.name, "currenttimestamp");
-                    var update = updateBuilder.Set(c => c.timestamp, now);
-                    meta.FindOneAndUpdate(filter, update);
-                    //Log(EventLogEntryType.Information, $"Success {now} : {DateTime.Now}");
-                    Console.WriteLine($"Success {now} : {DateTime.Now}");
+                    repo.InsertDatas(racs);
+                    repo.InsertOrUpdateTimetamp(machineName, now);
                 }
             }
             catch (Exception ex)
@@ -126,36 +100,36 @@ namespace Accounting.RouterReporter
         }
         public static void DisconnectVpnUser(object state)
         {
-            try
-            {
-                var database = client.GetDatabase("accountingdata");
-                var collection = database.GetCollection<BsonDocument>("current");
-                var meta = database.GetCollection<Meta>("meta");
+            //try
+            //{
+            //    var database = client.GetDatabase("accountingdata");
+            //    var collection = database.GetCollection<BsonDocument>("current");
+            //    var meta = database.GetCollection<Meta>("meta");
 
-                var disconnectusers = meta.Find(c => c.name == "disconnectusers").FirstOrDefault();
-                if (disconnectusers != null && !disconnectusers.users.IsNullOrCountEqualsZero())
-                {
-                    foreach (var username in disconnectusers.users)
-                    {
-                        Console.WriteLine($"try disconnecting {username}");
-                        ps.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
-                        ps.Invoke();
+            //    var disconnectusers = meta.Find(c => c.name == "disconnectusers").FirstOrDefault();
+            //    if (disconnectusers != null && !disconnectusers.users.IsNullOrCountEqualsZero())
+            //    {
+            //        foreach (var username in disconnectusers.users)
+            //        {
+            //            Console.WriteLine($"try disconnecting {username}");
+            //            ps.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
+            //            ps.Invoke();
 
-                        ps.Commands.Clear();
+            //            ps.Commands.Clear();
 
-                        ps.AddCommand($@"Disconnect-VpnUser");
-                        ps.AddParameter("UserName", username);
-                        ps.Invoke();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log(EventLogEntryType.Error, ex.Message);
-                Log(EventLogEntryType.Error, ex.StackTrace);
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
+            //            ps.AddCommand($@"Disconnect-VpnUser");
+            //            ps.AddParameter("UserName", username);
+            //            ps.Invoke();
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log(EventLogEntryType.Error, ex.Message);
+            //    Log(EventLogEntryType.Error, ex.StackTrace);
+            //    Console.WriteLine(ex.Message);
+            //    Console.WriteLine(ex.StackTrace);
+            //}
         }
 
         private static void Log(EventLogEntryType type, string message)
@@ -181,5 +155,30 @@ namespace Accounting.RouterReporter
             // Close the Event Log
             eventLog.Close();
         }
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//repo.InsertDatas(new System.Collections.Generic.List<RemoteAccessConnection>
+//{
+//    new RemoteAccessConnection { AuthMethod = "sdf", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
+//    new RemoteAccessConnection { AuthMethod = "1232", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
+//    new RemoteAccessConnection { AuthMethod = "fsdf", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
+//    new RemoteAccessConnection { AuthMethod = "sdfs", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
+//});
+

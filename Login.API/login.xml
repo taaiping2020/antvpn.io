@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Login.API</name>
+        <name>Accounting.Distributed.LoginManagement.API</name>
     </assembly>
     <members>
         <member name="M:Login.API.Controllers.GroupController.Get(System.String)">
