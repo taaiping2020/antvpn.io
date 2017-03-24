@@ -25,10 +25,6 @@ namespace Accounting.API.Models
         public readonly long TotalOutput;
         public readonly string UserName;
 
-        public string TotalInDisplay => ToMegaByte(TotalInput);
-        public string TotalOutDisplay => ToMegaByte(TotalOutput);
-        public string TotalInOutDisplay => ToMegaByte(TotalOutput + TotalInput);
-
         private static string ToMegaByte(double inputTraffic)
         {
             return (inputTraffic / 1024d / 1024d).ToString("0.00") + " MB";

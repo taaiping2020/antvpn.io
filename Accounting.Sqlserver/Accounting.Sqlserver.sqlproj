@@ -62,7 +62,6 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MongoDBRepository.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="EventReport.cs" />
     <Content Include="publish.txt" />
@@ -74,15 +73,6 @@
     <Content Include="Copy of publish.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MongoDB.Bson">
-      <HintPath>dll\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver.Core">
-      <HintPath>dll\MongoDB.Driver.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver">
-      <HintPath>dll\MongoDB.Driver.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System" />
     <Reference Include="System.Core" />

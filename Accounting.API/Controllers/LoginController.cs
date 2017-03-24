@@ -31,10 +31,8 @@ namespace Accounting.API.Controllers
         [HttpGet("Status/{userId}")]
         public async Task<IActionResult> GetLoginStatus(string userId)
         {
-            var logins = await _repo.Context.Logins.Where(c => c.UserId == userId).ToListAsync();
-            var loginNames = logins.Select(c => c.LoginName).ToArray();
-            var currentaccts = await _repo.GetCurrentAcctNAsync();
-            var accts = await _repo.GetAcctNAsync(loginNames, null, null);
+            var logins = await _repo.GetLogins(userId);
+            var accts = await _repo.GetAcctNAsync(userId, null, null);
 
             var model = logins.Select(c => new LoginStatus
             {
@@ -42,12 +40,10 @@ namespace Accounting.API.Controllers
                 Enabled = c.Enabled,
                 LoginName = c.LoginName,
                 UserId = c.UserId,
-                LastUpdated = DateTimeOffset.UtcNow,
                 BasicAcct = new BasicAcct()
                 {
-                    TotalIn = (currentaccts.FirstOrDefault(d => d.UserName == c.LoginName) + accts.FirstOrDefault(d => d.UserName == c.LoginName))?.TotalInput ?? 0,
-                    TotalOut = (currentaccts.FirstOrDefault(d => d.UserName == c.LoginName) + accts.FirstOrDefault(d => d.UserName == c.LoginName))?.TotalOutput ?? 0,
-                    UserName = c.LoginName
+                    TotalIn = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalInput ?? 0,
+                    TotalOut = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalOutput ?? 0,
                 }
             });
             return Ok(model);

@@ -7,7 +7,6 @@ namespace Extensions
 {
     public class BasicAcct
     {
-        public string UserName { get; set; }
         public double TotalIn { get; set; }
         public double TotalOut { get; set; }
 

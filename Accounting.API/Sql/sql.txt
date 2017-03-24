@@ -1,30 +1,42 @@
-﻿--store
-DROP FUNCTION IF EXISTS	dbo.GetAccountings; 
+﻿DROP FUNCTION IF EXISTS	dbo.GetAccountings; 
 GO
 
 CREATE FUNCTION dbo.GetAccountings
-	(@begintime AS date,
+	(@userid AS nvarchar(450),
+	@begintime AS date,
 	@endtime AS date) 
 	returns table
 AS
 return
 
-with eventtables(computername, inputoctets,outputoctes, username, clientaddress, eventtimestamp) as
+with eventtables(inputoctets,outputoctes, username) as
 (
-	select JSON_VALUE(InfoJSON, '$.Computer_Name'),  cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
-	JSON_VALUE(InfoJSON, '$.User_Name'),  JSON_VALUE(InfoJSON, '$.Tunnel_Client_Endpt'),  cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as datetime)
+	select cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
+	JSON_VALUE(InfoJSON, '$.User_Name')
 	from dbo.eventraw
 	where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 
 	  --and JSON_VALUE(InfoJSON, '$.User_Name') in( 'bosxixi', 'c01')
-	  --and JSON_VALUE(InfoJSON, '$.User_Name') in(SELECT * FROM OPENXML (@handle, '/usernames/username') WITH (username nvarchar '.'))
+	  and JSON_VALUE(InfoJSON, '$.User_Name') in(select LoginName from [dbo].[logins] where UserId = @userid)
 	  and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
+
+	union
+		select sum(TotalBytesIn) as totalinput, sum(TotalBytesOut) as totaloutput, username
+	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
+	 and [UserName] in (select LoginName from [dbo].[logins] where UserId = @userid)
+	 group by username
 )
+
 select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, username from eventtables
 group by username;
 
 --proc
+
 go
-select * from dbo.GetAccountings('20150101','20180101'); 
+	select totalinput, totaloutput,username from dbo.GetAccountings('04a3ae52-b42d-438a-b5a7-17c52e0f8ec5', '1753-1-1', '2017-11-11')
+
+	
+
+	
 
 
 ALTER TABLE [dbo].[eventraw]  WITH CHECK ADD  CONSTRAINT [Content should be formatted as JSON] CHECK  ((isjson([InfoJSON])>(0)))
