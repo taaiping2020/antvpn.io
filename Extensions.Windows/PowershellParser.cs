@@ -111,7 +111,7 @@ namespace Extensions.Windows
             rac.MachineName = machineName;
             rac.AuthMethod = pso.GetValue(nameof(RemoteAccessConnection.AuthMethod));
             rac.Bandwidth = pso.ParseInt(nameof(RemoteAccessConnection.Bandwidth));
-            rac.ConnectionDuration = pso.ParseTimeSpanFromSeconds(nameof(RemoteAccessConnection.ConnectionDuration));
+            rac.ConnectionDuration = pso.ParseTimeSpanFromSeconds(nameof(RemoteAccessConnection.ConnectionDuration))?.Ticks;
             rac.ConnectionStartTime = pso.ParseDate(nameof(RemoteAccessConnection.ConnectionStartTime));
             rac.ConnectionType = pso.ParseEnum<ConnectionType>(nameof(ConnectionType));
             rac.TotalBytesIn = pso.ParseInt(nameof(RemoteAccessConnection.TotalBytesIn));

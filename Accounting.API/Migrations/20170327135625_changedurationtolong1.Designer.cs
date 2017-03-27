@@ -9,9 +9,10 @@ using Extensions;
 namespace Accounting.API.Migrations
 {
     [DbContext(typeof(AccountingContext))]
-    partial class LoginContextModelSnapshot : ModelSnapshot
+    [Migration("20170327135625_changedurationtolong1")]
+    partial class changedurationtolong1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -45,8 +46,6 @@ namespace Accounting.API.Migrations
                     b.Property<string>("ClientExternalAddress");
 
                     b.Property<string>("ClientIPv4Address");
-
-                    b.Property<long?>("ConnectionDuration");
 
                     b.Property<DateTime?>("ConnectionStartTime");
 

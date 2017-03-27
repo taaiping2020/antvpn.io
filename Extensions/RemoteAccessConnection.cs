@@ -10,7 +10,7 @@ namespace Extensions
     {
         public string AuthMethod { get; set; }
         public int Bandwidth { get; set; }
-        public TimeSpan? ConnectionDuration { get; set; }
+        public long? ConnectionDuration { get; set; }
         public DateTime? ConnectionStartTime { get; set; }
         public ConnectionType ConnectionType { get; set; }
         public long TotalBytesIn { get; set; }
