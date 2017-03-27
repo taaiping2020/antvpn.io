@@ -9,6 +9,8 @@ using Accounting.API.Data;
 using Accounting.API.Models;
 using Extensions;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
+using static Extensions.Extension;
 
 namespace Accounting.API.Controllers
 {
@@ -17,22 +19,24 @@ namespace Accounting.API.Controllers
     public class LoginController : Controller
     {
         public readonly IAcctRepo _repo;
-        public LoginController(IAcctRepo repo)
+        private readonly ADContext _adContext;
+        public LoginController(IAcctRepo repo, ADContext adContext)
         {
             _repo = repo;
+            _adContext = adContext;
         }
 
         [HttpGet("{userId}")]
         public IEnumerable<Login> GetLogins(string userId)
         {
-            return _repo.Context.Logins.Where(c => c.UserId == userId);
+            return _adContext.Logins.Where(c => c.UserId == userId);
         }
-
+   
         [HttpGet("Status/{userId}")]
         public async Task<IActionResult> GetLoginStatus(string userId)
         {
             var logins = await _repo.GetLogins(userId);
-            var accts = await _repo.GetAcctNAsync(userId, null, null);
+            var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), null, null);
 
             var model = logins.Select(c => new LoginStatus
             {
@@ -57,8 +61,8 @@ namespace Accounting.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            _repo.Context.Logins.Add(login);
-            await _repo.Context.SaveChangesAsync();
+            _adContext.Logins.Add(login);
+            await _adContext.SaveChangesAsync();
 
             return Ok();
         }
@@ -72,14 +76,14 @@ namespace Accounting.API.Controllers
             }
 
 
-            var login = await _repo.Context.Logins.FindAsync(model.UserName);
+            var login = await _adContext.Logins.FindAsync(model.UserName);
             if (login == null)
             {
                 return NotFound();
             }
             login.Password = model.Password;
 
-            await _repo.Context.SaveChangesAsync();
+            await _adContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -162,7 +166,7 @@ namespace Accounting.API.Controllers
 
         private bool LoginExists(string id)
         {
-            return _repo.Context.Logins.Any(e => e.LoginName == id);
+            return _adContext.Logins.Any(e => e.LoginName == id);
         }
     }
 }

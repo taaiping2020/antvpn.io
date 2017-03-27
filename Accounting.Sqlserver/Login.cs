@@ -8,7 +8,6 @@ namespace Accounting.Sqlserver
         {
             this.UserId = (string)reader[nameof(UserId)];
             this.LoginName = (string)reader[nameof(LoginName)];
-            this.NormalizedLoginName = (string)reader[nameof(NormalizedLoginName)];
             this.Password = (string)reader[nameof(Password)];
             this.AllowDialIn = (bool)reader[nameof(AllowDialIn)];
             this.Enabled = (bool)reader[nameof(Enabled)];
@@ -24,7 +23,7 @@ namespace Accounting.Sqlserver
 
         public override string ToString()
         {
-            return $"UserId:{UserId} LoginName:{LoginName} NormalizedLoginName:{NormalizedLoginName} Password:{Password} AllowDialIn:{AllowDialIn} Enabled:{Enabled} GroupName:{GroupName}";
+            return $"UserId:{UserId} LoginName:{LoginName} Password:{Password} AllowDialIn:{AllowDialIn} Enabled:{Enabled} GroupName:{GroupName}";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Extensions
 {
@@ -14,6 +15,20 @@ namespace Extensions
             }
 
             return !list.Any();
+        }
+
+        public static string ToString(this IEnumerable<string> stringArray, char spliter)
+        {
+            if (stringArray.IsNullOrCountEqualsZero())
+            {
+                return null;
+            }
+            StringBuilder b = new StringBuilder();
+            foreach (var item in stringArray)
+            {
+                b.Append(spliter.ToString()).Append(item);
+            }
+            return b.ToString().Remove(0, 1);
         }
     }
 }

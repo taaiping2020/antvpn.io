@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Accounting.API.Data;
+using Extensions;
 
 namespace Accounting.API.Migrations
 {
     [DbContext(typeof(AccountingContext))]
-    partial class LoginContextModelSnapshot : ModelSnapshot
+    [Migration("20170327073843_splitelogin")]
+    partial class splitelogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

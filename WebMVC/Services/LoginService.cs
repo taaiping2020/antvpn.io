@@ -61,11 +61,11 @@ namespace WebMVC.Services
 
         public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId)
         {
-            var context = _httpContextAccesor.HttpContext;
-            var token = await context.Authentication.GetTokenAsync("access_token");
+            //var context = _httpContextAccesor.HttpContext;
+            //var token = await context.Authentication.GetTokenAsync("access_token");
 
             _apiClient = new HttpClient();
-            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //_apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var loginsUrl = $"{_remoteServiceBaseUrl}/status/{userId}";
             var dataString = await _apiClient.GetStringAsync(loginsUrl);

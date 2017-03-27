@@ -14,9 +14,6 @@ namespace Accounting.API.Models
         [Required]
         [StringLength(256)]
         public string LoginName { get; set; }
-        [Required]
-        [StringLength(256)]
-        public string NormalizedLoginName { get; set; }
         [StringLength(100, MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Required]

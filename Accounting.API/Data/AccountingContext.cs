@@ -13,8 +13,7 @@ namespace Accounting.API.Data
             : base(options)
         {
         }
-
-        public virtual DbSet<Login> Logins { get; set; }
+        
         public virtual DbSet<Eventraw> Eventraw { get; set; }
         public virtual DbSet<Current> Current { get; set; }
         public virtual DbSet<CurrentMeta> CurrentMeta { get; set; }
@@ -22,14 +21,6 @@ namespace Accounting.API.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-          
-            builder.Entity<Login>(entity =>
-            {
-                entity.HasKey(c => c.LoginName);
-                entity.HasAlternateKey(c => c.NormalizedLoginName);
-                entity.ToTable("logins");
-            });
 
             builder.Entity<Eventraw>(entity =>
             {

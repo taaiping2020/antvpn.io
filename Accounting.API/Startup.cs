@@ -22,6 +22,11 @@ namespace Accounting.API
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            //Console.WriteLine(env.EnvironmentName);
+            //Console.WriteLine($"option1 = {Configuration["option1"]}");
+            //Console.WriteLine($"option2 = {Configuration["option2"]}");
+
+            //Console.ReadLine();
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -32,6 +37,9 @@ namespace Accounting.API
             // Add framework services.
             services.AddDbContext<AccountingContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<ADContext>(options =>
+              options.UseSqlServer(Configuration.GetConnectionString("ADConnection")));
 
             // Add framework services.
             services.AddMvc();

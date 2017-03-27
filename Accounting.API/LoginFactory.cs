@@ -15,8 +15,7 @@ namespace Accounting.API
                 AllowDialIn = user.AllowDialIn ?? false,
                 Enabled = user.Enabled ?? false,
                 GroupName = user.GroupName,
-                LoginName = user.Name,
-                NormalizedLoginName = user.Name.ToLower()
+                LoginName = user.Name
             };
         }
     }
