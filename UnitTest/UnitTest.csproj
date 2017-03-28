@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Accounting.Sqlserver\Accounting.Sqlserver.sqlproj" />
     <ProjectReference Include="..\Ordering.API\Ordering.API.csproj" />
   </ItemGroup>
 

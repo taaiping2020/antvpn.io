@@ -1,10 +1,9 @@
-//using MongoDB.Bson;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace Accounting.Sqlserver
+namespace UnitTest
 {
     public static class XmlMapper
     {
@@ -153,5 +152,4 @@ namespace Accounting.Sqlserver
         Date and time (data_type=4)
         */
     }
-
 }

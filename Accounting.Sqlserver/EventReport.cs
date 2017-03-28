@@ -44,6 +44,8 @@ namespace Accounting.Sqlserver
                 command.Parameters.AddWithValue("@json", json);
                 SqlContext.Pipe.ExecuteAndSend(command);
             }
+
+
         }
     }
 }
