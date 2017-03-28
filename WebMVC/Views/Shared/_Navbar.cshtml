@@ -58,7 +58,7 @@
                         <a class="color-type-secondary" href="#" data-toggle="modal">Pricing</a>
                     </li>
                     <li>
-                        <a class="color-type-secondary" href="#" data-toggle="modal">Documentation</a>
+                        <a class="color-type-secondary" asp-controller="Docs" asp-action="Index" data-toggle="modal">Documentation</a>
                     </li>
                     <li class="dropdown">
                         <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Download<i class="glyph glyph-chevron-down-2"></i></a>
@@ -69,9 +69,18 @@
                             <li><a href="#">iOS</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <a class="color-type-secondary" href="#" data-toggle="modal">Support</a>
+                    <li class="dropdown">
+                        <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Support<i class="glyph glyph-chevron-down-2"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a asp-controller="Docs" asp-action="Index" asp-route-id="Contact-us">Contact us</a></li>
+                            <li class="divider"></li>
+                            <li><a asp-controller="Docs" asp-action="Index" asp-route-id="Privacy-Statement">Privacy & cookies</a></li>
+                            <li><a asp-controller="Docs" asp-action="Index" asp-route-id="Terms-of-use">Terms of use</a></li>
+                        </ul>
                     </li>
+                    @*<li>
+                        <a class="color-type-secondary" href="#" data-toggle="modal">Support</a>
+                    </li>*@
 
 
 

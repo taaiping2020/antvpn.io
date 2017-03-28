@@ -14,6 +14,7 @@
     <Content Include="wwwroot\css\site.less" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.10.6" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.1.1" />
@@ -29,13 +30,18 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" />
-    <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.2" />
+    <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.4" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extensions\Extensions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Content\Privacy-Statement.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

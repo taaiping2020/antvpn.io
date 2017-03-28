@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Identity.API.Configuration
 {
-   public class Config
+    public class Config
     {
         // scopes define the resources in your system
         public static IEnumerable<Scope> GetScopes()
@@ -21,6 +21,11 @@ namespace Identity.API.Configuration
                     Name = "orders",
                     Description = "Orders Service"
                 },
+                 new Scope
+                {
+                    Name = "servers",
+                    Description = "Servers Service"
+                },
                 new Scope
                 {
                     Name = "accounting",
@@ -30,7 +35,7 @@ namespace Identity.API.Configuration
         }
 
         // client want to access resources (aka scopes)
-        public static IEnumerable<Client> GetClients(Dictionary<string,string> clientsUrl)
+        public static IEnumerable<Client> GetClients(Dictionary<string, string> clientsUrl)
         {
             return new List<Client>
             {
@@ -100,6 +105,7 @@ namespace Identity.API.Configuration
                         StandardScopes.Profile.Name,
                         StandardScopes.OfflineAccess.Name,
                         "orders",
+                        "servers",
                         "accounting",
                     },
                 }
