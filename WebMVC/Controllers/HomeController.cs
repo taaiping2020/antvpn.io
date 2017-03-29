@@ -34,5 +34,17 @@ namespace WebMVC.Controllers
         {
             return View();
         }
+        public IActionResult PrivacyStatement()
+        {
+            return View();
+        }
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
+        public IActionResult TermsOfUse()
+        {
+            return View();
+        }
     }
 }

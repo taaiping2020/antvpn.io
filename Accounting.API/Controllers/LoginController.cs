@@ -62,7 +62,16 @@ namespace Accounting.API.Controllers
             }
 
             _adContext.Logins.Add(login);
-            await _adContext.SaveChangesAsync();
+            try
+            {
+
+                await _adContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
             return Ok();
         }
