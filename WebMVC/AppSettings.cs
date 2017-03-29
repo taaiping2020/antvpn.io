@@ -10,6 +10,7 @@ namespace WebMVC
         public Connectionstrings ConnectionStrings { get; set; }
         public string CatalogUrl { get; set; }
         public string AccountingUrl { get; set; }
+        public string ServerUrl { get; set; }
         public string OrderingUrl { get; set; }
         public string IdentityUrl { get; set; }
         public string MvcClient { get; set; }

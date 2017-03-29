@@ -39,6 +39,7 @@ namespace WebMVC
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<IServerService, ServerService>();
 
             //services.AddTransient<IOrderingService, OrderingService>();
             //services.AddTransient<IBasketService, BasketService>();

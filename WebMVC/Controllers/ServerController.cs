@@ -17,16 +17,18 @@ namespace WebMVC.Controllers
     [Authorize]
     public class ServerController : Controller
     {
-        private readonly ILoginService _loginService;
+        private readonly IServerService _serverService;
         private readonly IOptionsSnapshot<AppSettings> _settings;
-        public ServerController(ILoginService loginService, IOptionsSnapshot<AppSettings> settings)
+        public ServerController(IServerService serverService, IOptionsSnapshot<AppSettings> settings)
         {
-            _loginService = loginService;
+            _serverService = serverService;
             _settings = settings;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewData["logins"] = await _serverService.GetServersAsync();
+
             return View();
         }
     }
