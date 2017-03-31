@@ -71,8 +71,8 @@ namespace Identity.API.Services
                 new Claim(JwtClaimTypes.PreferredUserName, user.UserName)
             };
 
-            //if (!string.IsNullOrWhiteSpace(user.Name))
-            //    claims.Add(new Claim("name", user.Name));
+
+            claims.Add(new Claim("monthly_traffic", user.MonthlyTraffic.ToString()));
 
             //if (!string.IsNullOrWhiteSpace(user.Name))
             //    claims.Add(new Claim("last_name", user.LastName));

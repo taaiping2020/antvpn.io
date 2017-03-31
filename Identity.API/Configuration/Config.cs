@@ -58,24 +58,26 @@ namespace Identity.API.Configuration
                 //        "basket"
                 //    }
                 //},
-                //new Client
-                //{
-                //    ClientId = "xamarin",
-                //    ClientName = "eShop Xamarin OpenId Client",
-                //    AllowedGrantTypes = GrantTypes.Implicit,
-                //    AllowAccessTokensViaBrowser = true,
-                //    RedirectUris =           { "http://eshopxamarin/callback.html" },
-                //    RequireConsent = false,
-                //    PostLogoutRedirectUris = { "http://13.88.8.119:5105/Account/Redirecting", "http://10.6.1.234:5105/Account/Redirecting" },
-                //    AllowedCorsOrigins =     { "http://eshopxamarin" },
-                //    AllowedScopes =
-                //    {
-                //        StandardScopes.OpenId.Name,
-                //        StandardScopes.Profile.Name,
-                //        "orders",
-                //        "basket"
-                //    }
-                //},
+                new Client
+                {
+                    ClientId = "xamarin",
+                    ClientName = "eShop Xamarin OpenId Client",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris =           { "http://eshopxamarin/callback.html" },
+                    RequireConsent = false,
+                    PostLogoutRedirectUris = { "http://13.88.8.119:5105/Account/Redirecting", "http://10.6.1.234:5105/Account/Redirecting" },
+                    AllowedCorsOrigins =     { "http://eshopxamarin" },
+                    AllowedScopes =
+                    {
+                        StandardScopes.OpenId.Name,
+                        StandardScopes.Profile.Name,
+                        StandardScopes.OfflineAccess.Name,
+                        "orders",
+                        "servers",
+                        "accounting",
+                    }
+                },
                 new Client
                 {
                     ClientId = "mvc",

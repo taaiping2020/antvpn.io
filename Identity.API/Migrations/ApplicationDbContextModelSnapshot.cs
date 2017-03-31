@@ -35,6 +35,8 @@ namespace Identity.API.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
+                    b.Property<long>("MonthlyTraffic");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
 

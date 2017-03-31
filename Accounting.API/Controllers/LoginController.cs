@@ -31,12 +31,15 @@ namespace Accounting.API.Controllers
         {
             return _adContext.Logins.Where(c => c.UserId == userId);
         }
-   
+
         [HttpGet("Status/{userId}")]
         public async Task<IActionResult> GetLoginStatus(string userId)
         {
             var logins = await _repo.GetLogins(userId);
-            var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), null, null);
+            DateTime date = DateTime.Now;
+            var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
 
             var model = logins.Select(c => new LoginStatus
             {

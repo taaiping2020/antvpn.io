@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Extensions;
 using WebMVC.Services;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace WebMVC.Controllers
 {
@@ -62,8 +63,11 @@ namespace WebMVC.Controllers
         {
             var userId = User.Identities.GetUserId();
 
-            ViewData["logins"] = await _loginService.GetWithStatusAsync(userId);
-
+            var logins = await _loginService.GetWithStatusAsync(userId);
+            ViewData["logins"] = logins;
+            var user = User as ClaimsPrincipal;
+            ViewData["traffic"] = user.FindFirst("monthly_traffic").Value;
+            ViewData["used"] = logins.Sum(c => c.BasicAcct.TotalIn) + logins.Sum(c => c.BasicAcct.TotalOut);
             return View();
         }
 
