@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using System.Threading;
+using System.Net.Http;
 
 namespace Accounting.API
 {
@@ -19,8 +21,25 @@ namespace Accounting.API
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .Build();
+            var autoEvent = new AutoResetEvent(false);
+            timer = new Timer(CallTaskJob, autoEvent, TimeSpan.FromSeconds(30), TimeSpan.FromMinutes(1));
 
             host.Run();
+        }
+
+        static Timer timer;
+        public static void CallTaskJob(object state)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.GetStringAsync("http://localhost:5200/api/task");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"job fail. message: {ex.Message}");
+            }
+           
         }
     }
 }

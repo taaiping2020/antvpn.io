@@ -12,6 +12,8 @@ namespace Accounting.API
         AccountingContext Context { get; }
 
         Task<IEnumerable<AcctN>> GetAcctNAsync(string userId, DateTime? beginTime, DateTime? endTime);
+        Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime);
         Task<IEnumerable<Login>> GetLogins(string userId);
+        Task<IEnumerable<UserInfo>> GetUserInfosAsync();
     }
 }

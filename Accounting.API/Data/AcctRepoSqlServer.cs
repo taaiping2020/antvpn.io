@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
 using Accounting.API.Data;
+using System.Net.Http;
+using Microsoft.Extensions.Options;
 
 namespace Accounting.API
 {
@@ -14,8 +16,12 @@ namespace Accounting.API
     {
         private readonly AccountingContext _context;
         private readonly ADContext _adContext;
-        public AcctRepoSqlServer(AccountingContext context, ADContext adContext)
+        private readonly string _remoteServiceBaseUrl;
+        private readonly IOptionsSnapshot<AppSettings> _settings;
+        public AcctRepoSqlServer(AccountingContext context, ADContext adContext, IOptionsSnapshot<AppSettings> settings)
         {
+            _settings = settings;
+            _remoteServiceBaseUrl = $"{settings.Value.IdentityUrl}/api/task";
             _context = context;
             _adContext = adContext;
         }
@@ -50,6 +56,28 @@ namespace Accounting.API
             var reader = await command.ExecuteReaderAsync();
             var acctns = AcctN.GetFromReader(reader).ToArray();
             return acctns;
+        }
+
+        public async Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime)
+        {
+            beginTime = beginTime ?? DateTime.Parse("1753-1-1");
+            endTime = endTime ?? DateTime.MaxValue;
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "select totalinput, totaloutput,username from dbo.GetAccountingsWithoutUsernames(@begintime, @endtime)";
+            command.Parameters.Add(new SqlParameter("@begintime", beginTime));
+            command.Parameters.Add(new SqlParameter("@endtime", endTime));
+            var reader = await command.ExecuteReaderAsync();
+            var acctns = AcctN.GetFromReader(reader).ToArray();
+            return acctns;
+        }
+
+        public async Task<IEnumerable<UserInfo>> GetUserInfosAsync()
+        {
+            var client = new HttpClient();
+            var json = await client.GetStringAsync(_remoteServiceBaseUrl);
+            return JsonConvert.DeserializeObject<UserInfo[]>(json);
         }
     }
 }
