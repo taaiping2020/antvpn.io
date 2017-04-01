@@ -20,47 +20,47 @@
 
             @if (ViewData["logins"] != null)
             {
-                <div class="entity-list entity-list-expandable">
-                    @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
+            <div class="entity-list entity-list-expandable">
+                @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
                 {
-                        <div class="entity-list-item">
-                            <div class="item-icon">
-                                @if (l.AllowDialIn && l.Enabled)
+                <div class="entity-list-item">
+                    <div class="item-icon">
+                        @if (l.AllowDialIn && l.Enabled)
                                 {
-                                    <span class="glyph glyph-contact"></span>
+                            <span class="glyph glyph-contact"></span>
                                 }
                                 else
                                 {
-                                    <span class="glyph glyph-block-contact"></span>
+                            <span class="glyph glyph-block-contact"></span>
                                 }
-                            </div>
-                            <div class="item-content-secondary">
-                                @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
+                    </div>
+                    <div class="item-content-secondary">
+                        @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
                                 {
-                                    <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay)</div>
+                            <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay)</div>
                                 }
                                 else
                                 {
-                                    <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
+                            <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
                                 }
-                                <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
-                            </div>
-                            <div class="item-content-primary">
-                                <div class="content-text-primary">@l.LoginName</div>
-                                <div class="content-text-secondary">Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")</div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
-                                        <span class="sr-only">@(l.Percent())</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-content-expanded">
-                                <button class="btn btn-default configure" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-configure">Configure</button>
-                                <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
+                        <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
+                    </div>
+                    <div class="item-content-primary">
+                        <div class="content-text-primary">@l.LoginName</div>
+                        <div class="content-text-secondary">Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
+                                <span class="sr-only">@(l.Percent())</span>
                             </div>
                         </div>
-                    }
+                    </div>
+                    <div class="item-content-expanded">
+                        <button class="btn btn-default configure" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-configure">Configure</button>
+                        <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
+                    </div>
                 </div>
+                    }
+            </div>
             }
         </div>
     </div>
@@ -165,9 +165,10 @@
                 <div class="modal-body">
                     <input type="hidden" name="UserName" id="resetusername-configure" class="form-control">
                     <div class="form-group">
-                        <label for="MonthlyTraffic">Max Monthly Traffic</label>
-                        <input id="MonthlyTraffic" name="MonthlyTraffic" class="form-control">
+                        <label for="MonthlyTraffic">Max Monthly Traffic: <span id="max-traffic"></span></label>
+                        <input id="slider-traffic" name="MonthlyTraffic" class="win-slider" type="range" step="10485760" min="0" max="@ViewData["traffic"]" />
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">
@@ -225,6 +226,16 @@
             data: data,
             options: {
             }
+        });
+
+        $(() => {
+            $("#slider-traffic").on("change", (e) => {
+               var value = $("#slider-traffic").val();
+               value = Number(value);
+               console.log(typeof value);
+               value = value / 1024 / 1024;
+               $("#max-traffic").html(value + " MB");
+            });
         });
     </script>
 }
