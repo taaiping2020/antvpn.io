@@ -76,7 +76,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@(User.FindFirst("preferred_username").Value)<i class="glyph glyph-chevron-down-2"></i></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a class="color-type-secondary" asp-area="" asp-controller="Account" asp-action="Dashboard" data-toggle="modal">Dashboard</a></li>
+                                <li><a class="color-type-secondary" asp-area="" asp-controller="Dashboard" asp-action="Index" data-toggle="modal">Dashboard</a></li>
                                 <li class="divider"></li>
                                 <li><a asp-controller="Account" asp-action="Signout">Sign out</a></li>
                             </ul>

@@ -12,12 +12,18 @@ namespace Accounting.RouterReporter
     public class Repo
     {
         private readonly string _connectionString;
-        public Repo(string connectionString)
+        private readonly string _connectionStringDc;
+        public Repo(string connectionString, string connectionStringDc)
         {
             if (String.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentNullException(nameof(connectionString));
             }
+            if (String.IsNullOrEmpty(connectionStringDc))
+            {
+                throw new ArgumentNullException(nameof(connectionStringDc));
+            }
+            this._connectionStringDc = connectionStringDc;
             this._connectionString = connectionString;
         }
         public void InsertDatas(List<RemoteAccessConnection> racs)
@@ -25,6 +31,14 @@ namespace Accounting.RouterReporter
             using (var connection = new SqlConnection(this._connectionString))
             {
                 connection.Execute(@"insert [dbo].[current](AuthMethod, Bandwidth, ClientExternalAddress, ClientIPv4Address, ConnectionDuration, ConnectionStartTime, ConnectionType, MachineName, TimeStamp, TotalBytesIn, TotalBytesOut, TransitionTechnology, TunnelType, UserActivityState, UserName) values (@AuthMethod, @Bandwidth, @ClientExternalAddress, @ClientIPv4Address, @ConnectionDuration, @ConnectionStartTime, @ConnectionType, @MachineName, @TimeStamp, @TotalBytesIn, @TotalBytesOut, @TransitionTechnology, @TunnelType, @UserActivityState, @UserName)", racs);
+            }
+        }
+
+        public string[] GetDisconnectUserNames()
+        {
+            using (var connection = new SqlConnection(this._connectionStringDc))
+            {
+                return connection.Query<string>(@"select [LoginName] from logins where [AllowDialIn] = 0 or [Enabled] = 0").ToArray();
             }
         }
 

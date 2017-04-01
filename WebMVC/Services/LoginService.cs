@@ -94,5 +94,25 @@ namespace WebMVC.Services
 
             return true;
         }
+
+        public async Task<bool> SetMonthlyTrafficAsync(string userId, LoginConfigureBindingModel model)
+        {
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}/Configure/{userId}";
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json");
+
+            var response = await _apiClient.PostAsync(loginsUrl, content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return false;
+
+            return true;
+        }
     }
 }

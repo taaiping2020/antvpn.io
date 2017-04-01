@@ -21,6 +21,7 @@ namespace Accounting.API
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .Build();
+
             var autoEvent = new AutoResetEvent(false);
             timer = new Timer(CallTaskJob, autoEvent, TimeSpan.FromSeconds(30), TimeSpan.FromMinutes(1));
 
@@ -33,7 +34,7 @@ namespace Accounting.API
             try
             {
                 var client = new HttpClient();
-                client.GetStringAsync("http://localhost:5200/api/task");
+                client.GetStringAsync("http://accounting.antvpn.io/api/task");
             }
             catch (Exception ex)
             {

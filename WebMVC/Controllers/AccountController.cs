@@ -58,53 +58,5 @@ namespace WebMVC.Controllers
             var homeUrl = Url.Action(nameof(HomeController.Index), "Home");
             return new SignOutResult("oidc", new AuthenticationProperties { RedirectUri = homeUrl });
         }
-
-        public async Task<IActionResult> Dashboard()
-        {
-            var userId = User.Identities.GetUserId();
-
-            var logins = await _loginService.GetWithStatusAsync(userId);
-            ViewData["logins"] = logins;
-            var user = User as ClaimsPrincipal;
-            ViewData["traffic"] = user.FindFirst("monthly_traffic").Value;
-            ViewData["used"] = logins.Sum(c => c.BasicAcct.TotalIn) + logins.Sum(c => c.BasicAcct.TotalOut);
-            return View();
-        }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LoginBindingModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(Dashboard));
-            }
-
-            var userId = User.Identities.GetUserId();
-
-            var result = await _loginService.CreateNewLoginAsync(userId, model.UserName, model.Password);
-            if (result == false)
-            {
-                //
-            }
-            return RedirectToAction(nameof(Dashboard));
-        }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reset(LoginBindingModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(Dashboard));
-            }
-
-            var userId = User.Identities.GetUserId();
-
-            var result = await _loginService.ResetPasswordAsync(userId, model);
-            if (result == false)
-            {
-                //
-            }
-            return RedirectToAction(nameof(Dashboard));
-        }
     }
 }

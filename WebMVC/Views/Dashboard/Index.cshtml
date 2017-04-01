@@ -25,23 +25,37 @@
                 {
                         <div class="entity-list-item">
                             <div class="item-icon">
-                                <span class="glyph glyph-people"></span>
+                                @if (l.AllowDialIn && l.Enabled)
+                                {
+                                    <span class="glyph glyph-contact"></span>
+                                }
+                                else
+                                {
+                                    <span class="glyph glyph-block-contact"></span>
+                                }
                             </div>
                             <div class="item-content-secondary">
-                                <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay)</div>
+                                @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
+                                {
+                                    <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay)</div>
+                                }
+                                else
+                                {
+                                    <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
+                                }
                                 <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
                             </div>
                             <div class="item-content-primary">
                                 <div class="content-text-primary">@l.LoginName</div>
-                                <div class="content-text-secondary">Allow dial in: @(l.AllowDialIn ? "Yes" : "No")</div>
+                                <div class="content-text-secondary">Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")</div>
                                 <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                                        <span class="sr-only">60%</span>
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
+                                        <span class="sr-only">@(l.Percent())</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="item-content-expanded">
-                                <button class="btn btn-default" disabled="disabled">Configure</button>
+                                <button class="btn btn-default configure" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-configure">Configure</button>
                                 <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
                             </div>
                         </div>
@@ -59,7 +73,7 @@
 
 <div class="modal" id="modal-addlogin" tabindex="-1" role="dialog" aria-labelledby="modal-sample-label" aria-hidden="true">
     <div class="modal-dialog">
-        <form asp-controller="Account" asp-action="Create" method="post">
+        <form asp-controller="Dashboard" asp-action="Create" method="post">
             <!-- Input and Submit elements -->
             <div class="modal-content">
                 <div class="modal-header">
@@ -103,11 +117,11 @@
 
 <div class="modal" id="modal-resetpassword" tabindex="-1" role="dialog" aria-labelledby="modal-sample-label" aria-hidden="true">
     <div class="modal-dialog">
-        <form asp-controller="Account" asp-action="Reset" method="post">
+        <form asp-controller="Dashboard" asp-action="Reset" method="post">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="modal-sample-label">
-                        Reset VPN Server Login <span><strong id="showloginname">cyahto</strong>'s</span> password
+                        Reset VPN Server Login <span><strong id="showloginname"></strong>'s</span> password
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -138,6 +152,37 @@
     </div>
 </div>
 
+
+<div class="modal" id="modal-configure" tabindex="-1" role="dialog" aria-labelledby="modal-sample-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-controller="Dashboard" asp-action="Configure" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-sample-label">
+                        Configure VPN Server Login <span><strong id="showloginname-configure"></strong></span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="UserName" id="resetusername-configure" class="form-control">
+                    <div class="form-group">
+                        <label for="MonthlyTraffic">Max Monthly Traffic</label>
+                        <input id="MonthlyTraffic" name="MonthlyTraffic" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-info"
+                            data-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @section scripts {
     <script>
         $(function () {
@@ -145,7 +190,13 @@
                 var l = e.currentTarget.attributes["data-loginname"].value;
                 $("#showloginname").text(l);
                 $('#resetusername').val(l);
-            })
+            });
+
+            $(".configure").on("click", e => {
+                var l = e.currentTarget.attributes["data-loginname"].value;
+                $("#showloginname-configure").text(l);
+                $('#resetusername-configure').val(l);
+            });
         });
 
         var data = {

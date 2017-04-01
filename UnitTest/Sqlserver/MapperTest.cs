@@ -6,26 +6,26 @@ using System.IO;
 
 namespace UnitTest.Sqlserver
 {
-    public class MapperTest
+    public class ExtensionTest
     {
-        public MapperTest()
+        public ExtensionTest()
         {
 
         }
         [Fact]
         public void Create_buyer_item_success()
         {
-            //Arrange    
-            XmlDocument dom = new XmlDocument();
-            var xml = File.ReadAllText("d:/xml3.txt");
-            dom.LoadXml(xml);
-            var json = dom.MapToJsonString();
+            ////Arrange    
+            //XmlDocument dom = new XmlDocument();
+            //var xml = File.ReadAllText("d:/xml3.txt");
+            //dom.LoadXml(xml);
+            //var json = dom.MapToJsonString();
 
-            //Act 
+            ////Act 
 
 
-            //Assert
-            Assert.NotNull(null);
+            ////Assert
+            //Assert.NotNull(null);
         }
     }
 }

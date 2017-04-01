@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Extensions.Windows;
 using System.Data;
 using System.Configuration;
+using System.Collections.Generic;
 
 namespace Accounting.RouterReporter
 {
@@ -40,7 +41,6 @@ namespace Accounting.RouterReporter
         {
             var autoEvent = new AutoResetEvent(false);
             t = new Timer(ReportRouterInfo, autoEvent, TimeSpan.FromSeconds(_interval), TimeSpan.FromSeconds(_interval));
-            t2 = new Timer(DisconnectVpnUser, autoEvent, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(_interval));
         }
         #endregion
 
@@ -48,10 +48,9 @@ namespace Accounting.RouterReporter
         static string machineName = Environment.MachineName;
         public const string ServiceName = "RouterReporter";
         static Timer t;
-        static Timer t2;
 
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
-        static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"]);
+        static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"]);
 
         static void Main(string[] args)
         {
@@ -88,6 +87,8 @@ namespace Accounting.RouterReporter
                     var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
                     repo.InsertDatas(racs);
                     repo.InsertOrUpdateTimetamp(machineName, now);
+
+                    TryDisconnectVpnUser(racs);
                 }
             }
             catch (Exception ex)
@@ -98,38 +99,41 @@ namespace Accounting.RouterReporter
                 Console.WriteLine(ex.StackTrace);
             }
         }
-        public static void DisconnectVpnUser(object state)
+        public static void TryDisconnectVpnUser(List<RemoteAccessConnection> connections)
         {
-            //try
-            //{
-            //    var database = client.GetDatabase("accountingdata");
-            //    var collection = database.GetCollection<BsonDocument>("current");
-            //    var meta = database.GetCollection<Meta>("meta");
+            if (connections == null)
+            {
+                throw new ArgumentNullException(nameof(connections));
+            }
+            try
+            {
+                var disconnectusers = repo.GetDisconnectUserNames();
+                if (disconnectusers != null && disconnectusers.Any())
+                {
+                    foreach (var username in connections.Select(c => c.UserName))
+                    {
+                        if (disconnectusers.Contains(username))
+                        {
+                            Console.WriteLine($"try disconnecting {username}");
+                            ps.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
+                            ps.Invoke();
 
-            //    var disconnectusers = meta.Find(c => c.name == "disconnectusers").FirstOrDefault();
-            //    if (disconnectusers != null && !disconnectusers.users.IsNullOrCountEqualsZero())
-            //    {
-            //        foreach (var username in disconnectusers.users)
-            //        {
-            //            Console.WriteLine($"try disconnecting {username}");
-            //            ps.AddScript($@"Get-RemoteAccessConnectionStatistics | where {{ $_.UserName -like ""*\{username}"" -or $_UserName -like ""{username}"" }} | Select-Object UserName | Disconnect-VpnUser");
-            //            ps.Invoke();
+                            ps.Commands.Clear();
 
-            //            ps.Commands.Clear();
-
-            //            ps.AddCommand($@"Disconnect-VpnUser");
-            //            ps.AddParameter("UserName", username);
-            //            ps.Invoke();
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log(EventLogEntryType.Error, ex.Message);
-            //    Log(EventLogEntryType.Error, ex.StackTrace);
-            //    Console.WriteLine(ex.Message);
-            //    Console.WriteLine(ex.StackTrace);
-            //}
+                            ps.AddCommand($@"Disconnect-VpnUser");
+                            ps.AddParameter("UserName", username);
+                            ps.Invoke();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(EventLogEntryType.Error, ex.Message);
+                Log(EventLogEntryType.Error, ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
         }
 
         private static void Log(EventLogEntryType type, string message)

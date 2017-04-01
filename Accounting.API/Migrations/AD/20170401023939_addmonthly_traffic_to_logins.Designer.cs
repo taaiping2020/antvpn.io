@@ -8,9 +8,10 @@ using Accounting.API.Data;
 namespace Accounting.API.Migrations.AD
 {
     [DbContext(typeof(ADContext))]
-    partial class ADContextModelSnapshot : ModelSnapshot
+    [Migration("20170401023939_addmonthly_traffic_to_logins")]
+    partial class addmonthly_traffic_to_logins
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

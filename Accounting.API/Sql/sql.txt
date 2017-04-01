@@ -1,43 +1,7 @@
-﻿DROP FUNCTION IF EXISTS	dbo.GetAccountings; 
-GO
+﻿go
 
-CREATE FUNCTION dbo.GetAccountings
-	(@userid AS nvarchar(450),
-	@begintime AS date,
-	@endtime AS date) 
-	returns table
-AS
-return
 
-with eventtables(inputoctets,outputoctes, username) as
-(
-	select cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
-	JSON_VALUE(InfoJSON, '$.User_Name')
-	from dbo.eventraw
-	where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 
-	  --and JSON_VALUE(InfoJSON, '$.User_Name') in( 'bosxixi', 'c01')
-	  and JSON_VALUE(InfoJSON, '$.User_Name') in(select LoginName from [dbo].[logins] where UserId = @userid)
-	  and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
-
-	union
-		select sum(TotalBytesIn) as totalinput, sum(TotalBytesOut) as totaloutput, username
-	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
-	 and [UserName] in (select LoginName from [dbo].[logins] where UserId = @userid)
-	 group by username
-)
-
-select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, username from eventtables
-group by username;
-
---proc
-
-go
-	select totalinput, totaloutput,username from dbo.GetAccountings('04a3ae52-b42d-438a-b5a7-17c52e0f8ec5', '1753-1-1', '2017-11-11')
-
-	
-
-	
-
+select totalinput, totaloutput,username from dbo.GetAccountings('04a3ae52-b42d-438a-b5a7-17c52e0f8ec5', '1753-1-1', '2017-11-11')
 
 ALTER TABLE [dbo].[eventraw]  WITH CHECK ADD  CONSTRAINT [Content should be formatted as JSON] CHECK  ((isjson([InfoJSON])>(0)))
 GO
@@ -47,7 +11,8 @@ GO
 
 
 -----------------------------------------------------------------------------------------------------
-
+DROP FUNCTION IF EXISTS	dbo.GetAccountingsWithoutUsernames; 
+GO
 
 CREATE FUNCTION [dbo].[GetAccountingsWithoutUsernames]
 	(@begintime AS date,
@@ -75,3 +40,35 @@ group by username;
 
 --proc
 GO
+
+----------------------------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS	dbo.GetAccountings; 
+GO
+
+CREATE FUNCTION [dbo].[GetAccountings]
+	(@usernames AS nvarchar(max),
+	@begintime AS date,
+	@endtime AS date) 
+	returns table
+AS
+return
+
+with eventtables(inputoctets,outputoctes, username) as
+(
+	select cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
+	JSON_VALUE(InfoJSON, '$.User_Name')
+	from dbo.eventraw
+	where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2 
+	  --and JSON_VALUE(InfoJSON, '$.User_Name') in( 'bosxixi', 'c01')
+	  and JSON_VALUE(InfoJSON, '$.User_Name') in(SELECT value FROM STRING_SPLIT(@usernames, ','))
+	  and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
+
+	union
+		select sum(TotalBytesIn) as totalinput, sum(TotalBytesOut) as totaloutput, username
+	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
+	 and [UserName] in (SELECT value FROM STRING_SPLIT(@usernames, ','))
+	 group by username
+)
+
+select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, username from eventtables
+group by username;

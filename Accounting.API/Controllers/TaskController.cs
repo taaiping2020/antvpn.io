@@ -11,6 +11,7 @@ using Extensions;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using static Extensions.Extension;
+using Microsoft.Extensions.Logging;
 
 namespace Accounting.API.Controllers
 {
@@ -20,10 +21,12 @@ namespace Accounting.API.Controllers
     {
         public readonly IAcctRepo _repo;
         private readonly ADContext _adContext;
-        public TaskController(IAcctRepo repo, ADContext adContext)
+        public readonly ILogger _log;
+        public TaskController(IAcctRepo repo, ADContext adContext, ILoggerFactory logger)
         {
             _repo = repo;
             _adContext = adContext;
+            _log = logger.CreateLogger<TaskController>();
         }
 
         [HttpGet()]
@@ -70,23 +73,46 @@ namespace Accounting.API.Controllers
                 {
                     Console.WriteLine($"{totalTraffic} > {u.MonthlyTraffic} = {totalTraffic > u.MonthlyTraffic}");
                     // send command disable all user's logins
+                    var lgs = _adContext.Logins.Where(c => c.UserId == u.UserId);
+                    foreach (var l in lgs)
+                    {
+                        l.Enabled = false;
+                    }
                     // log it
                 }
                 else
                 {
                     Console.WriteLine($"{totalTraffic} > {u.MonthlyTraffic} = {totalTraffic > u.MonthlyTraffic}");
                     // send command enable all user' logins
+                    var lgs = _adContext.Logins.Where(c => c.UserId == u.UserId);
+                    foreach (var l in lgs)
+                    {
+                        l.Enabled = true;
+                    }
                     // log it
                 }
             }
 
             foreach (var a in accts)
             {
-                var total = a.TotalInput + a.TotalOutput;
+                var totalTraffic = a.TotalInput + a.TotalOutput;
                 //TODO when login can configure max traffic then allow dial in set to false, else enable it.
-
-            
+                var login = logins.FirstOrDefault(c => c.LoginName == a.UserName);
+                if (login?.MonthlyTraffic == null)
+                {
+                    continue;
+                }
+                if (totalTraffic > login.MonthlyTraffic)
+                {
+                    login.AllowDialIn = false;
+                }
+                else
+                {
+                    login.AllowDialIn = true;
+                }
             }
+
+            await _adContext.SaveChangesAsync();
             return Ok();
         }
     }

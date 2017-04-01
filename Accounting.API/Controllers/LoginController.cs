@@ -47,6 +47,7 @@ namespace Accounting.API.Controllers
                 Enabled = c.Enabled,
                 LoginName = c.LoginName,
                 UserId = c.UserId,
+                MonthlyTraffic = c.MonthlyTraffic,
                 BasicAcct = new BasicAcct()
                 {
                     TotalIn = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalInput ?? 0,
@@ -94,6 +95,26 @@ namespace Accounting.API.Controllers
                 return NotFound();
             }
             login.Password = model.Password;
+
+            await _adContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("Configure/{userId}")]
+        public async Task<IActionResult> ConfigureLogin([FromRoute] string userId, [FromBody] LoginConfigureBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var login = await _adContext.Logins.FindAsync(model.UserName);
+            if (login == null)
+            {
+                return NotFound();
+            }
+            login.MonthlyTraffic = model.MonthlyTraffic;
 
             await _adContext.SaveChangesAsync();
 

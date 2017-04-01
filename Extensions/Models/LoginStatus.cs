@@ -13,5 +13,31 @@ namespace Extensions
         public bool Enabled { get; set; }
         public BasicAcct BasicAcct { get; set; }
         public DateTimeOffset? LastUpdated { get; set; }
+        public long? MonthlyTraffic { get; set; }
+        public string MonthlyTrafficDisplay => ToMegaByte(MonthlyTraffic);
+        public string Percent()
+        {
+            if (this.BasicAcct != null && MonthlyTraffic != null)
+            {
+                var percent = $"{((this.BasicAcct.TotalInOut / (double)MonthlyTraffic) * 100).ToString("0")}%";
+                if (this.BasicAcct.TotalInOut != 0 && percent == "0%")
+                {
+                    percent = "1%";
+                }
+                return percent;
+            }
+            return null;
+        }
+
+
+
+        private static string ToMegaByte(long? bytes)
+        {
+            if (bytes == null)
+            {
+                return string.Empty;
+            }
+            return (bytes / 1024d / 1024d)?.ToString("0.00") + " MB";
+        }
     }
 }
