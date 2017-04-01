@@ -19,7 +19,7 @@ EXTERNAL NAME[Accounting.Sqlserver].[Accounting.Sqlserver.StoredProcedures].Even
 -- drop
 USE [antvpn.accounting]
 drop PROCEDURE dbo.report_event
-drop assembly [antvpn.io.sqlserver];
+drop assembly [Accounting.Sqlserver];
 
 
 //

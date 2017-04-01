@@ -1,0 +1,28 @@
+﻿use [antvpn.accounting]
+
+DROP FUNCTION IF EXISTS	dbo.GetServerAccountings;
+GO
+
+CREATE FUNCTION [dbo].[GetServerAccountings]
+	(@begintime AS date,
+	@endtime AS date) 
+	returns table
+AS
+return
+
+with eventtables(inputoctets,outputoctes, nasidentifier) as
+(
+select cast(JSON_VALUE(InfoJSON, '$.Acct_Input_Octets') as bigint),  cast(JSON_VALUE(InfoJSON, '$.Acct_Output_Octets') as bigint),
+JSON_VALUE(InfoJSON, '$.NAS_Identifier')
+from dbo.eventraw
+where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2
+ -- and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
+	union
+		select sum(TotalBytesIn) as totalinput, sum(TotalBytesOut) as totaloutput, machinename as nasidentifier
+	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
+	 group by machinename
+
+)
+
+select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, nasidentifier from eventtables
+group by nasidentifier;

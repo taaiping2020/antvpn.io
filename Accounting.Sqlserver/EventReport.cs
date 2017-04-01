@@ -32,20 +32,31 @@ namespace Accounting.Sqlserver
                 throw new ArgumentNullException();
             }
 
-            XmlDocument dom = new XmlDocument();
-            dom.LoadXml(doc.Value);
-            var json = dom.MapToJsonString();
-
-            using (SqlConnection connection = new SqlConnection("context connection=true"))
+            try
             {
-                connection.Open();
-                SqlCommand command = new SqlCommand("insert into eventraw (InfoXML, InfoJson) values (@xml, @json)", connection);
-                command.Parameters.AddWithValue("@xml", doc.Value);
-                command.Parameters.AddWithValue("@json", json);
-                SqlContext.Pipe.ExecuteAndSend(command);
+                XmlDocument dom = new XmlDocument();
+                dom.LoadXml(doc.Value);
+                var json = dom.MapToJsonString();
+
+                using (SqlConnection connection = new SqlConnection("context connection=true"))
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("insert into eventraw (InfoXML, InfoJson) values (@xml, @json)", connection);
+                    command.Parameters.AddWithValue("@xml", doc.Value);
+                    command.Parameters.AddWithValue("@json", json);
+                    SqlContext.Pipe.ExecuteAndSend(command);
+                }
             }
-
-
+            catch (Exception)
+            {
+                using (SqlConnection connection = new SqlConnection("context connection=true"))
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("insert into eventraw (InfoXML) values (@xml)", connection);
+                    command.Parameters.AddWithValue("@xml", doc.Value);
+                    SqlContext.Pipe.ExecuteAndSend(command);
+                }
+            }
         }
     }
 }
