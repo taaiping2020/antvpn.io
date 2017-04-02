@@ -1,42 +1,62 @@
 
+
 <div class="container">
-    <h1>Servers</h1>
-
-    <div class="row">
-        @if(ViewData["logins"] != null)
+    <ol class="list-items">
+        @if (ViewData["servers"] != null)
         {
-        foreach(var server in ViewData["logins"] as IEnumerable<WebMVC.ViewModels.Server>)
-        {
-    <div class="col-md-3">
-        <figure class="media">
-            <div class="media-img media-img-has-label ratio-movie">
-                <a href="#">
-                    <img src="~/images/icon-virtual-machines.png" alt="" />
-                </a>
-                <span class="media-img-label">@server.Name</span>
-                <div class="progress progress-media">
-                    <div class="progress-bar" role="progressbar"
-                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
-                         style="width: 60%;"></div>
-                    <!-- Accessibility -->
-                    <span class="sr-only">60%</span>
-                </div>
-            </div>
-            <figcaption>
-                <h4 class="media-header">
-                    @*<a href="#">Header</a>*@
-                    @server.Domain
-                </h4>
-                <div class="media-price">
-                    @server.Description
-                </div>
-            </figcaption>
-        </figure>
-    </div>
+            foreach (var server in ViewData["servers"] as IEnumerable<WebMVC.ViewModels.Server>)
+            {
+                <li class="list-items-row">
+                    <div data-toggle="collapse" aria-expanded="false" data-target="@("#list-item-line-" + server.Id)">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <i class="glyph glyph-add"></i>
+                                <i class="glyph glyph-remove"></i>
+                                @*<strong>1</strong>*@
+                            </div>
+                            <div class="col-md-6">
+                                @if (server.IsHybrid)
+                                {
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.RedirectorServerCountryFlag)" alt="@server.RedirectorServerCountryName" />
+                                    <strong><span class="glyph glyph-remote"></span></strong>
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.TrafficServerCountryFlag)" alt="@server.TrafficServerCountryName" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.CountryFlag)" alt="@server.CountryName" />
+                                }
+                               
+                      
+                                @*<a>sh.uk.antvpn.io</a>*@
+                            </div>
+                            <div class="col-md-4">
+                                Protocals: <strong>@server.ProtocalsDisplay</strong>
+                            </div>
+                            <div class="col-md-4">
+                                Type: <strong>@(server.IsHybrid ? "Hybrid" : "Normal")</strong>
+                         
+                            </div>
+                            <div class="col-md-4">
+                                Status: <strong>@(server.Off ? "Offline" : "Running")</strong>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a><span class="glyph glyph-hamburger"></span></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapse" id="@("list-item-line-" + server.Id)">
+                        <div class="row">
+                            <div class="col-md-18 col-md-offset-2">
+                                Server Endpoint: <strong>@server.Domain</strong>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <button class="btn btn-primary btn-sm">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
         }
-
-        }
-
-    </div>
-
+    </ol>
 </div>

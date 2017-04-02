@@ -23,9 +23,21 @@ namespace Server.API.Controllers
 
         // GET: api/Server
         [HttpGet]
-        public IEnumerable<Server.API.Models.Server> GetServers()
+        public async Task<IActionResult> GetServers()
         {
-            return _context.Servers;
+            var servers = await _context.Servers
+                .Include(c => c.Country)
+                .Include(c => c.RedirectorServer)
+                .ThenInclude(c => c.Country)
+                .Include(c => c.TrafficServer)
+                .ThenInclude(c => c.Country)
+                .Include(c => c.ServerProtocals)
+                .Where(c => c.IsPublic).ToListAsync();
+            if (!servers.Any())
+            {
+                return NotFound();
+            }
+            return Ok(servers.Select(c => new Server.API.ViewModels.ServerViewModels(c)));
         }
 
         // GET: api/Server/5

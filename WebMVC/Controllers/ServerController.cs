@@ -27,7 +27,7 @@ namespace WebMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["logins"] = await _serverService.GetServersAsync();
+            ViewData["servers"] = await _serverService.GetServersAsync();
 
             return View();
         }

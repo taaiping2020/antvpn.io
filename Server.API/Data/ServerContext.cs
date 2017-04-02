@@ -15,6 +15,8 @@ namespace Server.API.Data
         }
 
         public virtual DbSet<Server.API.Models.Server> Servers { get; set; }
+        public virtual DbSet<Server.API.Models.Protocal> Protocals { get; set; }
+        public virtual DbSet<Server.API.Models.Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -23,9 +25,42 @@ namespace Server.API.Data
 
             builder.Entity<Server.API.Models.Server>(entity =>
             {
-                entity.HasKey(c => c.Name);
+                //entity.HasKey(c => c.Name);
                 entity.ToTable("servers");
+
+                entity.HasOne(c => c.RedirectorServer).WithMany().HasForeignKey(c => c.RedirectorServerId);
+                entity.HasOne(c => c.TrafficServer).WithMany().HasForeignKey(c => c.TrafficServerId);
             });
+
+            builder.Entity<Server.API.Models.Protocal>(entity =>
+            {
+                //entity.HasKey(c => c.Name);
+                entity.ToTable("protocals");
+            });
+
+            builder.Entity<Server.API.Models.Country>(entity =>
+            {
+                //entity.HasKey(c => c.Name);
+                entity.ToTable("countries");
+            });
+
+            builder.Entity<Server.API.Models.ServerProtocal>(entity =>
+            {
+                entity.HasKey(u => new { u.ProtocalId, u.ServerId });
+                entity.ToTable("serverprotocals");
+            });
+
+          
+            builder.Entity<ServerProtocal>()
+                .HasOne(sc => sc.Protocal)
+                .WithMany(s => s.ServerProtocals)
+                .HasForeignKey(sc => sc.ProtocalId);
+
+            builder.Entity<ServerProtocal>()
+               .HasOne(sc => sc.Server)
+               .WithMany(s => s.ServerProtocals)
+               .HasForeignKey(sc => sc.ServerId);
+
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);

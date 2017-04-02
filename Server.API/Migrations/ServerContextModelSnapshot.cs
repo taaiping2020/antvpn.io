@@ -16,10 +16,38 @@ namespace Server.API.Migrations
                 .HasAnnotation("ProductVersion", "1.1.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Server.API.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Flag");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("countries");
+                });
+
+            modelBuilder.Entity("Server.API.Models.Protocal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("protocals");
+                });
+
             modelBuilder.Entity("Server.API.Models.Server", b =>
                 {
-                    b.Property<string>("Name")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("CountryId");
 
                     b.Property<string>("Description");
 
@@ -27,13 +55,72 @@ namespace Server.API.Migrations
 
                     b.Property<string>("IPv4");
 
+                    b.Property<bool>("IsHybrid");
+
+                    b.Property<bool>("IsPublic");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Off");
+
                     b.Property<string>("Password");
+
+                    b.Property<int?>("RedirectorServerId");
+
+                    b.Property<int?>("TrafficServerId");
 
                     b.Property<string>("UserName");
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("RedirectorServerId");
+
+                    b.HasIndex("TrafficServerId");
 
                     b.ToTable("servers");
+                });
+
+            modelBuilder.Entity("Server.API.Models.ServerProtocal", b =>
+                {
+                    b.Property<int>("ProtocalId");
+
+                    b.Property<int>("ServerId");
+
+                    b.HasKey("ProtocalId", "ServerId");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("serverprotocals");
+                });
+
+            modelBuilder.Entity("Server.API.Models.Server", b =>
+                {
+                    b.HasOne("Server.API.Models.Country", "Country")
+                        .WithMany("Servers")
+                        .HasForeignKey("CountryId");
+
+                    b.HasOne("Server.API.Models.Server", "RedirectorServer")
+                        .WithMany()
+                        .HasForeignKey("RedirectorServerId");
+
+                    b.HasOne("Server.API.Models.Server", "TrafficServer")
+                        .WithMany()
+                        .HasForeignKey("TrafficServerId");
+                });
+
+            modelBuilder.Entity("Server.API.Models.ServerProtocal", b =>
+                {
+                    b.HasOne("Server.API.Models.Protocal", "Protocal")
+                        .WithMany("ServerProtocals")
+                        .HasForeignKey("ProtocalId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Server.API.Models.Server", "Server")
+                        .WithMany("ServerProtocals")
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }
