@@ -37,7 +37,14 @@
                          
                             </div>
                             <div class="col-md-4">
-                                Status: <strong>@(server.Off ? "Offline" : "Running")</strong>
+                                @if (server.Off)
+                                {
+                                    <span>Status: </span><span class="glyph glyph-radio-bullet status-stop" title="Stopped"></span>
+                                }
+                                else
+                                {
+                                    <span>Status: </span><span class="glyph glyph-radio-bullet status-running" title="Running"></span>
+                                }
                             </div>
                             <div class="col-md-4 text-right">
                                 <a><span class="glyph glyph-hamburger"></span></a>

@@ -9,6 +9,7 @@ namespace WebMVC.Services
 {
     public interface ILoginService
     {
+        Task<IEnumerable<AcctRaw>> GetAcctRawAsync(string userId);
         Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId);
         Task<bool> ResetPasswordAsync(string userId, LoginBindingModel model);
         Task<bool> CreateNewLoginAsync(string userId, string loginName, string password);

@@ -20,10 +20,12 @@ namespace Accounting.API.Controllers
     {
         public readonly IAcctRepo _repo;
         private readonly ADContext _adContext;
-        public LoginController(IAcctRepo repo, ADContext adContext)
+        private readonly AccountingContext _accountingContext;
+        public LoginController(IAcctRepo repo, ADContext adContext, AccountingContext accountingContext)
         {
             _repo = repo;
             _adContext = adContext;
+            _accountingContext = accountingContext;
         }
 
         [HttpGet("{userId}")]
@@ -41,6 +43,11 @@ namespace Accounting.API.Controllers
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
 
+            var query = from c in _accountingContext.Current
+                        join cm in _accountingContext.CurrentMeta on c.TimeStamp equals cm.TimeStamp
+                        select c.UserName;
+            var currentUserNames = await query.ToArrayAsync();
+
             var model = logins.Select(c => new LoginStatus
             {
                 AllowDialIn = c.AllowDialIn,
@@ -48,13 +55,26 @@ namespace Accounting.API.Controllers
                 LoginName = c.LoginName,
                 UserId = c.UserId,
                 MonthlyTraffic = c.MonthlyTraffic,
+                IsOnline = currentUserNames.Contains(c.LoginName),
                 BasicAcct = new BasicAcct()
                 {
                     TotalIn = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalInput ?? 0,
                     TotalOut = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalOutput ?? 0,
                 }
-            });
+            }).ToArray();
             return Ok(model);
+        }
+
+        [HttpGet("History/{userId}")]
+        public async Task<IActionResult> GetHistory(string userId)
+        {
+            var logins = await _repo.GetLogins(userId);
+            DateTime date = DateTime.Now;
+            var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var acctRaws = _repo.GetAcctRaw(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth).ToArray();
+
+            return Ok(acctRaws);
         }
 
         [HttpPost]

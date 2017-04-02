@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Accounting.API.Models;
 using MongoDB.Bson;
 using Accounting.API.Data;
+using Extensions;
 
 namespace Accounting.API
 {
@@ -15,5 +16,6 @@ namespace Accounting.API
         Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime);
         Task<IEnumerable<Login>> GetLogins(string userId);
         Task<IEnumerable<UserInfo>> GetUserInfosAsync();
+        IEnumerable<AcctRaw> GetAcctRaw(string usernames, DateTime? beginTime, DateTime? endTime);
     }
 }

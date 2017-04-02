@@ -6,6 +6,19 @@ using System.Threading.Tasks;
 
 namespace Extensions.Windows
 {
+    public enum PacketType
+    {
+        AccessRequest = 1,
+        AccessAccept = 2,
+        AccessReject = 3,
+        AccountingRequest = 4,
+        AccountingResponse = 5,
+        AccessChallenge = 11,
+        StatusServer = 12,
+        StatusClient = 13,
+        Reserved = 255,
+    }
+
     public enum AcctStatusType
     {
         Start = 1,

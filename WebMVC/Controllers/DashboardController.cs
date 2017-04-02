@@ -12,6 +12,7 @@ using Extensions;
 using WebMVC.Services;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using System;
 
 namespace WebMVC.Controllers
 {
@@ -32,9 +33,18 @@ namespace WebMVC.Controllers
 
             var logins = await _loginService.GetWithStatusAsync(userId);
             ViewData["logins"] = logins;
+            var acctRaws = await _loginService.GetAcctRawAsync(userId);
+            ViewData["acctRaws"] = acctRaws.Select(c => new AcctRawViewModel(c)).OrderByDescending(c => c.EventTime);
+
             var user = User as ClaimsPrincipal;
-            ViewData["traffic"] = user.FindFirst("monthly_traffic").Value;
-            ViewData["used"] = logins.Sum(c => c.BasicAcct.TotalIn) + logins.Sum(c => c.BasicAcct.TotalOut);
+            var m_traffic = String.IsNullOrEmpty(user.FindFirst("monthly_traffic")?.Value) ? 0d : double.Parse(user.FindFirst("monthly_traffic").Value);
+            var used = logins.Sum(c => c.BasicAcct.TotalIn) + logins.Sum(c => c.BasicAcct.TotalOut);
+
+            ViewData["traffic"] = m_traffic;
+            ViewData["used"] = used;
+
+            ViewData["traffic_gb"] = m_traffic / 1024d / 1024d / 1024d;
+            ViewData["used_gb"] = used / 1024d / 1024d / 1024d;
             return View();
         }
 
@@ -93,7 +103,21 @@ namespace WebMVC.Controllers
             {
                 //
             }
+            NotifyServerUpdateAccountStatus();
             return RedirectToAction(nameof(Index));
+        }
+
+        private void NotifyServerUpdateAccountStatus()
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.GetStringAsync($"{_settings.Value.AccountingUrl}/api/task");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"job fail. message: {ex.Message}");
+            }
         }
     }
 }

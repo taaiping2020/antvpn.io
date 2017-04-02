@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using Accounting.API.Data;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
+using Extensions;
+using Dapper;
 
 namespace Accounting.API
 {
@@ -34,7 +36,7 @@ namespace Accounting.API
             {
                 throw new ArgumentNullException(nameof(userId));
             }
-            return  await _adContext.Logins.Where(c => c.UserId == userId).ToListAsync();
+            return await _adContext.Logins.Where(c => c.UserId == userId).ToListAsync();
         }
 
         public async Task<IEnumerable<AcctN>> GetAcctNAsync(string usernames, DateTime? beginTime, DateTime? endTime)
@@ -55,6 +57,7 @@ namespace Accounting.API
             command.Parameters.Add(new SqlParameter("@endtime", endTime));
             var reader = await command.ExecuteReaderAsync();
             var acctns = AcctN.GetFromReader(reader).ToArray();
+            connection.Close();
             return acctns;
         }
 
@@ -71,6 +74,31 @@ namespace Accounting.API
             var reader = await command.ExecuteReaderAsync();
             var acctns = AcctN.GetFromReader(reader).ToArray();
             return acctns;
+        }
+
+        public IEnumerable<AcctRaw> GetAcctRaw(string usernames, DateTime? beginTime, DateTime? endTime)
+        {
+            if (String.IsNullOrEmpty(usernames))
+            {
+                //throw new ArgumentNullException(nameof(usernames));
+                usernames = usernames ?? "";
+            }
+            beginTime = beginTime ?? DateTime.Parse("1753-1-1");
+            endTime = endTime ?? DateTime.MaxValue;
+            var connection = _context.Database.GetDbConnection();
+            connection.Open();
+
+            var jsons = connection.Query<string>(@"select top 6 infojson
+	                      from dbo.eventraw
+                          where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2
+                          and JSON_VALUE(InfoJSON, '$.User_Name') in(SELECT value FROM STRING_SPLIT(@usernames, ','))
+	                      and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
+                          order by cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) desc", new { usernames = usernames, begintime = beginTime, endtime = endTime });
+            connection.Close();
+            foreach (var j in jsons)
+            {
+                yield return JsonConvert.DeserializeObject<AcctRaw>(j);
+            }
         }
 
         public async Task<IEnumerable<UserInfo>> GetUserInfosAsync()

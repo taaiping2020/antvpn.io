@@ -1,12 +1,48 @@
 ﻿@model WebMVC.ViewModels.LoginBindingModel
 
+<div class="space-header"></div>
+<div class="container">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#">
+                    @if (User.FindFirst("email").Value == "bosxixi@outlook.com")
+                    {
+                        <img id="profile-picture" class="person-graphic win-color-bg-10" alt="" src="https://cid-33c11863920db22c.users.storage.live.com/users/0x33c11863920db22c/myprofile/expressionprofile/profilephoto:Win8Static,UserTileMedium,UserTileStatic/MeControlXXLUserTile?ck=1&amp;ex=24">
+                    }
+                    else
+                    {
+                        <img id="profile-picture" class="person-graphic win-color-bg-10" alt="" src="~/images/default-avatar.png">
+                    }
+                </a>
+            </div>
+            <div class="col-md-12 col-xs-12">
+                <div class="profile-detail">
+                    <h3>Hello!</h3>
+                    <p>@User.FindFirst("email").Value</p>
+                    <ul class="nav nav-pills">
+                        <li role="presentation">
+                            <a href="#"><span class="glyph glyph-permissions"></span>Change password</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#"><span class="glyph glyph-shopping-cart"></span>Payment</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-xs-12">
+                <canvas id="myChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <canvas id="myChart" width="400" height="400"></canvas>
-        </div>
-        <div class="col-md-12">
+            <div class="type-p1">VPN accounts</div>
             <div class="entity-list entity-list-add-item-button">
                 <a class="entity-list-item" href="#" data-toggle="modal" data-target="#modal-addlogin">
                     <div class="item-icon">
@@ -20,48 +56,92 @@
 
             @if (ViewData["logins"] != null)
             {
-            <div class="entity-list entity-list-expandable">
-                @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
+                <div class="entity-list entity-list-expandable">
+                    @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
                 {
-                <div class="entity-list-item">
-                    <div class="item-icon">
-                        @if (l.AllowDialIn && l.Enabled)
+                        <div class="entity-list-item">
+                            <div class="item-icon">
+                                @if (l.AllowDialIn && l.Enabled)
                                 {
-                            <span class="glyph glyph-contact"></span>
+                                    <span class="glyph glyph-contact"></span>
                                 }
                                 else
                                 {
-                            <span class="glyph glyph-block-contact"></span>
+                                    <span class="glyph glyph-block-contact"></span>
                                 }
-                    </div>
-                    <div class="item-content-secondary">
-                        @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
+                            </div>
+                            <div class="item-content-secondary">
+                                @if (l.IsOnline)
                                 {
-                            <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay)</div>
+                                    <text>Status: <span title="Online" class="glyph glyph-radio-bullet status-running"></span></text>
                                 }
                                 else
                                 {
-                            <div class="content-text-primary">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
+                                    <text>Status: <span title="Offline" class="glyph glyph-radio-bullet status-stop"></span></text>
                                 }
-                        <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
-                    </div>
-                    <div class="item-content-primary">
-                        <div class="content-text-primary">@l.LoginName</div>
-                        <div class="content-text-secondary">Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")</div>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
-                                <span class="sr-only">@(l.Percent())</span>
+                                <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
+                            </div>
+                            <div class="item-content-primary">
+                                <div class="content-text-primary">@l.LoginName</div>
+
+                                <div class="content-text-secondary">
+                                    @*Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")*@
+
+                                    @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
+                                    {
+                                        <div class="content-text-primary text-right">@(l.BasicAcct?.TotalInOutDisplay) / Unlimited</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="content-text-primary text-right">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
+                                    }
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
+                                        <span class="sr-only">@(l.Percent())</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content-expanded">
+                                <button class="btn btn-default configure" data-loginname="@l.LoginName" data-traffic="@l.MonthlyTraffic" data-toggle="modal" data-target="#modal-configure">Configure</button>
+                                <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="item-content-expanded">
-                        <button class="btn btn-default configure" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-configure">Configure</button>
-                        <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
-                    </div>
-                </div>
                     }
-            </div>
+                </div>
             }
+        </div>
+
+        <div class="col-md-12">
+            <div class="type-h6">Recent activity</div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="color-bg-light-vivid-low">
+                        <tr>
+                            <th>Account</th>
+                            <th>Disconnect Time</th>
+                            <th class="hidden-xs">Protocal</th>
+                            <th>Duration</th>
+                            <th class="text-right">TotalTraffic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewData["acctRaws"] != null)
+                        {
+                            @foreach (var a in (IEnumerable<WebMVC.ViewModels.AcctRawViewModel>)ViewData["acctRaws"])
+                            {
+                                <tr>
+                                    <td>@a.UserName</td>
+                                    <td>@a.EventTime</td>
+                                    <td class="hidden-xs">@a.Protocal</td>
+                                    <td>@a.Duration</td>
+                                    <td class="text-right">@a.TotalTraffic</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -187,27 +267,46 @@
 @section scripts {
     <script>
         $(function () {
+            $("#slider-traffic").on("change", (e) => {
+                var value = $("#slider-traffic").val();
+                value = Number(value);
+                if (value == 0) {
+                    $("#max-traffic").html("unlimited");
+                } else {
+                    value = value / 1024 / 1024;
+                    $("#max-traffic").html(value + " MB");
+                }
+
+            });
+
             $(".reset-password").on("click", e => {
                 var l = e.currentTarget.attributes["data-loginname"].value;
                 $("#showloginname").text(l);
                 $('#resetusername').val(l);
+
             });
 
             $(".configure").on("click", e => {
                 var l = e.currentTarget.attributes["data-loginname"].value;
+                var t = e.currentTarget.attributes["data-traffic"].value;
                 $("#showloginname-configure").text(l);
                 $('#resetusername-configure').val(l);
+                $("#slider-traffic").val(t);
+                $("#slider-traffic").trigger("change");
             });
         });
-
+        @{
+            ViewData["usedgb"] = double.Parse(ViewData["used_gb"].ToString()).ToString("0.00");
+            ViewData["availablegb"] = (double.Parse(ViewData["traffic_gb"].ToString()) - double.Parse(ViewData["used_gb"].ToString())).ToString("0.00");
+        }
         var data = {
             labels: [
-                "Used",
-                "Available"
+                "Used @ViewData["usedgb"] GB",
+                "Available @ViewData["availablegb"] GB"
             ],
             datasets: [
                 {
-                    data: [@ViewData["used"], @ViewData["traffic"] - @ViewData["used"]],
+                    data: [@ViewData["usedgb"], @ViewData["traffic_gb"] - @ViewData["usedgb"]],
                     backgroundColor: [
                         "#0078D7",
                         "#CCCCCC"
@@ -226,20 +325,6 @@
             data: data,
             options: {
             }
-        });
-
-        $(() => {
-            $("#slider-traffic").on("change", (e) => {
-               var value = $("#slider-traffic").val();
-               value = Number(value);
-               if (value == 0) {
-                   $("#max-traffic").html("unlimited");
-               } else {
-                   value = value / 1024 / 1024;
-                   $("#max-traffic").html(value + " MB");
-               }
-               
-            });
         });
     </script>
 }

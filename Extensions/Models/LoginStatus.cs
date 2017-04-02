@@ -11,6 +11,7 @@ namespace Extensions
         public string LoginName { get; set; }
         public bool AllowDialIn { get; set; }
         public bool Enabled { get; set; }
+        public bool IsOnline { get; set; }
         public BasicAcct BasicAcct { get; set; }
         public DateTimeOffset? LastUpdated { get; set; }
         public long? MonthlyTraffic { get; set; }

@@ -59,6 +59,17 @@ namespace WebMVC.Services
             return true;
         }
 
+        public async Task<IEnumerable<AcctRaw>> GetAcctRawAsync(string userId)
+        {
+            _apiClient = new HttpClient();
+            var loginsUrl = $"{_remoteServiceBaseUrl}/history/{userId}";
+            var dataString = await _apiClient.GetStringAsync(loginsUrl);
+
+            var response = JsonConvert.DeserializeObject<AcctRaw[]>(dataString);
+
+            return response;
+        }
+
         public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId)
         {
             //var context = _httpContextAccesor.HttpContext;
