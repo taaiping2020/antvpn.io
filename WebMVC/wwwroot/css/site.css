@@ -1,4 +1,7 @@
-﻿a.navbar-brand {
+﻿body {
+  overflow-x: auto;
+}
+a.navbar-brand {
   color: #89BF04 !important;
   font-size: xx-large;
 }

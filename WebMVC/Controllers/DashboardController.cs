@@ -83,6 +83,10 @@ namespace WebMVC.Controllers
             }
 
             var userId = User.Identities.GetUserId();
+            if (model.MonthlyTraffic == 0)
+            {
+                model.MonthlyTraffic = null;
+            }
 
             var result = await _loginService.SetMonthlyTrafficAsync(userId, model);
             if (result == false)

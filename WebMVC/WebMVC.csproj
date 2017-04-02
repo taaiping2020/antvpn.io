@@ -12,6 +12,14 @@
     <Content Include="wwwroot\css\site-origin.css" />
     <Content Include="wwwroot\css\site-origin.min.css" />
     <Content Include="wwwroot\css\site.less" />
+    <Content Include="wwwroot\images\China.png" />
+    <Content Include="wwwroot\images\countryflags\China.png" />
+    <Content Include="wwwroot\images\countryflags\Hong Kong.png" />
+    <Content Include="wwwroot\images\countryflags\United Kingdom%28Great Britain%29.png" />
+    <Content Include="wwwroot\images\countryflags\United States of America%28USA%29.png" />
+    <Content Include="wwwroot\images\Hong Kong.png" />
+    <Content Include="wwwroot\images\United Kingdom(Great Britain).png" />
+    <Content Include="wwwroot\images\United States of America(USA).png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.10.7" />
