@@ -16,6 +16,6 @@ namespace Accounting.API
         Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime);
         Task<IEnumerable<Login>> GetLogins(string userId);
         Task<IEnumerable<UserInfo>> GetUserInfosAsync();
-        IEnumerable<AcctRaw> GetAcctRaw(string usernames, DateTime? beginTime, DateTime? endTime);
+        IEnumerable<AcctRaw> GetAcctRaw(string usernames, int pageSize, int pageIndex);
     }
 }

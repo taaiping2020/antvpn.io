@@ -27,6 +27,9 @@
                         <li role="presentation">
                             <a href="#"><span class="glyph glyph-shopping-cart"></span>Payment</a>
                         </li>
+                        <li role="presentation">
+                            <a href="#"><span class=""></span>Redeem code</a>
+                        </li>
                     </ul>
                 </div>
 
@@ -134,7 +137,7 @@
                                     <td>@a.UserName</td>
                                     <td>@a.EventTime</td>
                                     <td class="hidden-xs">@a.Protocal</td>
-                                    <td>@a.Duration</td>
+                                    <td>@a.DurationDisplay()</td>
                                     <td class="text-right">@a.TotalTraffic</td>
                                 </tr>
                             }

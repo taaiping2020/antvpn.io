@@ -100,9 +100,9 @@ namespace Accounting.API.Controllers
                 var login = logins.FirstOrDefault(c => c.LoginName == a.UserName);
                 if (login?.MonthlyTraffic == null)
                 {
-                    continue;
+                    login.AllowDialIn = true;
                 }
-                if (totalTraffic > login.MonthlyTraffic)
+                else if (totalTraffic > login.MonthlyTraffic)
                 {
                     login.AllowDialIn = false;
                 }

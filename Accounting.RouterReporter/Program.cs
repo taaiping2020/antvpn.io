@@ -77,13 +77,14 @@ namespace Accounting.RouterReporter
                 ps.Commands.Clear();
                 ps.AddCommand("Get-RemoteAccessConnectionStatistics");
                 var psos = ps.Invoke();
+                var now = DateTime.UtcNow;
                 if (psos.IsNullOrCountEqualsZero())
                 {
+                    repo.InsertOrUpdateTimetamp(machineName, now);
                     Console.WriteLine("not client on this server...");
                 }
                 else
                 {
-                    var now = DateTime.UtcNow;
                     var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
                     repo.InsertDatas(racs);
                     repo.InsertOrUpdateTimetamp(machineName, now);

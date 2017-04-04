@@ -62,7 +62,7 @@ namespace WebMVC.Services
         public async Task<IEnumerable<AcctRaw>> GetAcctRawAsync(string userId)
         {
             _apiClient = new HttpClient();
-            var loginsUrl = $"{_remoteServiceBaseUrl}/history/{userId}";
+            var loginsUrl = $"{_remoteServiceBaseUrl}/history/{userId}/6/1";
             var dataString = await _apiClient.GetStringAsync(loginsUrl);
 
             var response = JsonConvert.DeserializeObject<AcctRaw[]>(dataString);

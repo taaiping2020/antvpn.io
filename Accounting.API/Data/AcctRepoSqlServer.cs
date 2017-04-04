@@ -76,25 +76,28 @@ namespace Accounting.API
             return acctns;
         }
 
-        public IEnumerable<AcctRaw> GetAcctRaw(string usernames, DateTime? beginTime, DateTime? endTime)
+        public IEnumerable<AcctRaw> GetAcctRaw(string usernames, int pageSize, int pageIndex)
         {
             if (String.IsNullOrEmpty(usernames))
             {
                 //throw new ArgumentNullException(nameof(usernames));
                 usernames = usernames ?? "";
             }
-            beginTime = beginTime ?? DateTime.Parse("1753-1-1");
-            endTime = endTime ?? DateTime.MaxValue;
+            var offset = (pageIndex - 1) * pageSize;
             var connection = _context.Database.GetDbConnection();
             connection.Open();
 
-            var jsons = connection.Query<string>(@"select top 6 infojson
+            var jsons = connection.Query<string>($@"select infojson
 	                      from dbo.eventraw
                           where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2
                           and JSON_VALUE(InfoJSON, '$.User_Name') in(SELECT value FROM STRING_SPLIT(@usernames, ','))
-	                      and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) < @endtime
-                          order by cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as date) desc", new { usernames = usernames, begintime = beginTime, endtime = endTime });
+	                     
+                          order by cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as datetime) desc
+                          OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;
+                          ", new { usernames = usernames, offset = offset, pageSize = pageSize });
             connection.Close();
+
+            // and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as datetime) >= @begintime and cast(JSON_VALUE(InfoJSON, '$.Event_Timestamp') as datetime) < @endtime
             foreach (var j in jsons)
             {
                 yield return JsonConvert.DeserializeObject<AcctRaw>(j);

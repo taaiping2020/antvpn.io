@@ -65,14 +65,14 @@ namespace Accounting.API.Controllers
             return Ok(model);
         }
 
-        [HttpGet("History/{userId}")]
-        public async Task<IActionResult> GetHistory(string userId)
+        [HttpGet("History/{userId}/{pageSize}/{pageIndex}")]
+        public async Task<IActionResult> GetHistory(string userId, int pageSize, int pageIndex)
         {
             var logins = await _repo.GetLogins(userId);
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var acctRaws = _repo.GetAcctRaw(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth).ToArray();
+            var acctRaws = _repo.GetAcctRaw(logins.Select(c => c.LoginName).ToString(','), pageSize, pageIndex).ToArray();
 
             return Ok(acctRaws);
         }
