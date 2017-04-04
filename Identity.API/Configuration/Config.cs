@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Models;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using static IdentityServer4.IdentityServerConstants;
 
@@ -86,7 +87,8 @@ namespace Identity.API.Configuration
                         StandardScopes.Profile,
                         "servers",
                         "accounting",
-                    }
+                    },
+                    AccessTokenLifetime = (int)TimeSpan.FromDays(14).TotalSeconds,
                 },
                 new Client
                 {

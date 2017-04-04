@@ -17,8 +17,8 @@ namespace Windows
                 case ApplicationPage.Login:
                     return new LoginPage();
 
-                case ApplicationPage.Chat:
-                    return new ChatPage();
+                case ApplicationPage.Server:
+                    return new ServerPage();
 
                 default:
                     Debugger.Break();

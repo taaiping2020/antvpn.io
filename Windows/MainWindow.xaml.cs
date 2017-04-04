@@ -23,8 +23,8 @@ namespace Windows
         public MainWindow()
         {
             InitializeComponent();
-
-            this.DataContext = new WindowViewModel(this);
+            WindowViewModel.Instance = new WindowViewModel(this);
+            this.DataContext = WindowViewModel.Instance;
         }
     }
 }

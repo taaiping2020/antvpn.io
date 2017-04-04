@@ -10,6 +10,8 @@ namespace Windows
     /// </summary>
     public class WindowViewModel : BaseViewModel
     {
+        public static WindowViewModel Instance { get; set; }
+
         #region Private Member
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace Windows
         /// <summary>
         /// The current page of the application
         /// </summary>
-        public ApplicationPage CurrentPage { get; set; } = ApplicationPage.Login;
+        public ApplicationPage CurrentPage { get; set; }
 
         #endregion
 
@@ -187,6 +189,17 @@ namespace Windows
                 // Fire off resize events
                 WindowResized();
             };
+
+            TokenHelper tg = new TokenHelper();
+            var token = tg.ReadTokenFromDisk();
+            if (token != null)
+            {
+                this.CurrentPage = ApplicationPage.Server;
+            }
+            else
+            {
+                this.CurrentPage = ApplicationPage.Login;
+            }
         }
 
         #endregion

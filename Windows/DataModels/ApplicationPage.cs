@@ -13,6 +13,6 @@
         /// <summary>
         /// The main chat page
         /// </summary>
-        Chat = 1,
+        Server = 1,
     }
 }

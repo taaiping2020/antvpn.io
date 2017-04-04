@@ -4,6 +4,7 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.IO;
 
 namespace Windows
 {
@@ -57,12 +58,23 @@ namespace Windows
         {
             await RunCommand(() => this.LoginIsRunning, async () =>
             {
-                await Task.Delay(5000);
+                //await Task.Delay(5000);
 
                 var email = this.Email;
 
-                // IMPORTANT: Never store unsecure password in variable like this
-                var pass = (parameter as IHavePassword).SecurePassword.Unsecure();
+                TokenHelper tg = new TokenHelper();
+                var token = await tg.GetBearerTokenAsync(email, (parameter as IHavePassword).SecurePassword.Unsecure());
+                if (token == null)
+                {
+                    //set warning.
+                }
+                else
+                {
+                    //store token
+                    tg.WriteTokenToDisk(token);
+                    WindowViewModel.Instance.CurrentPage = ApplicationPage.Server;
+                }
+
             });
         }
     }
