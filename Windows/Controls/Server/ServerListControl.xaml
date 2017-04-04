@@ -6,8 +6,9 @@
              xmlns:local="clr-namespace:Windows"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid DataContext="{x:Static local:ServerListDesignModel.Instance}" Background="{StaticResource ForegroundLightBrush}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid Background="{StaticResource ForegroundLightBrush}">
+        <!--<Grid DataContext="{x:Static local:ServerListDesignModel.Instance}" Background="{StaticResource ForegroundLightBrush}">-->
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

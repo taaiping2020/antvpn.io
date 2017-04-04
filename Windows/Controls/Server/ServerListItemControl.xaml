@@ -21,7 +21,8 @@
                                 <!-- New Message Indicator Bar -->
                                 <!-- Profile picture -->
                                 <ColumnDefinition Width="Auto" />
-                                <!-- Main content -->
+                                <ColumnDefinition Width="Auto" />
+                                    <!-- Main content -->
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
@@ -35,31 +36,38 @@
                             <!-- Profile picture padding -->
                             <Border Grid.Column="0" Padding="8">
                                 <!-- Profile picture background -->
-                                <Border Background="{Binding ProfilePictureRGB, Converter={local:StringRGBToBrushConverter}}" 
+                                <Border 
                                         Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                         CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
                                     <!-- Profile picture initials -->
-                                    <TextBlock Text="{Binding Initials}"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               Foreground="{StaticResource ForegroundLightBrush}"
-                                               FontSize="{StaticResource FontSizeAverage}"
-                                               FontFamily="{StaticResource LatoRegular}"
-                                               />           
-                                </Border>
+                                        <Image Source="{Binding RedirectorServerCountryFlag, Converter={local:ServerToImageConverter}}"
+                                            
+                                               />
+                                    </Border>
                             </Border>
+                                <!-- Profile picture padding -->
+                                <Border Grid.Column="1" Padding="8">
+                                    <!-- Profile picture background -->
+                                    <Border 
+                                        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                        CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                                        <!-- Profile picture initials -->
+                                        <Image Source="{Binding TrafficServerCountryFlag, Converter={local:ServerToImageConverter}, ConverterParameter=2}"
 
-                            <!-- Main content -->
-                            <Border Grid.Column="1" Padding="0 0 8 0">
+                                               />
+                                    </Border>
+                                </Border>
+                                <!-- Main content -->
+                            <Border Grid.Column="2" Padding="0 0 8 0">
                                 <StackPanel VerticalAlignment="Center">
                                     <!-- Name-->
-                                    <TextBlock Text="{Binding Name}"
+                                    <TextBlock Text="{Binding Domain}"
                                                 Foreground="{StaticResource WordBlueBrush}"
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"
                                                 />
                                     <!-- Message -->
-                                    <TextBlock Text="{Binding Message}"
+                                    <TextBlock Text="{Binding CountryName}"
                                                Foreground="{StaticResource ForegroundDarkBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                FontFamily="{StaticResource LatoRegular}"

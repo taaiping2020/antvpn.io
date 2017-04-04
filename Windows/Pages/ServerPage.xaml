@@ -34,7 +34,7 @@
 
                 </Grid.ColumnDefinitions>
 
-                <local:ServerListControl>
+                <local:ServerListControl DataContext="{Binding Servers}">
 
                 </local:ServerListControl>
             </Grid>

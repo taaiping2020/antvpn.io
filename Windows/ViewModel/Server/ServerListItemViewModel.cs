@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 
 namespace Windows
 {
@@ -10,6 +11,19 @@ namespace Windows
     /// </summary>
     public class ServerListItemViewModel : BaseViewModel
     {
+        /// <summary>
+        /// The command to login
+        /// </summary>
+        public ICommand SelectCommand { get; set; }
+        public ServerListItemViewModel()
+        {
+            SelectCommand = new RelayParameterizedCommand((parameter) => Select(parameter));
+        }
+
+        public void Select(object parameter)
+        {
+           
+        }
         /// <summary>
         /// The latest message from this chat
         /// </summary>
@@ -24,7 +38,7 @@ namespace Windows
         /// The RGB values (in hex) for the background color of the profile picture
         /// For example FF00FF for Red and Blue mixed
         /// </summary>
-        public string ProfilePictureRGB { get; set; } 
+        public string ProfilePictureRGB { get; set; }
 
         /// <summary>
         /// True if there are unread messages in this chat 
@@ -42,10 +56,43 @@ namespace Windows
         public string Domain { get; set; }
         public string UserName { get; set; }
         public string Description { get; set; }
-        public string CountryName { get; set; }
+
+        private string countryName;
+
+        public string CountryName
+        {
+            get
+            {
+                if (this.countryName == null)
+                {
+                    return $"{this.RedirectorServerCountryName} / {this.TrafficServerCountryName}";
+                }
+                return countryName;
+            }
+            set { countryName = value; }
+        }
+
+        //public string CountryName { get; set; }
         public string CountryFlag { get; set; }
         public string RedirectorServerCountryName { get; set; }
-        public string RedirectorServerCountryFlag { get; set; }
+
+        private string redirectorServerCountryFlag;
+
+        public string RedirectorServerCountryFlag
+        {
+            get
+            {
+                if (this.CountryFlag != null)
+                {
+                    return this.CountryFlag;
+                }
+                return redirectorServerCountryFlag;
+            }
+            set { redirectorServerCountryFlag = value; }
+        }
+
+
+        //public string RedirectorServerCountryFlag { get { return  }; set; }
         public string TrafficServerCountryName { get; set; }
         public string TrafficServerCountryFlag { get; set; }
         public bool IsPublic { get; set; }

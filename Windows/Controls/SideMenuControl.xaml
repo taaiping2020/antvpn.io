@@ -34,7 +34,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeServerIcon}" />
                             <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeUserIcon}" />
-                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomePictureIcon}" />
+                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeRefreshIcon}" />
                         </StackPanel>
 
                         <!-- Settings button -->
