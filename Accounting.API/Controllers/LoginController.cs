@@ -16,6 +16,7 @@ namespace Accounting.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/Login")]
+    [Authorize]
     public class LoginController : Controller
     {
         public readonly IAcctRepo _repo;
@@ -28,15 +29,17 @@ namespace Accounting.API.Controllers
             _accountingContext = accountingContext;
         }
 
-        [HttpGet("{userId}")]
-        public IEnumerable<Login> GetLogins(string userId)
+        [HttpGet]
+        public IEnumerable<Login> GetLogins()
         {
+            var userId = User.FindFirst("sub").Value;
             return _adContext.Logins.Where(c => c.UserId == userId);
         }
 
-        [HttpGet("Status/{userId}")]
-        public async Task<IActionResult> GetLoginStatus(string userId)
+        [HttpGet("Status")]
+        public async Task<IActionResult> GetLoginStatus()
         {
+            var userId = User.FindFirst("sub").Value;
             var logins = await _repo.GetLogins(userId);
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
@@ -65,9 +68,10 @@ namespace Accounting.API.Controllers
             return Ok(model);
         }
 
-        [HttpGet("History/{userId}/{pageSize}/{pageIndex}")]
-        public async Task<IActionResult> GetHistory(string userId, int pageSize, int pageIndex)
+        [HttpGet("History/{pageSize}/{pageIndex}")]
+        public async Task<IActionResult> GetHistory(int pageSize, int pageIndex)
         {
+            var userId = User.FindFirst("sub").Value;
             var logins = await _repo.GetLogins(userId);
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
@@ -80,34 +84,40 @@ namespace Accounting.API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostLogin([FromBody] Login login)
         {
+            var userId = User.FindFirst("sub").Value;
+            login.UserId = userId;
+            login.LoginName = login.LoginName.ToLower();
+            ModelState.Remove("UserId");
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            if (String.IsNullOrEmpty(userId))
+            {
+                return BadRequest("id can not be null");
+            }
+
+            // check db if exist.
+            if (await _adContext.Logins.AnyAsync(c => c.LoginName == login.LoginName))
+            {
+                return BadRequest("the account already exist.");
+            }
 
             _adContext.Logins.Add(login);
-            try
-            {
-
-                await _adContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
+            await _adContext.SaveChangesAsync();
 
             return Ok();
         }
 
-        [HttpPost("Reset/{userId}")]
-        public async Task<IActionResult> PutLogin([FromRoute] string userId, [FromBody] LoginBindingModel model)
+        [HttpPost("Reset")]
+        public async Task<IActionResult> PutLogin([FromBody] LoginBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var userId = User.FindFirst("sub").Value;
 
             var login = await _adContext.Logins.FindAsync(model.UserName);
             if (login == null)
@@ -121,13 +131,15 @@ namespace Accounting.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("Configure/{userId}")]
-        public async Task<IActionResult> ConfigureLogin([FromRoute] string userId, [FromBody] LoginConfigureBindingModel model)
+        [HttpPost("Configure")]
+        public async Task<IActionResult> ConfigureLogin([FromBody] LoginConfigureBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var userId = User.FindFirst("sub").Value;
 
             var login = await _adContext.Logins.FindAsync(model.UserName);
             if (login == null)
@@ -140,82 +152,6 @@ namespace Accounting.API.Controllers
 
             return NoContent();
         }
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutLogin([FromRoute] string id, [FromBody] Login login)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != login.LoginName)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(login).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!LoginExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetLogin([FromRoute] string id)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var login = await _context.Logins.SingleOrDefaultAsync(m => m.LoginName == id);
-
-        //    if (login == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(login);
-        //}
-
-
-
-
-        //// DELETE: api/Login/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteLogin([FromRoute] string id)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var login = await _context.Logins.SingleOrDefaultAsync(m => m.LoginName == id);
-        //    if (login == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Logins.Remove(login);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(login);
-        //}
 
         private bool LoginExists(string id)
         {

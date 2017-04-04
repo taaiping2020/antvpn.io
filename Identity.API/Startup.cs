@@ -87,11 +87,13 @@ namespace Identity.API
                 //// User settings
                 //options.User.RequireUniqueEmail = true;
             });
-
+            
             // Adds IdentityServer
             services.AddIdentityServer(x => x.IssuerUri = "null")
                 .AddTemporarySigningCredential()
-                .AddInMemoryScopes(Config.GetScopes())
+                .AddInMemoryPersistedGrants()
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                .AddInMemoryApiResources(Config.GetApiResources())
                 .AddInMemoryClients(Config.GetClients(clientUrls))
                 .AddAspNetIdentity<ApplicationUser>()
                 .Services.AddTransient<IProfileService, ProfileService>();

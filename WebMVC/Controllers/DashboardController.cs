@@ -31,9 +31,9 @@ namespace WebMVC.Controllers
         {
             var userId = User.Identities.GetUserId();
 
-            var logins = await _loginService.GetWithStatusAsync(userId);
+            var logins = await _loginService.GetWithStatusAsync();
             ViewData["logins"] = logins;
-            var acctRaws = await _loginService.GetAcctRawAsync(userId);
+            var acctRaws = await _loginService.GetAcctRawAsync();
             ViewData["acctRaws"] = acctRaws.Select(c => new AcctRawViewModel(c)).OrderByDescending(c => c.EventTime);
 
             var user = User as ClaimsPrincipal;
@@ -58,10 +58,10 @@ namespace WebMVC.Controllers
 
             var userId = User.Identities.GetUserId();
 
-            var result = await _loginService.CreateNewLoginAsync(userId, model.UserName, model.Password);
-            if (result == false)
+            var result = await _loginService.CreateNewLoginAsync(model.UserName, model.Password);
+            if (!result.IsSuccess)
             {
-                //
+                ViewData["Message"] = result.ErrorMessage;
             }
             return RedirectToAction(nameof(Index));
         }
@@ -76,7 +76,7 @@ namespace WebMVC.Controllers
 
             var userId = User.Identities.GetUserId();
 
-            var result = await _loginService.ResetPasswordAsync(userId, model);
+            var result = await _loginService.ResetPasswordAsync(model);
             if (result == false)
             {
                 //
@@ -98,7 +98,7 @@ namespace WebMVC.Controllers
                 model.MonthlyTraffic = null;
             }
 
-            var result = await _loginService.SetMonthlyTrafficAsync(userId, model);
+            var result = await _loginService.SetMonthlyTrafficAsync(model);
             if (result == false)
             {
                 //

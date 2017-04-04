@@ -10,7 +10,7 @@ namespace Identity.API.Models.AccountViewModels
 {
     public class ConsentViewModel : ConsentInputModel
     {
-        public ConsentViewModel(ConsentInputModel model, string returnUrl, AuthorizationRequest request, Client client, IEnumerable<Scope> scopes)
+        public ConsentViewModel(ConsentInputModel model, string returnUrl, AuthorizationRequest request, Client client, Resources scopes)
         {
             RememberConsent = model?.RememberConsent ?? true;
             ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>();
@@ -22,8 +22,22 @@ namespace Identity.API.Models.AccountViewModels
             ClientLogoUrl = client.LogoUri;
             AllowRememberConsent = client.AllowRememberConsent;
 
-            IdentityScopes = scopes.Where(x => x.Type == ScopeType.Identity).Select(x => new ScopeViewModel(x, ScopesConsented.Contains(x.Name) || model == null)).ToArray();
-            ResourceScopes = scopes.Where(x => x.Type == ScopeType.Resource).Select(x => new ScopeViewModel(x, ScopesConsented.Contains(x.Name) || model == null)).ToArray();
+            IdentityScopes = scopes.IdentityResources.Select(x => new ScopeViewModel()
+            {
+                Name = x.Name,
+                Description = x.Description,
+                DisplayName = x.DisplayName,
+                Emphasize = x.Emphasize,
+                Required = x.Required,
+                Checked = (ScopesConsented.Contains(x.Name) || model == null) || x.Required
+            }).ToArray();
+            ResourceScopes = scopes.ApiResources.Select(x => new ScopeViewModel/*(ScopesConsented.Contains(x.Name) || model == null)*/
+            {
+                Name = x.Name,
+                Description = x.Description,
+                DisplayName = x.DisplayName,
+                Checked = (ScopesConsented.Contains(x.Name) || model == null)
+            }).ToArray();
         }
 
         public string ClientName { get; set; }
@@ -37,16 +51,6 @@ namespace Identity.API.Models.AccountViewModels
 
     public class ScopeViewModel
     {
-        public ScopeViewModel(Scope scope, bool check)
-        {
-            Name = scope.Name;
-            DisplayName = scope.DisplayName;
-            Description = scope.Description;
-            Emphasize = scope.Emphasize;
-            Required = scope.Required;
-            Checked = check || scope.Required;
-        }
-
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }

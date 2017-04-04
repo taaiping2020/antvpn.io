@@ -17,6 +17,7 @@ namespace Accounting.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/Acct")]
+    [Authorize]
     public class AcctController : Controller
     {
         public readonly IAcctRepo _repo;

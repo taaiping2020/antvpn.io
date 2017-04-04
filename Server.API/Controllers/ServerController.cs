@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.API.Data;
 using Server.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/Server")]
+    [Authorize]
     public class ServerController : Controller
     {
         private readonly ServerContext _context;

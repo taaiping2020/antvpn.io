@@ -76,7 +76,7 @@ namespace WebMVC
             var callBackUrl = Configuration.GetValue<string>("CallBackUrl");
             var log = loggerFactory.CreateLogger("identity");
 
-            var oidcOptions = new OpenIdConnectOptions
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
             {
                 AuthenticationScheme = "oidc",
                 SignInScheme = "Cookies",
@@ -88,16 +88,9 @@ namespace WebMVC
                 SaveTokens = true,
                 GetClaimsFromUserInfoEndpoint = true,
                 RequireHttpsMetadata = false,
-            };
 
-            oidcOptions.Scope.Clear();
-            oidcOptions.Scope.Add("openid");
-            oidcOptions.Scope.Add("profile");
-            oidcOptions.Scope.Add("orders");
-            oidcOptions.Scope.Add("accounting");
-
-            //Wait untill identity service is ready on compose. 
-            app.UseOpenIdConnectAuthentication(oidcOptions);
+                Scope = { "openid", "profile", "orders", "accounting", "servers" },
+            });
 
             app.UseMvc(routes =>
             {

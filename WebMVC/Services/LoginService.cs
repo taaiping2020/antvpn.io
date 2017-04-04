@@ -28,7 +28,7 @@ namespace WebMVC.Services
             _httpContextAccesor = httpContextAccesor;
         }
 
-        public async Task<bool> CreateNewLoginAsync(string userId, string loginName, string password)
+        public async Task<CreateLoginResult> CreateNewLoginAsync(string loginName, string password)
         {
             var context = _httpContextAccesor.HttpContext;
             var token = await context.Authentication.GetTokenAsync("access_token");
@@ -46,47 +46,22 @@ namespace WebMVC.Services
                 LoginName = loginName,
                 NormalizedLoginName = loginName.ToLower(),
                 Password = password,
-                UserId = userId
             };
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(login), System.Text.Encoding.UTF8, "application/json");
 
             var response = await _apiClient.PostAsync(loginsUrl, content);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                return false;
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                return new CreateLoginResult() { IsSuccess = false, ErrorMessage = message };
+            }
 
-            return true;
+            return new CreateLoginResult() { IsSuccess = true };
         }
 
-        public async Task<IEnumerable<AcctRaw>> GetAcctRawAsync(string userId)
-        {
-            _apiClient = new HttpClient();
-            var loginsUrl = $"{_remoteServiceBaseUrl}/history/{userId}/6/1";
-            var dataString = await _apiClient.GetStringAsync(loginsUrl);
-
-            var response = JsonConvert.DeserializeObject<AcctRaw[]>(dataString);
-
-            return response;
-        }
-
-        public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId)
-        {
-            //var context = _httpContextAccesor.HttpContext;
-            //var token = await context.Authentication.GetTokenAsync("access_token");
-
-            _apiClient = new HttpClient();
-            //_apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var loginsUrl = $"{_remoteServiceBaseUrl}/status/{userId}";
-            var dataString = await _apiClient.GetStringAsync(loginsUrl);
-
-            var response = JsonConvert.DeserializeObject<LoginStatus[]>(dataString);
-
-            return response;
-        }
-
-        public async Task<bool> ResetPasswordAsync(string userId, LoginBindingModel model)
+        public async Task<IEnumerable<AcctRaw>> GetAcctRawAsync()
         {
             var context = _httpContextAccesor.HttpContext;
             var token = await context.Authentication.GetTokenAsync("access_token");
@@ -94,7 +69,39 @@ namespace WebMVC.Services
             _apiClient = new HttpClient();
             _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var loginsUrl = $"{_remoteServiceBaseUrl}/Reset/{userId}";
+            var loginsUrl = $"{_remoteServiceBaseUrl}/history/6/1";
+            var dataString = await _apiClient.GetStringAsync(loginsUrl);
+
+            var response = JsonConvert.DeserializeObject<AcctRaw[]>(dataString);
+
+            return response;
+        }
+
+        public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync()
+        {
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}/status";
+            var dataString = await _apiClient.GetStringAsync(loginsUrl);
+
+            var response = JsonConvert.DeserializeObject<LoginStatus[]>(dataString);
+
+            return response;
+        }
+
+        public async Task<bool> ResetPasswordAsync(LoginBindingModel model)
+        {
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}/Reset";
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json");
 
@@ -106,7 +113,7 @@ namespace WebMVC.Services
             return true;
         }
 
-        public async Task<bool> SetMonthlyTrafficAsync(string userId, LoginConfigureBindingModel model)
+        public async Task<bool> SetMonthlyTrafficAsync(LoginConfigureBindingModel model)
         {
             var context = _httpContextAccesor.HttpContext;
             var token = await context.Authentication.GetTokenAsync("access_token");
@@ -114,7 +121,7 @@ namespace WebMVC.Services
             _apiClient = new HttpClient();
             _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var loginsUrl = $"{_remoteServiceBaseUrl}/Configure/{userId}";
+            var loginsUrl = $"{_remoteServiceBaseUrl}/Configure";
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json");
 

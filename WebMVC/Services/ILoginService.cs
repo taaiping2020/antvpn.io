@@ -9,10 +9,10 @@ namespace WebMVC.Services
 {
     public interface ILoginService
     {
-        Task<IEnumerable<AcctRaw>> GetAcctRawAsync(string userId);
-        Task<IEnumerable<LoginStatus>> GetWithStatusAsync(string userId);
-        Task<bool> ResetPasswordAsync(string userId, LoginBindingModel model);
-        Task<bool> CreateNewLoginAsync(string userId, string loginName, string password);
-        Task<bool> SetMonthlyTrafficAsync(string userId, LoginConfigureBindingModel model);
+        Task<IEnumerable<AcctRaw>> GetAcctRawAsync();
+        Task<IEnumerable<LoginStatus>> GetWithStatusAsync();
+        Task<bool> ResetPasswordAsync(LoginBindingModel model);
+        Task<CreateLoginResult> CreateNewLoginAsync(string loginName, string password);
+        Task<bool> SetMonthlyTrafficAsync(LoginConfigureBindingModel model);
     }
 }

@@ -30,7 +30,10 @@ namespace WebMVC.Services
 
         public async Task<IEnumerable<Server>> GetServersAsync()
         {
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
             _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var serverUrl = $"{_remoteServiceBaseUrl}";
             var dataString = await _apiClient.GetStringAsync(serverUrl);
