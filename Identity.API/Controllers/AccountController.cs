@@ -210,8 +210,11 @@ namespace IdentityServer4.Quickstart.UI.Controllers
 
             // get context information (client name, post logout redirect URI and iframe for federated signout)
             var logout = await _interaction.GetLogoutContextAsync(model.LogoutId);
-
-            return Redirect(logout?.PostLogoutRedirectUri);
+            if (logout.PostLogoutRedirectUri == null)
+            {
+                return RedirectToAction("Index", "Home", null);
+            }
+            return Redirect(logout.PostLogoutRedirectUri);
         }
 
         public async Task<IActionResult> DeviceLogOut(string redirectUrl)

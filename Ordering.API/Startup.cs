@@ -92,7 +92,7 @@ namespace Ordering.API
             app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
             {
                 Authority = identityUrl.ToString(),
-                ScopeName = "orders",
+                ApiName = "orders",
                 RequireHttpsMetadata = false
             });
         }

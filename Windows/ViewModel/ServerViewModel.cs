@@ -17,19 +17,27 @@ namespace Windows
         public ServerViewModel()
         {
             RefleshServerCommand = new RelayCommand(async () => await RefleshServer());
-            RefleshServerCommand.Execute(this);
+            ConnectVPNCommand = new RelayCommand(async () => await ConnectVPN());
+            SelectCommand = new RelayParameterizedCommand(async (parameter) => await Select(parameter));
+            //RefleshServerCommand.Execute(this);
         }
 
         public ICommand RefleshServerCommand { get; set; }
+        public ICommand ConnectVPNCommand { get; set; }
+        public ICommand SelectCommand { get; set; }
+        public ServerListViewModel Servers { get; set; }
 
-        public ServerListDesignModel Servers { get; set; } = ServerListDesignModel.Instance;
+        public ServerListItemViewModel Server { get; set; }
 
-        public bool LoginIsRunning { get; set; }
+        public bool IsFetching { get; set; }
+
+        public bool IsTryConnecting { get; set; }
 
         public async Task RefleshServer()
         {
-            await RunCommand(() => this.LoginIsRunning, async () =>
+            await RunCommand(() => this.IsFetching, async () =>
             {
+                this.Servers = null;
                 TokenHelper tg = new TokenHelper();
                 var token = tg.ReadTokenFromDisk();
                 if (token == null)
@@ -40,16 +48,37 @@ namespace Windows
                 try
                 {
                     var servers = await server.GetServersAsync(token.access_token);
-                    var s = servers.First();
-                    s.IsSelected = true;
-                    this.Servers = new ServerListDesignModel { Items = servers.ToList() };
+                    //var s = servers.LastOrDefault();
+                    //s.IsSelected = true;
+                    foreach (var s in servers)
+                    {
+                        s.ServerViewModel = this;
+                    }
+
+                    this.Servers = new ServerListViewModel { Items = servers.ToList() };
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    
                     WindowViewModel.Instance.CurrentPage = ApplicationPage.Login;
                 }
 
- 
+
+            });
+        }
+
+        public async Task ConnectVPN()
+        {
+            await RunCommand(() => this.IsTryConnecting, async () =>
+            {
+                await Task.Delay(3000);
+            });
+        }
+        public async Task Select(object parameter)
+        {
+            await RunCommand(() => this.IsTryConnecting, async () =>
+            {
+                await Task.Delay(3000);
             });
         }
     }

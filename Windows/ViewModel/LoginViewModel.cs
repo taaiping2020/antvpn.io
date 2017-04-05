@@ -58,8 +58,6 @@ namespace Windows
         {
             await RunCommand(() => this.LoginIsRunning, async () =>
             {
-                //await Task.Delay(5000);
-
                 var email = this.Email;
 
                 TokenHelper tg = new TokenHelper();

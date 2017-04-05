@@ -65,18 +65,18 @@ namespace WebMVC
             //}
 
             app.UseStaticFiles();
-
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            var cookie = new CookieAuthenticationOptions
             {
                 AuthenticationScheme = "Cookies",
-                AutomaticAuthenticate = true,
-            });
+                AutomaticAuthenticate = true
+            };
+            app.UseCookieAuthentication(cookie);
 
             var identityUrl = Configuration.GetValue<string>("IdentityUrl");
             var callBackUrl = Configuration.GetValue<string>("CallBackUrl");
             var log = loggerFactory.CreateLogger("identity");
 
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
+            var oo = new OpenIdConnectOptions
             {
                 AuthenticationScheme = "oidc",
                 SignInScheme = "Cookies",
@@ -88,9 +88,9 @@ namespace WebMVC
                 SaveTokens = true,
                 GetClaimsFromUserInfoEndpoint = true,
                 RequireHttpsMetadata = false,
-
-                Scope = { "openid", "profile", "orders", "accounting", "servers" },
-            });
+                Scope = { "openid", "profile", "orders", "accounting", "servers", "offline_access" },
+            };
+            app.UseOpenIdConnectAuthentication(oo);
 
             app.UseMvc(routes =>
             {
@@ -98,6 +98,11 @@ namespace WebMVC
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+
+
         }
+
+     
     }
 }

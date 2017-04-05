@@ -18,11 +18,9 @@ namespace WebMVC.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly ILoginService _loginService;
         private readonly IOptionsSnapshot<AppSettings> _settings;
         public AccountController(ILoginService loginService, IOptionsSnapshot<AppSettings> settings)
         {
-            _loginService = loginService;
             _settings = settings;
         }
 

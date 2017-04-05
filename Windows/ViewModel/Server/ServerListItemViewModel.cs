@@ -11,19 +11,7 @@ namespace Windows
     /// </summary>
     public class ServerListItemViewModel : BaseViewModel
     {
-        /// <summary>
-        /// The command to login
-        /// </summary>
-        public ICommand SelectCommand { get; set; }
-        public ServerListItemViewModel()
-        {
-            SelectCommand = new RelayParameterizedCommand((parameter) => Select(parameter));
-        }
-
-        public void Select(object parameter)
-        {
-           
-        }
+        public ServerViewModel ServerViewModel { get; set; }
         /// <summary>
         /// The latest message from this chat
         /// </summary>

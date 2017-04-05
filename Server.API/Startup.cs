@@ -83,7 +83,7 @@ namespace Server.API
             app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
             {
                 Authority = identityUrl.ToString(),
-                ScopeName = "servers",
+                ApiName = "servers",
                 RequireHttpsMetadata = false
             });
         }

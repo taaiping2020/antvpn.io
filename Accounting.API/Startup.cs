@@ -74,8 +74,8 @@ namespace Accounting.API
             app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
             {
                 Authority = identityUrl.ToString(),
-                ScopeName = "accounting",
-                RequireHttpsMetadata = false
+                ApiName = "accounting",
+                RequireHttpsMetadata = false,
             });
 
             app.UseMvcWithDefaultRoute();

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Windows"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              Height="60"
              d:DesignHeight="60" d:DesignWidth="300">
@@ -13,72 +14,73 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
-                        
                         <!-- Content -->
-                        <Border x:Name="background" Background="{StaticResource ForegroundLightBrush}">
-                            <Grid x:Name="container" Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <!-- New Message Indicator Bar -->
-                                <!-- Profile picture -->
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                    <!-- Main content -->
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                            <Border x:Name="background" Background="{StaticResource ForegroundLightBrush}" MouseUp="background_MouseUp">
+                                <Grid x:Name="container" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <!-- New Message Indicator Bar -->
+                                        <!-- Profile picture -->
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <!-- Main content -->
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                            <!-- New Message Indicator Bar -->
-                            <Border Background="Red" 
+                                    <!-- New Message Indicator Bar -->
+                                    <Border Background="Red" 
                                     Width="4"
                                     HorizontalAlignment="Left"
                                     Visibility="{Binding NewContentAvailable, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
+                                    
                                     />
 
-                            <!-- Profile picture padding -->
-                            <Border Grid.Column="0" Padding="8">
-                                <!-- Profile picture background -->
-                                <Border 
+                                    <!-- Profile picture padding -->
+                                    <Border Grid.Column="0" Padding="8">
+                                        <!-- Profile picture background -->
+                                        <Border 
                                         Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                         CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
-                                    <!-- Profile picture initials -->
-                                        <Image Source="{Binding RedirectorServerCountryFlag, Converter={local:ServerToImageConverter}}"
+                                            <!-- Profile picture initials -->
+                                            <Image Source="{Binding RedirectorServerCountryFlag, Converter={local:ServerToImageConverter}}"
                                             
                                                />
+                                        </Border>
                                     </Border>
-                            </Border>
-                                <!-- Profile picture padding -->
-                                <Border Grid.Column="1" Padding="8">
-                                    <!-- Profile picture background -->
-                                    <Border 
+                                    <!-- Profile picture padding -->
+                                    <Border Grid.Column="1" Padding="8">
+                                        <!-- Profile picture background -->
+                                        <Border 
                                         Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                         CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
-                                        <!-- Profile picture initials -->
-                                        <Image Source="{Binding TrafficServerCountryFlag, Converter={local:ServerToImageConverter}, ConverterParameter=2}"
+                                            <!-- Profile picture initials -->
+                                            <Image Source="{Binding TrafficServerCountryFlag, Converter={local:ServerToImageConverter}, ConverterParameter=2}"
 
                                                />
+                                        </Border>
                                     </Border>
-                                </Border>
-                                <!-- Main content -->
-                            <Border Grid.Column="2" Padding="0 0 8 0">
-                                <StackPanel VerticalAlignment="Center">
-                                    <!-- Name-->
-                                    <TextBlock Text="{Binding Domain}"
+                                    <!-- Main content -->
+                                    <Border Grid.Column="2" Padding="0 0 8 0">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <!-- Name-->
+                                            <TextBlock Text="{Binding Domain}"
                                                 Foreground="{StaticResource WordBlueBrush}"
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"
                                                 />
-                                    <!-- Message -->
-                                    <TextBlock Text="{Binding CountryName}"
+                                            <!-- Message -->
+                                        <TextBlock Text="{Binding CountryName}"
                                                Foreground="{StaticResource ForegroundDarkBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                FontFamily="{StaticResource LatoRegular}"
                                                />
-
-                                </StackPanel>
+                               
+                                    </StackPanel>
+                                    </Border>
+                                    
+                                </Grid>
                             </Border>
 
-                        </Grid>
-                        </Border>
-
+                  
                         <!-- Hover effect -->
                         <ControlTemplate.Triggers>
 
@@ -99,6 +101,13 @@
                                         <ColorAnimation To="Transparent" Duration="0:0:0.3" Storyboard.TargetName="container" Storyboard.TargetProperty="Background.Color" />
                                     </Storyboard>
                                 </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseUp">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger>
+                                        <i:InvokeCommandAction Command="{Binding Path=SelectCommand}" CommandParameter="{Binding}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
                             </EventTrigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Background" TargetName="container" Value="{StaticResource ForegroundDarkBrush}"/>

@@ -140,13 +140,12 @@ namespace Identity.API.Configuration
                     {
                         StandardScopes.OpenId,
                         StandardScopes.Profile,
-                        //StandardScopes.OfflineAccess,
+                        StandardScopes.OfflineAccess,
                         "orders",
                         "servers",
                         "accounting"
                     },
-
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
                 }
             };
         }

@@ -34,7 +34,8 @@
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeServerIcon}" />
                             <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeUserIcon}" />
-                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeRefreshIcon}" />
+                            <Button Style="{StaticResource IconButton}" Content="{StaticResource FontAwesomeRefreshIcon}"
+                                    Command="{Binding RefleshServerCommand}"/>
                         </StackPanel>
 
                         <!-- Settings button -->
