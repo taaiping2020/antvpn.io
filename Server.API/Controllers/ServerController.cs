@@ -13,7 +13,6 @@ namespace Server.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/Server")]
-    [Authorize]
     public class ServerController : Controller
     {
         private readonly ServerContext _context;

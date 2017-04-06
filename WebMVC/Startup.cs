@@ -88,7 +88,7 @@ namespace WebMVC
                 SaveTokens = true,
                 GetClaimsFromUserInfoEndpoint = true,
                 RequireHttpsMetadata = false,
-                Scope = { "openid", "profile", "orders", "accounting", "servers", "offline_access" },
+                Scope = { "openid", "profile", "orders", "accounting", "servers", "offline_access" },                
             };
             app.UseOpenIdConnectAuthentication(oo);
 
