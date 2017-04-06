@@ -19,7 +19,6 @@ namespace Windows
             RefleshServerCommand = new RelayCommand(async () => await RefleshServer());
             ConnectVPNCommand = new RelayCommand(async () => await ConnectVPN());
             SelectCommand = new RelayParameterizedCommand(async (parameter) => await Select(parameter));
-            //RefleshServerCommand.Execute(this);
         }
 
         public ICommand RefleshServerCommand { get; set; }
@@ -48,8 +47,6 @@ namespace Windows
                 try
                 {
                     var servers = await server.GetServersAsync(token.access_token);
-                    //var s = servers.LastOrDefault();
-                    //s.IsSelected = true;
                     foreach (var s in servers)
                     {
                         s.ServerViewModel = this;
@@ -59,7 +56,6 @@ namespace Windows
                 }
                 catch (Exception ex)
                 {
-                    
                     WindowViewModel.Instance.CurrentPage = ApplicationPage.Login;
                 }
 
@@ -71,9 +67,14 @@ namespace Windows
         {
             await RunCommand(() => this.IsTryConnecting, async () =>
             {
-                await Task.Delay(3000);
+                IVpnManagementAgent psvm = new PSVpnManager();
+                await psvm.AddOrUpdateProfileAsync(Server.Domain);
+                await psvm.ConnectProfileAsync("bosxixi", "xboxone");
             });
         }
+
+
+
         public async Task Select(object parameter)
         {
             await RunCommand(() => this.IsTryConnecting, async () =>

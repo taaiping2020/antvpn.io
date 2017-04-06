@@ -53,6 +53,10 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -79,11 +83,15 @@
     <Compile Include="Security\SecureStringHelpers.cs" />
     <Compile Include="Services\IServerService.cs" />
     <Compile Include="Services\ITokenHelper.cs" />
+    <Compile Include="Services\IVPNConnector.cs" />
+    <Compile Include="Services\IVpnManagementAgent.cs" />
     <Compile Include="Services\Protocal.cs" />
+    <Compile Include="Services\PSVpnManager.cs" />
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Services\TokenHelper.cs" />
     <Compile Include="Services\TokenResult.cs" />
     <Compile Include="Services\VPNConnector.cs" />
+    <Compile Include="Services\VpnManagementErrorStatus.cs" />
     <Compile Include="ValueConverters\ApplicationPageValueConverter.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
     <Compile Include="ValueConverters\BooleanToVisibilityConverter.cs" />
