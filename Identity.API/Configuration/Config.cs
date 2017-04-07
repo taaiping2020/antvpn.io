@@ -122,8 +122,9 @@ namespace Identity.API.Configuration
                         new Secret("secret".Sha256())
                     },
                     ClientUri = $"{clientsUrl["Mvc"]}",                             // public uri of the client
-                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                    AllowedGrantTypes = GrantTypes.Hybrid,
                     RequireConsent = false,
+                    AllowOfflineAccess = true,
                     RedirectUris = new List<string>
                     {
                         $"{clientsUrl["Mvc"]}/signin-oidc",
@@ -145,7 +146,7 @@ namespace Identity.API.Configuration
                         "servers",
                         "accounting"
                     },
-                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = (int)TimeSpan.FromDays(14).TotalSeconds,
                 }
             };
         }

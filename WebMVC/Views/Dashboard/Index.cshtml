@@ -60,7 +60,7 @@
             @if (ViewData["logins"] != null)
             {
                 <div class="entity-list entity-list-expandable">
-                    @foreach (var l in (IEnumerable<Extensions.LoginStatus>)ViewData["logins"])
+                    @foreach (var l in (IEnumerable<SharedProject.LoginStatus>)ViewData["logins"])
                 {
                         <div class="entity-list-item">
                             <div class="item-icon">
