@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)AcctRaw.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BasicAcct.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HealthReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoginStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RadiusTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RemoteAccessConnection.cs" />

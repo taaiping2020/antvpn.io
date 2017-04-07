@@ -1,8 +1,10 @@
-﻿using SharedProject;
+﻿using Microsoft.PowerShell.Commands.GetCounter;
+using SharedProject;
 using System;
 using System.Linq;
 using System.Management.Automation;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Accounting.RouterReporter
 {
@@ -123,6 +125,32 @@ namespace Accounting.RouterReporter
             rac.TimeStamp = timestamp;
 
             return rac;
+        }
+
+        public static void SetX509Certificate2(this HealthReport report, X509Certificate2 cert)
+        {
+            report.CertIssuer = cert.Issuer;
+            report.CertSubject = cert.Subject;
+            report.CertNotAfter = cert.NotAfter;
+            report.CertNotBefore = cert.NotBefore;
+        }
+        public static void SetNetwork(this HealthReport report, PerformanceCounterSample receivedCounterSample, PerformanceCounterSample sentCounterSample, PerformanceCounterSample totalCounterSample)
+        {
+            report.NetworkBytesInPerSec = receivedCounterSample.CookedValue;
+            report.NetworkBytesOutPerSec = sentCounterSample.CookedValue;
+            report.NetworkBytesTotalPerSec = totalCounterSample.CookedValue;
+        }
+        public static void SetRemoteAccess(this HealthReport report, PSObject pso)
+        {
+            if (pso == null)
+            {
+                throw new ArgumentNullException(nameof(pso));
+            }
+            report.RoutingStatus = pso.GetValue(nameof(HealthReport.RoutingStatus));
+            report.SstpProxyStatus = pso.GetValue(nameof(HealthReport.SstpProxyStatus));
+            report.VpnS2SStatus = pso.GetValue(nameof(HealthReport.VpnS2SStatus));
+            report.VpnStatus = pso.GetValue(nameof(HealthReport.VpnStatus));
+            report.UseHttp = pso.ParseBool(nameof(HealthReport.UseHttp)) ?? false;
         }
     }
 }

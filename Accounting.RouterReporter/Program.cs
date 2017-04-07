@@ -8,6 +8,9 @@ using System.Data;
 using System.Configuration;
 using System.Collections.Generic;
 using SharedProject;
+using Microsoft.PowerShell.Commands.GetCounter;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace Accounting.RouterReporter
 {
@@ -35,21 +38,23 @@ namespace Accounting.RouterReporter
         private static void Stop()
         {
             ps?.Dispose();
+            perfCounterPS?.Dispose();
         }
 
         private static void Start(string[] args)
         {
-            var autoEvent = new AutoResetEvent(false);
-            t = new Timer(ReportRouterInfo, autoEvent, TimeSpan.FromSeconds(_interval), TimeSpan.FromSeconds(_interval));
+            //ReportRouterInfo();
+            ReportServerHealth();
         }
         #endregion
 
         static PowerShell ps = PowerShell.Create();
+        static PowerShell perfCounterPS = PowerShell.Create();
         static string machineName = Environment.MachineName;
         public const string ServiceName = "RouterReporter";
-        static Timer t;
 
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
+        static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
         static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"]);
 
         static void Main(string[] args)
@@ -70,36 +75,138 @@ namespace Accounting.RouterReporter
             }
         }
 
-        public static void ReportRouterInfo(object state)
+        public async static void ReportRouterInfo()
         {
-            try
+            while (true)
             {
-                ps.Commands.Clear();
-                ps.AddCommand("Get-RemoteAccessConnectionStatistics");
-                var psos = ps.Invoke();
-                var now = DateTime.UtcNow;
+                try
+                {
+                    ps.Commands.Clear();
+                    ps.AddCommand("Get-RemoteAccessConnectionStatistics");
+                    var psos = ps.Invoke();
+                    var now = DateTime.UtcNow;
+                    if (psos.IsNullOrCountEqualsZero())
+                    {
+                        repo.InsertOrUpdateTimetamp(machineName, now);
+                        Console.WriteLine("not client on this server...");
+                    }
+                    else
+                    {
+                        var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
+                        repo.InsertDatas(racs);
+                        repo.InsertOrUpdateTimetamp(machineName, now);
+
+                        TryDisconnectVpnUser(racs);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log(EventLogEntryType.Error, ex.Message);
+                    Log(EventLogEntryType.Error, ex.StackTrace);
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(_interval));
+            }
+            
+        }
+        public static void ReportServerHealth()
+        {
+            while (true)
+            {
+                try
+                {
+                    HealthReport report = new HealthReport();
+                    report.SampleIntervalInSec = _perfCounterInterval;
+                    report.BeginTimestamp = DateTime.UtcNow;
+
+                    CheckingServiceAreRunning();
+
+                    SetPerfCounter(report);
+                    SetRemoteAccessSslCertificate(report);
+                    SetRemoteAccess(report);
+                    SetRemoteAccessRadius(report);
+
+                    report.EndTimestamp = DateTime.UtcNow;
+                    Console.WriteLine(report.EndTimestamp);
+                }
+                catch (Exception ex)
+                {
+                    Log(EventLogEntryType.Error, ex.Message);
+                    Log(EventLogEntryType.Error, ex.StackTrace);
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                }
+            }
+          
+
+            void CheckingServiceAreRunning()
+            {
+                perfCounterPS.Commands.Clear();
+                perfCounterPS.AddScript("Get-Service RaMgmtSvc, RemoteAccess, RouterReporter | Where-Object { $PSItem.Status -eq 'Running'}");
+                var psos = perfCounterPS.Invoke<ServiceController>();
+                if (psos.Count == 3)//TODO
+                {
+                    throw new Exception("service not running...");
+                }
+            }
+            void SetPerfCounter(HealthReport report)
+            {
+                perfCounterPS.Commands.Clear();
+                perfCounterPS.AddScript($"Get-Counter -Counter '{CounterName.NetworkIn}','{CounterName.NetworkOut}','{CounterName.NetworkTotal}','{CounterName.ProcessorInformationTotal}','{CounterName.MemoryAvailableMBytes}' -SampleInterval {_perfCounterInterval} | Select-Object -ExpandProperty CounterSamples");
+                var psos = perfCounterPS.Invoke<PerformanceCounterSample>();
+
+                if (!psos.IsNullOrCountEqualsZero())
+                {
+                    var netCounterSample = psos.FirstOrDefault(c => c.Path.Contains("network") && c.CookedValue != 0);
+                    if (netCounterSample != null)
+                    {
+                        var networkInterfaceName = CounterName.GetNetworkInterfaceName(netCounterSample.Path);
+                        var receivedCounterSample = psos.FirstOrDefault(c => c.Path.Contains(networkInterfaceName) && c.Path.Contains("received"));
+                        var sentCounterSample = psos.FirstOrDefault(c => c.Path.Contains(networkInterfaceName) && c.Path.Contains("sent"));
+                        var totalCounterSample = psos.FirstOrDefault(c => c.Path.Contains(networkInterfaceName) && c.Path.Contains("total"));
+                        report.SetNetwork(receivedCounterSample, sentCounterSample, totalCounterSample);
+                    }
+                    var proTotal = psos.FirstOrDefault(c => c.Path.Contains("processor"));
+                    if (proTotal != null)
+                    {
+                        report.ProcessorTime = proTotal.CookedValue;
+                    }
+                    var memoTotal = psos.FirstOrDefault(c => c.Path.Contains("memory"));
+                    if (memoTotal != null)
+                    {
+                        report.AvailableMemoryMegaBytes = memoTotal.CookedValue;
+                    }
+                }
+            }
+            void SetRemoteAccessRadius(HealthReport report)
+            {
+            }
+            void SetRemoteAccessSslCertificate(HealthReport report)
+            {
+                perfCounterPS.Commands.Clear();
+                perfCounterPS.AddScript($"Get-RemoteAccess | Select-Object -ExpandProperty SslCertificate");
+                var psos = perfCounterPS.Invoke<X509Certificate2>();
                 if (psos.IsNullOrCountEqualsZero())
                 {
-                    repo.InsertOrUpdateTimetamp(machineName, now);
-                    Console.WriteLine("not client on this server...");
+                    throw new ItemNotFoundException("SslCertificate");
                 }
-                else
-                {
-                    var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
-                    repo.InsertDatas(racs);
-                    repo.InsertOrUpdateTimetamp(machineName, now);
-
-                    TryDisconnectVpnUser(racs);
-                }
+                report.SetX509Certificate2(psos.First());
             }
-            catch (Exception ex)
+            void SetRemoteAccess(HealthReport report)
             {
-                Log(EventLogEntryType.Error, ex.Message);
-                Log(EventLogEntryType.Error, ex.StackTrace);
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                perfCounterPS.Commands.Clear();
+                perfCounterPS.AddCommand($"Get-RemoteAccess");
+                var psos = perfCounterPS.Invoke();
+                if (psos.IsNullOrCountEqualsZero())
+                {
+                    throw new Exception("Get-RemoteAccess fail.");
+                }
+                report.SetRemoteAccess(psos.First());
             }
         }
+
         public static void TryDisconnectVpnUser(List<RemoteAccessConnection> connections)
         {
             if (connections == null)
@@ -160,7 +267,6 @@ namespace Accounting.RouterReporter
             // Close the Event Log
             eventLog.Close();
         }
-
     }
 }
 
