@@ -146,7 +146,7 @@ namespace Identity.API.Configuration
                         "servers",
                         "accounting"
                     },
-                    AccessTokenLifetime = (int)TimeSpan.FromDays(14).TotalSeconds,
+                    AccessTokenLifetime = (int)TimeSpan.FromDays(16).TotalSeconds,
                 }
             };
         }
