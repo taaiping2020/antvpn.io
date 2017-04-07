@@ -17,11 +17,13 @@ namespace Server.API.Models
         public virtual Country Country { get; set; }
         public bool IsPublic { get; set; }
         public bool IsHybrid { get; set; }
-        public bool Off { get; set; }
+        public bool Off => true;
         public int? RedirectorServerId { get; set; }
         public virtual Server RedirectorServer { get; set; }
         public int? TrafficServerId { get; set; }
         public virtual Server TrafficServer { get; set; }
         public virtual ICollection<ServerProtocal> ServerProtocals { get; set; }
+
+        public string HealthReportJson { get; set; }
     }
 }

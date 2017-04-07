@@ -8,9 +8,10 @@ using Server.API.Data;
 namespace Server.API.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    partial class ServerContextModelSnapshot : ModelSnapshot
+    [Migration("20170406094039_addHealthReportJson")]
+    partial class addHealthReportJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -28,18 +29,6 @@ namespace Server.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("countries");
-                });
-
-            modelBuilder.Entity("Server.API.Models.HealthReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("HealthReportJson");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("healthreports");
                 });
 
             modelBuilder.Entity("Server.API.Models.Protocal", b =>

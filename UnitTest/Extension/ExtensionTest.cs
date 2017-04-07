@@ -1,10 +1,8 @@
-﻿using Accounting.Sqlserver;
-using System;
+﻿using System;
 using System.Xml;
 using Xunit;
 using System.IO;
-using Extensions;
-
+using SharedProject;
 namespace UnitTest
 {
     public class ExtensionTest
@@ -13,7 +11,7 @@ namespace UnitTest
         public void calc_percent_null()
         {
             //Arrange
-            Extensions.LoginStatus log = new LoginStatus();
+            LoginStatus log = new LoginStatus();
 
             //Act 
             //Assert
@@ -24,7 +22,7 @@ namespace UnitTest
         public void calc_percent_value()
         {
             //Arrange
-            Extensions.LoginStatus log = new LoginStatus();
+            LoginStatus log = new LoginStatus();
             log.BasicAcct = new BasicAcct() { TotalIn = 10, TotalOut = 10 };
             log.MonthlyTraffic = 100;
             //Act 
@@ -38,7 +36,7 @@ namespace UnitTest
         public void calc_percent_value_complex()
         {
             //Arrange
-            Extensions.LoginStatus log = new LoginStatus();
+            LoginStatus log = new LoginStatus();
             log.BasicAcct = new BasicAcct() { TotalIn = 1001210151405, TotalOut = 4654645 };
             log.MonthlyTraffic = 1201210151405;
             //Act 

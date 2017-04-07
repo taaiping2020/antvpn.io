@@ -17,6 +17,7 @@ namespace Server.API.Data
         public virtual DbSet<Server.API.Models.Server> Servers { get; set; }
         public virtual DbSet<Server.API.Models.Protocal> Protocals { get; set; }
         public virtual DbSet<Server.API.Models.Country> Countries { get; set; }
+        public virtual DbSet<Server.API.Models.HealthReport> HealthReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +43,12 @@ namespace Server.API.Data
             {
                 //entity.HasKey(c => c.Name);
                 entity.ToTable("countries");
+            });
+
+            builder.Entity<Server.API.Models.HealthReport>(entity =>
+            {
+                //entity.HasKey(c => c.Name);
+                entity.ToTable("healthreports");
             });
 
             builder.Entity<Server.API.Models.ServerProtocal>(entity =>

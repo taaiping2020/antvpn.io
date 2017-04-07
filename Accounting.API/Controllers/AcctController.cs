@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Accounting.API.Data;
 using Accounting.API.Models;
-using Extensions;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
-using static Extensions.Extension;
 using Dapper;
 
 namespace Accounting.API.Controllers

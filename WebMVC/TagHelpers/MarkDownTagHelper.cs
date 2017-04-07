@@ -12,7 +12,7 @@ namespace WebMVC.TagHelpers
     {
         private static readonly string _markdownBasePath = Path.Combine(Directory.GetCurrentDirectory(), "Content");
         public string File { get; set; }
-        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
+        public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var fileName = Path.Combine(_markdownBasePath, File + ".md");
             if (!System.IO.File.Exists(fileName))

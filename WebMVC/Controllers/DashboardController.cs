@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using WebMVC.Extensions;
 using Newtonsoft.Json;
-using Extensions;
 using WebMVC.Services;
 using Microsoft.Extensions.Options;
 using System.Linq;

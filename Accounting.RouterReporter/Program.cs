@@ -4,10 +4,10 @@ using System.Management.Automation;
 using System.Threading;
 using System.ServiceProcess;
 using System.Diagnostics;
-using Extensions.Windows;
 using System.Data;
 using System.Configuration;
 using System.Collections.Generic;
+using SharedProject;
 
 namespace Accounting.RouterReporter
 {

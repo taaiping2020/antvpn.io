@@ -1011,9 +1011,6 @@
     <None Include="Views\Dashboard\Index.cshtml" />
   </ItemGroup>-->
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Extensions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Content\servicesagreement.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1024,5 +1021,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Import Project="..\SharedProject\SharedProject.projitems" Label="Shared" />
 
 </Project>

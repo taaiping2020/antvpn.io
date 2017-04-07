@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Extensions
+namespace SharedProject
 {
     public static class Extension
     {
@@ -16,7 +16,6 @@ namespace Extensions
 
             return !list.Any();
         }
-
         public static string ToString(this IEnumerable<string> stringArray, char spliter)
         {
             if (stringArray.IsNullOrCountEqualsZero())

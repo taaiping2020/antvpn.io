@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Accounting.API.Data;
 using Accounting.API.Models;
-using Extensions;
+using SharedProject;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
-using static Extensions.Extension;
 
 namespace Accounting.API.Controllers
 {

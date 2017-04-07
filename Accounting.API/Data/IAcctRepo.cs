@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Accounting.API.Models;
 using MongoDB.Bson;
 using Accounting.API.Data;
-using Extensions;
+using SharedProject;
 
 namespace Accounting.API
 {

@@ -83,7 +83,6 @@
     <Compile Include="Security\SecureStringHelpers.cs" />
     <Compile Include="Services\IServerService.cs" />
     <Compile Include="Services\ITokenHelper.cs" />
-    <Compile Include="Services\IVPNConnector.cs" />
     <Compile Include="Services\IVpnManagementAgent.cs" />
     <Compile Include="Services\Protocal.cs" />
     <Compile Include="Services\PSVpnManager.cs" />

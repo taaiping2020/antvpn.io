@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>cd3c2eaf-5e48-4310-9c56-3e0e449e6c76</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SharedProject</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AcctRaw.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasicAcct.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoginStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RadiusTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RemoteAccessConnection.cs" />
+  </ItemGroup>
+</Project>

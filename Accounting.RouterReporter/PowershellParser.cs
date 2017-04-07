@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SharedProject;
+using System;
 using System.Linq;
 using System.Management.Automation;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Extensions.Windows
+namespace Accounting.RouterReporter
 {
     public static class PowershellParser
     {

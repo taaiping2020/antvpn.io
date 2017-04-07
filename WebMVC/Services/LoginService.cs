@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 using WebMVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using SharedProject;
 
 namespace WebMVC.Services
 {

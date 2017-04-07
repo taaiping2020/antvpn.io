@@ -1,5 +1,4 @@
-﻿using Accounting.Sqlserver;
-using System;
+﻿using System;
 using System.Xml;
 using Xunit;
 using System.IO;

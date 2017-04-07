@@ -54,7 +54,7 @@ namespace Windows
 
                     this.Servers = new ServerListViewModel { Items = servers.ToList() };
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     WindowViewModel.Instance.CurrentPage = ApplicationPage.Login;
                 }

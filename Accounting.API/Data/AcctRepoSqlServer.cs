@@ -9,8 +9,8 @@ using Newtonsoft.Json;
 using Accounting.API.Data;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
-using Extensions;
 using Dapper;
+using SharedProject;
 
 namespace Accounting.API
 {
