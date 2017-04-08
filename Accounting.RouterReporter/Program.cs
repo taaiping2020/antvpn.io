@@ -45,6 +45,9 @@ namespace Accounting.RouterReporter
         {
             _timerReportRouterInfo = new Timer(ReportRouterInfo, null, Timeout.Infinite, Timeout.Infinite);
             _timerReportServerHealth = new Timer(ReportServerHealth, null, Timeout.Infinite, Timeout.Infinite);
+
+            _timerReportRouterInfo.Change(0, Timeout.Infinite);
+            _timerReportServerHealth.Change(0, Timeout.Infinite);
         }
         #endregion
 
@@ -141,7 +144,7 @@ namespace Accounting.RouterReporter
                 perfCounterPS.Commands.Clear();
                 perfCounterPS.AddScript("Get-Service RaMgmtSvc, RemoteAccess, RouterReporter | Where-Object { $PSItem.Status -eq 'Running'}");
                 var psos = perfCounterPS.Invoke<ServiceController>();
-                if (psos.Count == 3)//TODO
+                if (psos.Count != 3)//TODO
                 {
                     throw new Exception("service not running...");
                 }
