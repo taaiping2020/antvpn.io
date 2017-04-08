@@ -4,6 +4,7 @@ namespace SharedProject
 {
     public class HealthReport
     {
+        public string MachineName { get; set; }
         public double NetworkBytesInPerSec { get; set; }
         public double NetworkBytesOutPerSec { get; set; }
         public double NetworkBytesTotalPerSec { get; set; }

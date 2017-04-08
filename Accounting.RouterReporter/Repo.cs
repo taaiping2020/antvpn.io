@@ -12,8 +12,9 @@ namespace Accounting.RouterReporter
     public class Repo
     {
         private readonly string _connectionString;
+        private readonly string _connectionStringServer;
         private readonly string _connectionStringDc;
-        public Repo(string connectionString, string connectionStringDc)
+        public Repo(string connectionString, string connectionStringDc, string connectionStringServer)
         {
             if (String.IsNullOrEmpty(connectionString))
             {
@@ -23,8 +24,13 @@ namespace Accounting.RouterReporter
             {
                 throw new ArgumentNullException(nameof(connectionStringDc));
             }
+            if (String.IsNullOrEmpty(connectionStringServer))
+            {
+                throw new ArgumentNullException(nameof(connectionStringServer));
+            }
             this._connectionStringDc = connectionStringDc;
             this._connectionString = connectionString;
+            this._connectionStringServer = connectionStringServer;
         }
         public void InsertDatas(List<RemoteAccessConnection> racs)
         {
@@ -55,6 +61,19 @@ namespace Accounting.RouterReporter
                 {
                     connection.Execute("update [dbo].[currentmeta] set TimeStamp = @timestamp where MachineName = @machineName", new { machineName, timestamp });
                 }
+            }
+        }
+
+        public void InsertServerHealthReport(HealthReport healthReport)
+        {
+            if (healthReport == null)
+            {
+                throw new ArgumentNullException(nameof(healthReport));
+            }
+            var healthReportJson = Newtonsoft.Json.JsonConvert.SerializeObject(healthReport);
+            using (var connection = new SqlConnection(this._connectionStringServer))
+            {
+                connection.Execute(@"insert [dbo].[healthreports](HealthReportJson) values (@healthReportJson)", new { healthReportJson });
             }
         }
     }

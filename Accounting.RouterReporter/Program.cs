@@ -50,12 +50,12 @@ namespace Accounting.RouterReporter
 
         static PowerShell ps = PowerShell.Create();
         static PowerShell perfCounterPS = PowerShell.Create();
-        static string machineName = Environment.MachineName;
+        readonly static string machineName = Environment.MachineName;
         public const string ServiceName = "RouterReporter";
 
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
         static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
-        static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"]);
+        static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"], ConfigurationManager.AppSettings["connectionStringServer"]);
 
         static void Main(string[] args)
         {
@@ -119,6 +119,7 @@ namespace Accounting.RouterReporter
                 {
                     HealthReport report = new HealthReport();
                     report.SampleIntervalInSec = _perfCounterInterval;
+                    report.MachineName = machineName;
                     report.BeginTimestamp = DateTime.UtcNow;
 
                     CheckingServiceAreRunning();
@@ -129,7 +130,7 @@ namespace Accounting.RouterReporter
                     SetRemoteAccessRadius(report);
 
                     report.EndTimestamp = DateTime.UtcNow;
-                    Console.WriteLine(report.EndTimestamp);
+                    repo.InsertServerHealthReport(report);
                 }
                 catch (Exception ex)
                 {

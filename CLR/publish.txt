@@ -33,6 +33,11 @@ CREATE TABLE eventraw (
  CHECK ( ISJSON( InfoJSON )> 0 )
 )
 
+USE [antvpn.server]
+alter TABLE healthreports 
+ add CONSTRAINT [Content should be formatted as JSON]
+ CHECK ( ISJSON( HealthReportJson )> 0 )
+
 
 
 
