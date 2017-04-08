@@ -43,8 +43,8 @@ namespace Accounting.RouterReporter
 
         private static void Start(string[] args)
         {
-            //ReportRouterInfo();
-            ReportServerHealth();
+            _timerReportRouterInfo = new Timer(ReportRouterInfo, null, Timeout.Infinite, Timeout.Infinite);
+            _timerReportServerHealth = new Timer(ReportServerHealth, null, Timeout.Infinite, Timeout.Infinite);
         }
         #endregion
 
@@ -52,7 +52,8 @@ namespace Accounting.RouterReporter
         static PowerShell perfCounterPS = PowerShell.Create();
         readonly static string machineName = Environment.MachineName;
         public const string ServiceName = "RouterReporter";
-
+        public static Timer _timerReportRouterInfo { get; set; }
+        public static Timer _timerReportServerHealth { get; set; }
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
         static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
         static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"], ConfigurationManager.AppSettings["connectionStringServer"]);
@@ -75,72 +76,65 @@ namespace Accounting.RouterReporter
             }
         }
 
-        public async static void ReportRouterInfo()
+        public static void ReportRouterInfo(object state)
         {
-            while (true)
+            try
             {
-                try
+                ps.Commands.Clear();
+                ps.AddCommand("Get-RemoteAccessConnectionStatistics");
+                var psos = ps.Invoke();
+                var now = DateTime.UtcNow;
+                if (psos.IsNullOrCountEqualsZero())
                 {
-                    ps.Commands.Clear();
-                    ps.AddCommand("Get-RemoteAccessConnectionStatistics");
-                    var psos = ps.Invoke();
-                    var now = DateTime.UtcNow;
-                    if (psos.IsNullOrCountEqualsZero())
-                    {
-                        repo.InsertOrUpdateTimetamp(machineName, now);
-                        Console.WriteLine("not client on this server...");
-                    }
-                    else
-                    {
-                        var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
-                        repo.InsertDatas(racs);
-                        repo.InsertOrUpdateTimetamp(machineName, now);
-
-                        TryDisconnectVpnUser(racs);
-                    }
+                    repo.InsertOrUpdateTimetamp(machineName, now);
+                    Console.WriteLine("not client on this server...");
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log(EventLogEntryType.Error, ex.Message);
-                    Log(EventLogEntryType.Error, ex.StackTrace);
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
-                }
+                    var racs = psos.Select(c => c.GetRemoteAccessConnection(machineName, now)).ToList();
+                    repo.InsertDatas(racs);
+                    repo.InsertOrUpdateTimetamp(machineName, now);
 
-                await Task.Delay(TimeSpan.FromSeconds(_interval));
+                    TryDisconnectVpnUser(racs);
+                }
             }
-            
+            catch (Exception ex)
+            {
+                Log(EventLogEntryType.Error, ex.Message);
+                Log(EventLogEntryType.Error, ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            _timerReportRouterInfo.Change(_interval * 1000, Timeout.Infinite);
         }
-        public static void ReportServerHealth()
+        public static void ReportServerHealth(object state)
         {
-            while (true)
+            try
             {
-                try
-                {
-                    HealthReport report = new HealthReport();
-                    report.SampleIntervalInSec = _perfCounterInterval;
-                    report.MachineName = machineName;
-                    report.BeginTimestamp = DateTime.UtcNow;
+                HealthReport report = new HealthReport();
+                report.SampleIntervalInSec = _perfCounterInterval;
+                report.MachineName = machineName;
+                report.BeginTimestamp = DateTime.UtcNow;
 
-                    CheckingServiceAreRunning();
+                CheckingServiceAreRunning();
 
-                    SetPerfCounter(report);
-                    SetRemoteAccessSslCertificate(report);
-                    SetRemoteAccess(report);
-                    SetRemoteAccessRadius(report);
+                SetPerfCounter(report);
+                SetRemoteAccessSslCertificate(report);
+                SetRemoteAccess(report);
+                SetRemoteAccessRadius(report);
 
-                    report.EndTimestamp = DateTime.UtcNow;
-                    repo.InsertServerHealthReport(report);
-                }
-                catch (Exception ex)
-                {
-                    Log(EventLogEntryType.Error, ex.Message);
-                    Log(EventLogEntryType.Error, ex.StackTrace);
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
-                }
+                report.EndTimestamp = DateTime.UtcNow;
+                repo.InsertServerHealthReport(report);
             }
-          
+            catch (Exception ex)
+            {
+                Log(EventLogEntryType.Error, ex.Message);
+                Log(EventLogEntryType.Error, ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+            _timerReportServerHealth.Change(1000, Timeout.Infinite);
 
             void CheckingServiceAreRunning()
             {
