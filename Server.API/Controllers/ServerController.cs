@@ -38,7 +38,7 @@ namespace Server.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(servers.Select(c => new Server.API.ViewModels.ServerViewModels(c)));
+            return Ok(servers.Select(c => ServerViewModelFactory.Create(c)));
         }
 
         // GET: api/Server/5

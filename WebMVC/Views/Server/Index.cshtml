@@ -37,7 +37,7 @@
                          
                             </div>
                             <div class="col-md-4">
-                                @if (server.Off)
+                                @if (!server.IsServerStatusGood)
                                 {
                                     <span>Status: </span><span class="glyph glyph-radio-bullet status-stop" title="Stopped"></span>
                                 }
@@ -56,6 +56,21 @@
                         <div class="row">
                             <div class="col-md-18 col-md-offset-2">
                                 Server Endpoint: <strong>@server.Domain</strong>
+                            </div>
+                            <div class="col-md-18 col-md-offset-2">
+                                CPU Load: <strong>@server.CPUPercentage</strong>
+                            </div>
+                            <div class="col-md-18 col-md-offset-2">
+                                Bandwidth In: <strong>@server.BandwidthIn</strong>
+                            </div>
+                            <div class="col-md-18 col-md-offset-2">
+                                Bandwidth Out: <strong>@server.BandwidthOut</strong>
+                            </div>
+                            <div class="col-md-18 col-md-offset-2">
+                                Bandwidth Total: <strong>@server.BandwidthTotal</strong>
+                            </div>
+                            <div class="col-md-18 col-md-offset-2">
+                                Last Updated: <strong>@server.DurationDisplay</strong>
                             </div>
                             <div class="col-md-4 text-right">
                                 <button class="btn btn-primary btn-sm">Copy</button>
