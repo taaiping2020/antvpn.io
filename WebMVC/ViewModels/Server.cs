@@ -50,7 +50,7 @@ namespace WebMVC.ViewModels
                 {
                     return false;
                 }
-                if (this.HealthReport.EndTimestamp.AddMinutes(5) < DateTime.UtcNow)
+                if (this.HealthReport.EndTimestamp.AddMinutes(7) < DateTime.UtcNow)
                 {
                     return false;
                 }

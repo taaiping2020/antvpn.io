@@ -114,8 +114,8 @@ namespace Accounting.RouterReporter
             rac.ConnectionDuration = pso.ParseTimeSpanFromSeconds(nameof(RemoteAccessConnection.ConnectionDuration))?.Ticks;
             rac.ConnectionStartTime = pso.ParseDate(nameof(RemoteAccessConnection.ConnectionStartTime));
             rac.ConnectionType = pso.ParseEnum<ConnectionType>(nameof(ConnectionType));
-            rac.TotalBytesIn = pso.ParseInt(nameof(RemoteAccessConnection.TotalBytesIn));
-            rac.TotalBytesOut = pso.ParseInt(nameof(RemoteAccessConnection.TotalBytesOut));
+            rac.TotalBytesIn = pso.ParseLong(nameof(RemoteAccessConnection.TotalBytesIn));
+            rac.TotalBytesOut = pso.ParseLong(nameof(RemoteAccessConnection.TotalBytesOut));
             rac.TransitionTechnology = pso.GetValue(nameof(RemoteAccessConnection.TransitionTechnology));
             rac.TunnelType = pso.ParseEnum<TunnelType>(nameof(TunnelType));
             rac.UserActivityState = pso.ParseEnum<UserActivityState>(nameof(UserActivityState));
