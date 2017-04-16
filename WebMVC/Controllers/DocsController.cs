@@ -24,7 +24,7 @@ namespace WebMVC.Controllers
         {
             if (id == null)
             {
-                id = "haha";
+                id = "documentation";
             }
             if (String.IsNullOrEmpty(id))
             {

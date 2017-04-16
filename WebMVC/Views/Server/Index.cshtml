@@ -1,6 +1,16 @@
 
 
 <div class="container">
+    <markdown file="serverintro"></markdown>
+    @*<div class="row">
+        <div class="col-md-6">
+            <markdown file="serverintro"></markdown>
+        </div>
+        <div class="col-md-18">
+
+        </div>
+    </div>*@
+
     <ol class="list-items">
         @if (ViewData["servers"] != null)
         {
@@ -18,15 +28,15 @@
                                 @if (server.IsHybrid)
                                 {
                                     <img src="@Url.Content("/images/flags_iso/32/" + server.RedirectorServerCountryFlag)" alt="@server.RedirectorServerCountryName" />
-                                    <strong><span class="glyph glyph-remote"></span></strong>
-                                    <img src="@Url.Content("/images/flags_iso/32/" + server.TrafficServerCountryFlag)" alt="@server.TrafficServerCountryName" />
+                                            <strong><span class="glyph glyph-remote"></span></strong>
+                                            <img src="@Url.Content("/images/flags_iso/32/" + server.TrafficServerCountryFlag)" alt="@server.TrafficServerCountryName" />
                                 }
                                 else
                                 {
                                     <img src="@Url.Content("/images/flags_iso/32/" + server.CountryFlag)" alt="@server.CountryName" />
                                 }
-                               
-                      
+
+
                                 @*<a>sh.uk.antvpn.io</a>*@
                             </div>
                             <div class="col-md-4">
@@ -34,7 +44,7 @@
                             </div>
                             <div class="col-md-4">
                                 Type: <strong>@(server.IsHybrid ? "Hybrid" : "Normal")</strong>
-                         
+
                             </div>
                             <div class="col-md-4">
                                 @if (!server.IsServerStatusGood)
