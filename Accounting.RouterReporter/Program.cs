@@ -43,11 +43,25 @@ namespace Accounting.RouterReporter
 
         private static void Start(string[] args)
         {
-            _timerReportRouterInfo = new Timer(ReportRouterInfo, null, Timeout.Infinite, Timeout.Infinite);
-            _timerReportServerHealth = new Timer(ReportServerHealth, null, Timeout.Infinite, Timeout.Infinite);
+            if (bool.Parse(ConfigurationManager.AppSettings["ReportRouterInfo"]))
+            {
+                _timerReportRouterInfo = new Timer(ReportRouterInfo, null, Timeout.Infinite, Timeout.Infinite);
+                _timerReportRouterInfo.Change(0, Timeout.Infinite);
+            }
 
-            _timerReportRouterInfo.Change(0, Timeout.Infinite);
-            _timerReportServerHealth.Change(0, Timeout.Infinite);
+            if (bool.Parse(ConfigurationManager.AppSettings["ReportServerHealth"]))
+            {
+                _timerReportServerHealth = new Timer(ReportServerHealth, null, Timeout.Infinite, Timeout.Infinite);
+                _timerReportServerHealth.Change(0, Timeout.Infinite);
+            }
+
+            if (bool.Parse(ConfigurationManager.AppSettings["UpdateShadowsocksUsers"]))
+            {
+                _shadowsocksUserManager = new ShadowsocksUserManager(_shadowsocksManageAddress, _shadowsocksManagePort, Log, repo, machineName);
+                _timerUpdateShadowsocksUsers = new Timer(_shadowsocksUserManager.UpdateShadowsocksUsers, null, Timeout.Infinite, Timeout.Infinite);
+                _shadowsocksUserManager.SetTimer(_timerUpdateShadowsocksUsers);
+                _timerUpdateShadowsocksUsers.Change(0, Timeout.Infinite);
+            }
         }
         #endregion
 
@@ -57,8 +71,14 @@ namespace Accounting.RouterReporter
         public const string ServiceName = "RouterReporter";
         public static Timer _timerReportRouterInfo { get; set; }
         public static Timer _timerReportServerHealth { get; set; }
+        public static Timer _timerUpdateShadowsocksUsers { get; set; }
+        public static ShadowsocksUserManager _shadowsocksUserManager { get; set; }
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
         static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
+
+        static string _shadowsocksManageAddress = ConfigurationManager.AppSettings["ShadowsocksManageAddress"];
+        static int _shadowsocksManagePort = int.Parse(ConfigurationManager.AppSettings["ShadowsocksManagePort"]);
+
         static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"], ConfigurationManager.AppSettings["connectionStringServer"]);
         static volatile bool IsShadowsocksServerRunning;
 
@@ -262,26 +282,34 @@ namespace Accounting.RouterReporter
 
         private static void Log(EventLogEntryType type, string message)
         {
-            // Create an instance of EventLog
-            EventLog eventLog = new EventLog();
-
-            // Check if the event source exists. If not create it.
-            if (!EventLog.SourceExists(ServiceName))
+            if (!Environment.UserInteractive)
             {
-                EventLog.CreateEventSource(ServiceName, "Application");
+                // Create an instance of EventLog
+                EventLog eventLog = new EventLog();
+
+                // Check if the event source exists. If not create it.
+                if (!EventLog.SourceExists(ServiceName))
+                {
+                    EventLog.CreateEventSource(ServiceName, "Application");
+                }
+
+                // Set the source name for writing log entries.
+                eventLog.Source = ServiceName;
+
+                // Create an event ID to add to the event log
+                int eventID = 8;
+
+                // Write an entry to the event log.
+                eventLog.WriteEntry(message, type, eventID);
+
+                // Close the Event Log
+                eventLog.Close();
             }
-
-            // Set the source name for writing log entries.
-            eventLog.Source = ServiceName;
-
-            // Create an event ID to add to the event log
-            int eventID = 8;
-
-            // Write an entry to the event log.
-            eventLog.WriteEntry(message, type, eventID);
-
-            // Close the Event Log
-            eventLog.Close();
+            else
+            {
+                Console.WriteLine($"{Enum.GetName(typeof(EventLogEntryType), type)}: {message}");
+            }
+           
         }
     }
 }

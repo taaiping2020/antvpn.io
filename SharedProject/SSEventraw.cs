@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Accounting.API
+namespace SharedProject
 {
     public partial class SSEventraw
     {

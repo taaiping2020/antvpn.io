@@ -48,6 +48,14 @@ namespace Accounting.RouterReporter
             }
         }
 
+        public IEnumerable<Login> GetLiveUsers()
+        {
+            using (var connection = new SqlConnection(this._connectionStringDc))
+            {
+                return connection.Query<Login>(@"select [LoginName],[Password],[Port] from logins where [AllowDialIn] = 1 and [Enabled] = 1").ToList();
+            }
+        }
+
         public void InsertOrUpdateTimetamp(string machineName, DateTime timestamp)
         {
             using (var connection = new SqlConnection(this._connectionString))
@@ -61,6 +69,14 @@ namespace Accounting.RouterReporter
                 {
                     connection.Execute("update [dbo].[currentmeta] set TimeStamp = @timestamp where MachineName = @machineName", new { machineName, timestamp });
                 }
+            }
+        }
+
+        public void InsertSSEventRaws(IEnumerable<SSEventraw> sseventraw)
+        {
+            using (var connection = new SqlConnection(this._connectionString))
+            {
+                connection.Execute(@"insert [dbo].[sseventraw](MachineName, TimeStamp, TotalBytesInOut, UserName) values (@MachineName, @TimeStamp, @TotalBytesInOut, @UserName)", sseventraw);
             }
         }
 

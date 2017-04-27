@@ -1,5 +1,6 @@
 ﻿using Accounting.API.Models;
 using Microsoft.EntityFrameworkCore;
+using SharedProject;
 using System;
 using System.Collections.Generic;
 using System.Linq;

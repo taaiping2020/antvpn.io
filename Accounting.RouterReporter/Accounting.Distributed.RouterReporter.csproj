@@ -78,11 +78,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CouterName.cs" />
+    <Compile Include="Login.cs" />
+    <Compile Include="LoginComparer.cs" />
     <Compile Include="Meta.cs" />
     <Compile Include="PowershellParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repo.cs" />
+    <Compile Include="ShadowsocksBase.cs" />
+    <Compile Include="ShadowsocksStat.cs" />
+    <Compile Include="ShadowsocksUserManager.cs" />
+    <Compile Include="SSCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

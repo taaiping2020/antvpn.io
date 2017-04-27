@@ -17,5 +17,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)RadiusTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RemoteAccessConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ServerViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SSEventraw.cs" />
   </ItemGroup>
 </Project>
