@@ -9,9 +9,10 @@ using SharedProject;
 namespace Accounting.API.Migrations
 {
     [DbContext(typeof(AccountingContext))]
-    partial class LoginContextModelSnapshot : ModelSnapshot
+    [Migration("20170427023516_addSSEventraw")]
+    partial class addSSEventraw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 using System.Xml;
+using System.IO;
 
 namespace Accounting.Sqlserver
 {
@@ -26,6 +27,7 @@ namespace Accounting.Sqlserver
         [SqlProcedure]
         public static void EventReport(SqlString doc)
         {
+            File.WriteAllText($"c:/logs/{DateTime.Now.ToString("yyyyMMddHHmmss")}-{DateTime.Now.Ticks}-xml-enter.txt", $"{doc.Value}");
             //repo.InsertData(doc.Value);
             if (doc == null || String.IsNullOrEmpty(doc.Value))
             {
@@ -37,7 +39,7 @@ namespace Accounting.Sqlserver
                 XmlDocument dom = new XmlDocument();
                 dom.LoadXml(doc.Value);
                 var json = dom.MapToJsonString();
-
+                //File.WriteAllText($"c:/logs/{DateTime.Now.ToString("yyyyMMddHHmmss")}-{DateTime.Now.Ticks}-json-enter.txt", $"{json}");
                 using (SqlConnection connection = new SqlConnection("context connection=true"))
                 {
                     connection.Open();
@@ -47,15 +49,10 @@ namespace Accounting.Sqlserver
                     SqlContext.Pipe.ExecuteAndSend(command);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                using (SqlConnection connection = new SqlConnection("context connection=true"))
-                {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand("insert into eventraw (InfoXML) values (@xml)", connection);
-                    command.Parameters.AddWithValue("@xml", doc.Value);
-                    SqlContext.Pipe.ExecuteAndSend(command);
-                }
+                File.WriteAllText($"c:/logs/{DateTime.Now.ToString("yyyyMMddHHmmss")}-{DateTime.Now.Ticks}-message.txt", ex.Message);
+                File.WriteAllText($"c:/logs/{DateTime.Now.ToString("yyyyMMddHHmmss")}-{DateTime.Now.Ticks}-xml.txt", doc.Value);
             }
         }
     }

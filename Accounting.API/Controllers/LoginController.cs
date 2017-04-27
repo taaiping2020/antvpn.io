@@ -58,6 +58,7 @@ namespace Accounting.API.Controllers
                 UserId = c.UserId,
                 MonthlyTraffic = c.MonthlyTraffic,
                 IsOnline = currentUserNames.Contains(c.LoginName),
+                Port = c.Port,
                 BasicAcct = new BasicAcct()
                 {
                     TotalIn = accts.FirstOrDefault(d => d.UserName == c.LoginName)?.TotalInput ?? 0,

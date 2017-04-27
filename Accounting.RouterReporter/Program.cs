@@ -60,6 +60,7 @@ namespace Accounting.RouterReporter
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
         static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
         static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"], ConfigurationManager.AppSettings["connectionStringServer"]);
+        static volatile bool IsShadowsocksServerRunning;
 
         static void Main(string[] args)
         {
@@ -125,6 +126,7 @@ namespace Accounting.RouterReporter
                 SetRemoteAccessSslCertificate(report);
                 SetRemoteAccess(report);
                 SetRemoteAccessRadius(report);
+                SetSSServerRunningStatus(report);
 
                 report.EndTimestamp = DateTime.UtcNow;
                 repo.InsertServerHealthReport(report);
@@ -202,6 +204,22 @@ namespace Accounting.RouterReporter
                     throw new Exception("Get-RemoteAccess fail.");
                 }
                 report.SetRemoteAccess(psos.First());
+            }
+            void SetSSServerRunningStatus(HealthReport report)
+            {
+                perfCounterPS.Commands.Clear();
+                perfCounterPS.AddScript($"Get-Process ssserver");
+                var psos = perfCounterPS.Invoke();
+                if (psos.IsNullOrCountEqualsZero())
+                {
+                    report.IsShadowsocksServerRunning = false;
+                    IsShadowsocksServerRunning = false;
+                }
+                else
+                {
+                    report.IsShadowsocksServerRunning = true;
+                    IsShadowsocksServerRunning = true;
+                }
             }
         }
 

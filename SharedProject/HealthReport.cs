@@ -25,5 +25,6 @@ namespace SharedProject
         public string VpnS2SStatus { get; set; }
         public string VpnStatus { get; set; }
         public bool UseHttp { get; set; }
+        public bool IsShadowsocksServerRunning { get; set; }
     }
 }

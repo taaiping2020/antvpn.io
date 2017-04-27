@@ -8,9 +8,10 @@ using Accounting.API.Data;
 namespace Accounting.API.Migrations.AD
 {
     [DbContext(typeof(ADContext))]
-    partial class ADContextModelSnapshot : ModelSnapshot
+    [Migration("20170427014135_addporttologins")]
+    partial class addporttologins
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

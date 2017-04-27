@@ -17,6 +17,7 @@ namespace Accounting.API.Data
         public virtual DbSet<Eventraw> Eventraw { get; set; }
         public virtual DbSet<Current> Current { get; set; }
         public virtual DbSet<CurrentMeta> CurrentMeta { get; set; }
+        public virtual DbSet<SSEventraw> SSEventraw { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +30,11 @@ namespace Accounting.API.Data
                 entity.Property(e => e.InfoJson).HasColumnName("InfoJSON");
 
                 entity.Property(e => e.InfoXml).HasColumnName("InfoXML");
+            });
+
+            builder.Entity<SSEventraw>(entity =>
+            {
+                entity.ToTable("sseventraw");
             });
 
             builder.Entity<Current>(entity =>

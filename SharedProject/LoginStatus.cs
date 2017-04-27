@@ -14,6 +14,7 @@ namespace SharedProject
         public BasicAcct BasicAcct { get; set; }
         public DateTimeOffset? LastUpdated { get; set; }
         public long? MonthlyTraffic { get; set; }
+        public int Port { get; set; }
         public string MonthlyTrafficDisplay => ToMegaByte(MonthlyTraffic);
         public string Percent()
         {

@@ -23,5 +23,6 @@ namespace Accounting.API.Models
         [StringLength(256)]
         public string GroupName { get; set; }
         public long? MonthlyTraffic { get; set; }
+        public int Port { get; set; }
     }
 }
