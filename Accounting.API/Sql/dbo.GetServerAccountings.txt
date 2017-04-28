@@ -22,6 +22,13 @@ where JSON_VALUE(InfoJSON, '$.Acct_Status_Type') = 2
 	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
 	 group by machinename
 
+	 union
+
+	 select 0 as totalinput, sum(TotalBytesInOut) as totaloutput, machinename as nasidentifier
+	 from [sseventraw] 
+	  where [TimeStamp] >= @begintime and [TimeStamp] < @endtime
+	 group by machinename
+
 )
 
 select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, nasidentifier from eventtables

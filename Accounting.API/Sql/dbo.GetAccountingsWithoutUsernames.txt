@@ -20,6 +20,12 @@ with eventtables(inputoctets,outputoctes, username) as
 		select sum(TotalBytesIn) as totalinput, sum(TotalBytesOut) as totaloutput, username
 	 from [current] where [TimeStamp] in (select [TimeStamp] from [dbo].[currentmeta])
 	 group by username
+
+	  union 
+	   select 0 as totalinput, sum(TotalBytesInOut) as totaloutput, username
+	   from sseventraw
+	   where [TimeStamp] >= @begintime and [TimeStamp] < @endtime
+	   group by username
 )
 
 select sum(inputoctets) as totalinput, sum(outputoctes) as totaloutput, username from eventtables
