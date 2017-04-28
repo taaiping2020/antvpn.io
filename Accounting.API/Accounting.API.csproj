@@ -25,6 +25,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.4.3" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Swashbuckle" Version="6.0.0-beta902" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>

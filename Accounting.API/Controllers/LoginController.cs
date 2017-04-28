@@ -44,6 +44,7 @@ namespace Accounting.API.Controllers
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
+            var acctsss = await _repo.GetSSAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
 
             var query = from c in _accountingContext.Current
                         join cm in _accountingContext.CurrentMeta on c.TimeStamp equals cm.TimeStamp
@@ -57,6 +58,7 @@ namespace Accounting.API.Controllers
                 LoginName = c.LoginName,
                 UserId = c.UserId,
                 MonthlyTraffic = c.MonthlyTraffic,
+                SSMonthlyTraffic = acctsss.FirstOrDefault(d => d.Item1 == c.LoginName).Item2,
                 IsOnline = currentUserNames.Contains(c.LoginName),
                 Port = c.Port,
                 BasicAcct = new BasicAcct()

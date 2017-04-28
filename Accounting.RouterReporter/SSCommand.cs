@@ -10,7 +10,7 @@ namespace Accounting.RouterReporter
     {
         public static byte[] AddUser(int port, string username, string password)
         {
-            var bytes = Encoding.ASCII.GetBytes($@"add: {{""server_port"": {port}, ""password"":""{username}{password}""}}");
+            var bytes = Encoding.ASCII.GetBytes($@"add: {{""server_port"": {port}, ""password"":""{password}""}}");
             return bytes;
         }
 

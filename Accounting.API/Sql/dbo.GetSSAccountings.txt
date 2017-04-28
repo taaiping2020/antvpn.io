@@ -1,0 +1,33 @@
+﻿USE [antvpn.accounting]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[GetAccountings]    Script Date: 2017/4/28 15:07:11 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE FUNCTION [dbo].[GetSSAccountings]
+	(@usernames AS nvarchar(max),
+	@begintime AS date,
+	@endtime AS date) 
+	returns table
+AS
+return
+
+with eventtables(totalinputoutput, username) as
+(
+	   select sum(TotalBytesInOut) as totalinputoutput, username
+	   from sseventraw
+	   where [TimeStamp] >= @begintime and [TimeStamp] < @endtime
+	   group by username
+)
+
+select sum(totalinputoutput) as totalinputoutput, username from eventtables
+group by username;
+GO
+
+

@@ -11,16 +11,16 @@
                 <li class="list-items-row">
                     <div data-toggle="collapse" aria-expanded="false" data-target="@("#list-item-line-" + server.Id)">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <i class="glyph glyph-add"></i>
                                 <i class="glyph glyph-remove"></i>
                                 @*<strong>1</strong>*@
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 @if (server.IsHybrid)
                                 {
                                     <img src="@Url.Content("/images/flags_iso/32/" + server.RedirectorServerCountryFlag)" alt="@server.RedirectorServerCountryName" />
-                                            <strong><span class="glyph glyph-remote"></span></strong>
+                                    <strong><span class="glyph glyph-remote"></span></strong>
                                             <img src="@Url.Content("/images/flags_iso/32/" + server.TrafficServerCountryFlag)" alt="@server.TrafficServerCountryName" />
                                 }
                                 else
@@ -31,7 +31,7 @@
 
                                 @*<a>sh.uk.antvpn.io</a>*@
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 Protocals: <strong>@server.ProtocalsDisplay</strong>
                             </div>
                             <div class="col-md-4">
@@ -75,7 +75,7 @@
                                 Last Updated: <strong>@server.DurationDisplay</strong>
                             </div>
                             <div class="col-md-4 text-right">
-                                <button class="btn btn-primary btn-sm">Copy</button>
+                                <button data-serverDomain="@server.Domain" class="btn btn-primary btn-sm copyBtn">Copy</button>
                             </div>
                         </div>
                     </div>
@@ -84,3 +84,14 @@
         }
     </ol>
 </div>
+
+
+@section scripts {
+    <script>
+        $(function () {
+            $(".copyBtn").on("click", (e) => {
+                window.prompt("Copy to clipboard: Ctrl+C, Enter", e.currentTarget.getAttribute("data-serverDomain"));
+            })
+        });
+    </script>
+}

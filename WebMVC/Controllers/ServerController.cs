@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace WebMVC.Controllers
 {
+    [ResponseCache(Duration = 60)]
     public class ServerController : Controller
     {
         private readonly IServerService _serverService;

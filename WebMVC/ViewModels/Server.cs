@@ -39,7 +39,8 @@ namespace WebMVC.ViewModels
             SSTP = 1,
             PPTP = 2,
             IKEv2 = 3,
-            L2TP = 4
+            L2TP = 4,
+            Shadowsocks = 5
         }
 
         public bool IsServerStatusGood

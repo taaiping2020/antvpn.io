@@ -13,9 +13,11 @@ namespace SharedProject
         public bool IsOnline { get; set; }
         public BasicAcct BasicAcct { get; set; }
         public DateTimeOffset? LastUpdated { get; set; }
-        public long? MonthlyTraffic { get; set; }
         public int Port { get; set; }
+        public long? MonthlyTraffic { get; set; }
         public string MonthlyTrafficDisplay => ToMegaByte(MonthlyTraffic);
+        public long? SSMonthlyTraffic { get; set; }
+        public string SSMonthlyTrafficDisplay => ToMegaByte(SSMonthlyTraffic);
         public string Percent()
         {
             if (this.BasicAcct != null && MonthlyTraffic != null)

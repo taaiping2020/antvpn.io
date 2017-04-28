@@ -11,6 +11,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Options;
 using Dapper;
 using SharedProject;
+using System.Data.Common;
 
 namespace Accounting.API
 {
@@ -61,6 +62,47 @@ namespace Accounting.API
             return acctns;
         }
 
+        public async Task<IEnumerable<ValueTuple<string, long>>> GetSSAcctNAsync(string usernames, DateTime? beginTime, DateTime? endTime)
+        {
+            if (String.IsNullOrEmpty(usernames))
+            {
+                //throw new ArgumentNullException(nameof(usernames));
+                usernames = usernames ?? "";
+            }
+            beginTime = beginTime ?? DateTime.Parse("1753-1-1");
+            endTime = endTime ?? DateTime.MaxValue;
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "select totalinputoutput,username from dbo.GetSSAccountings(@usernames, @begintime, @endtime)";
+            command.Parameters.Add(new SqlParameter("@usernames", usernames));
+            command.Parameters.Add(new SqlParameter("@begintime", beginTime));
+            command.Parameters.Add(new SqlParameter("@endtime", endTime));
+            var reader = await command.ExecuteReaderAsync();
+            var acctns = GetValueTupleFromReader(reader).ToArray();
+            connection.Close();
+            return acctns;
+        }
+        public static IEnumerable<ValueTuple<string, long>> GetValueTupleFromReader(DbDataReader reader)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+            if (reader.IsClosed)
+            {
+                throw new InvalidOperationException("DbDataReader is closed.");
+            }
+            if (!reader.HasRows)
+            {
+                yield break;
+            }
+
+            while (reader.Read())
+            {
+                yield return new ValueTuple<string, long>(reader.GetString(1), reader.GetInt64(0));
+            }
+        }
         public async Task<IEnumerable<AcctN>> GetAcctNAsync(DateTime? beginTime, DateTime? endTime)
         {
             beginTime = beginTime ?? DateTime.Parse("1753-1-1");
