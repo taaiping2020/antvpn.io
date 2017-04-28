@@ -34,7 +34,7 @@ namespace Accounting.RouterReporter
         {
             this._timer = timer;
         }
-        protected void ResultHandler(Action onAddedOrRemoveUser = null, Action onReceiveStat = null)
+        protected void ResultHandler(Action onAddedOrRemoveUser = null, Action<string> onReceiveStat = null)
         {
             byte[] bytes = new byte[32];
             _socket.Receive(bytes);
@@ -43,6 +43,7 @@ namespace Accounting.RouterReporter
             if (result == "pong")
             {
                 _logger(EventLogEntryType.SuccessAudit, "Connect to ssserver manage api.");
+                return;
             }
             if (result == "ok")
             {
@@ -51,7 +52,7 @@ namespace Accounting.RouterReporter
             }
 
             _logger(EventLogEntryType.Information, result);
-            onReceiveStat?.Invoke();
+            onReceiveStat?.Invoke(result);
         }
     }
 }

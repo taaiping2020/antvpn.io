@@ -35,14 +35,18 @@ namespace Accounting.RouterReporter
             }
         }
 
-        public void ReportShadowsocksStat()
+        public void ReportShadowsocksStat(string message)
         {
-            _socket.Receive(bytes);
-            int lastIndex = Array.FindLastIndex(bytes, b => b != 0);
-            var result = Encoding.ASCII.GetString(bytes, 0, lastIndex + 1);
-            Array.Clear(bytes, 0, lastIndex + 1);
+            if (String.IsNullOrEmpty(message))
+            {
+                _socket.Receive(bytes);
+                int lastIndex = Array.FindLastIndex(bytes, b => b != 0);
+                message = Encoding.ASCII.GetString(bytes, 0, lastIndex + 1);
+                Array.Clear(bytes, 0, lastIndex + 1);
+            }
 
-            var stat = ShadowsocksStat.Parse(result);
+
+            var stat = ShadowsocksStat.Parse(message);
             List<SSEventraw> events = new List<SSEventraw>();
             foreach (var item in stat)
             {
@@ -75,7 +79,7 @@ namespace Accounting.RouterReporter
             {
                 if (!isFirstTime)
                 {
-                    ReportShadowsocksStat();
+                    ReportShadowsocksStat(null);
                 }
 
                 _timer.Change(5000, Timeout.Infinite);
