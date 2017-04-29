@@ -9,7 +9,7 @@ using SharedProject;
 
 namespace Accounting.RouterReporter
 {
-    public class Repo
+    public class Repo : IRepo
     {
         private readonly string _connectionString;
         private readonly string _connectionStringServer;

@@ -55,12 +55,12 @@ namespace Accounting.RouterReporter
                 _timerReportServerHealth.Change(0, Timeout.Infinite);
             }
 
-            if (bool.Parse(ConfigurationManager.AppSettings["UpdateShadowsocksUsers"]))
+            if (bool.Parse(ConfigurationManager.AppSettings["Shadowsocks"]))
             {
-                _shadowsocksUserManager = new ShadowsocksUserManager(_shadowsocksManageAddress, _shadowsocksManagePort, Log, repo, machineName);
-                _timerUpdateShadowsocksUsers = new Timer(_shadowsocksUserManager.UpdateShadowsocksUsers, null, Timeout.Infinite, Timeout.Infinite);
-                _shadowsocksUserManager.SetTimer(_timerUpdateShadowsocksUsers);
-                _timerUpdateShadowsocksUsers.Change(0, Timeout.Infinite);
+                _shadowsocksUser = new Shadowsocks(_shadowsocksManageAddress, _shadowsocksManagePort, machineName, logger, repo);
+                _timerShadowsocks = new Timer(_shadowsocksUser.Fetch, null, Timeout.Infinite, Timeout.Infinite);
+                _shadowsocksUser.SetTimer(_timerShadowsocks);
+                _timerShadowsocks.Change(0, Timeout.Infinite);
             }
         }
         #endregion
@@ -71,16 +71,15 @@ namespace Accounting.RouterReporter
         public const string ServiceName = "RouterReporter";
         public static Timer _timerReportRouterInfo { get; set; }
         public static Timer _timerReportServerHealth { get; set; }
-        public static Timer _timerUpdateShadowsocksUsers { get; set; }
-        public static ShadowsocksUserManager _shadowsocksUserManager { get; set; }
+        public static Timer _timerShadowsocks { get; set; }
+        public static Shadowsocks _shadowsocksUser { get; set; }
         static int _interval = int.Parse(ConfigurationManager.AppSettings["interval"]);
         static int _perfCounterInterval = int.Parse(ConfigurationManager.AppSettings["perfCounterInterval"]);
-
+        static WindowsEventLogger logger = new WindowsEventLogger(ServiceName);
         static string _shadowsocksManageAddress = ConfigurationManager.AppSettings["ShadowsocksManageAddress"];
         static int _shadowsocksManagePort = int.Parse(ConfigurationManager.AppSettings["ShadowsocksManagePort"]);
 
         static Repo repo = new Repo(ConfigurationManager.AppSettings["connectionString"], ConfigurationManager.AppSettings["connectionStringDc"], ConfigurationManager.AppSettings["connectionStringServer"]);
-        static volatile bool IsShadowsocksServerRunning;
 
         static void Main(string[] args)
         {
@@ -124,8 +123,8 @@ namespace Accounting.RouterReporter
             }
             catch (Exception ex)
             {
-                Log(EventLogEntryType.Error, ex.Message);
-                Log(EventLogEntryType.Error, ex.StackTrace);
+                logger.Log(EventLogEntryType.Error, ex.Message);
+                logger.Log(EventLogEntryType.Error, ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
@@ -135,11 +134,12 @@ namespace Accounting.RouterReporter
         {
             try
             {
-                HealthReport report = new HealthReport();
-                report.SampleIntervalInSec = _perfCounterInterval;
-                report.MachineName = machineName;
-                report.BeginTimestamp = DateTime.UtcNow;
-
+                HealthReport report = new HealthReport()
+                {
+                    SampleIntervalInSec = _perfCounterInterval,
+                    MachineName = machineName,
+                    BeginTimestamp = DateTime.UtcNow
+                };
                 CheckingServiceAreRunning();
 
                 SetPerfCounter(report);
@@ -153,8 +153,8 @@ namespace Accounting.RouterReporter
             }
             catch (Exception ex)
             {
-                Log(EventLogEntryType.Error, ex.Message);
-                Log(EventLogEntryType.Error, ex.StackTrace);
+                logger.Log(EventLogEntryType.Error, ex.Message);
+                logger.Log(EventLogEntryType.Error, ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
@@ -233,12 +233,10 @@ namespace Accounting.RouterReporter
                 if (psos.IsNullOrCountEqualsZero())
                 {
                     report.IsShadowsocksServerRunning = false;
-                    IsShadowsocksServerRunning = false;
                 }
                 else
                 {
                     report.IsShadowsocksServerRunning = true;
-                    IsShadowsocksServerRunning = true;
                 }
             }
         }
@@ -273,67 +271,13 @@ namespace Accounting.RouterReporter
             }
             catch (Exception ex)
             {
-                Log(EventLogEntryType.Error, ex.Message);
-                Log(EventLogEntryType.Error, ex.StackTrace);
+                logger.Log(EventLogEntryType.Error, ex.Message);
+                logger.Log(EventLogEntryType.Error, ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
         }
 
-        private static void Log(EventLogEntryType type, string message)
-        {
-            if (!Environment.UserInteractive)
-            {
-                // Create an instance of EventLog
-                EventLog eventLog = new EventLog();
-
-                // Check if the event source exists. If not create it.
-                if (!EventLog.SourceExists(ServiceName))
-                {
-                    EventLog.CreateEventSource(ServiceName, "Application");
-                }
-
-                // Set the source name for writing log entries.
-                eventLog.Source = ServiceName;
-
-                // Create an event ID to add to the event log
-                int eventID = 8;
-
-                // Write an entry to the event log.
-                eventLog.WriteEntry(message, type, eventID);
-
-                // Close the Event Log
-                eventLog.Close();
-            }
-            else
-            {
-                Console.WriteLine($"{Enum.GetName(typeof(EventLogEntryType), type)}: {message}");
-            }
-           
-        }
+       
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//repo.InsertDatas(new System.Collections.Generic.List<RemoteAccessConnection>
-//{
-//    new RemoteAccessConnection { AuthMethod = "sdf", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
-//    new RemoteAccessConnection { AuthMethod = "1232", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
-//    new RemoteAccessConnection { AuthMethod = "fsdf", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
-//    new RemoteAccessConnection { AuthMethod = "sdfs", Bandwidth = 123, ClientExternalAddress = "12012.12413", ClientIPv4Address = "45454", ConnectionDuration = TimeSpan.FromHours(1), ConnectionStartTime = DateTime.Now, ConnectionType = ConnectionType.Vpn, MachineName = "HK", TimeStamp = DateTime.Now, TotalBytesIn = 1234343214, TotalBytesOut = 34324, TransitionTechnology = "tech", TunnelType = TunnelType.Ikev2, UserActivityState = UserActivityState.Active, UserName = "bosxixi" },
-//});
-

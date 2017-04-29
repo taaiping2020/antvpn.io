@@ -22,6 +22,10 @@ namespace Accounting.RouterReporter
             {
                 stat = stat.Replace("stat:", string.Empty);
             }
+            else
+            {
+                yield break;
+            }
             var obj = (JObject)JsonConvert.DeserializeObject(stat);
             foreach (var item in obj)
             {
