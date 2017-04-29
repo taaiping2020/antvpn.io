@@ -18,5 +18,6 @@ namespace Accounting.API
         Task<IEnumerable<Login>> GetLogins(string userId);
         Task<IEnumerable<UserInfo>> GetUserInfosAsync();
         IEnumerable<AcctRaw> GetAcctRaw(string usernames, int pageSize, int pageIndex);
+        Task<IEnumerable<string>> GetSSOnlineUsersAsync();
     }
 }

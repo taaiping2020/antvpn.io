@@ -152,5 +152,14 @@ namespace Accounting.API
             var json = await client.GetStringAsync(_remoteServiceBaseUrl);
             return JsonConvert.DeserializeObject<UserInfo[]>(json);
         }
+
+        public async Task<IEnumerable<string>> GetSSOnlineUsersAsync()
+        {
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+            var usernames = await connection.QueryAsync<string>("select distinct username from sseventraw where TimeStamp > DATEADD(minute,-5, GETUTCDATE())");
+            connection.Close();
+            return usernames;
+        }
     }
 }

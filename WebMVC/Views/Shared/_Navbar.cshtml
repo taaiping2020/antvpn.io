@@ -28,22 +28,6 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                 <ul class="nav navbar-nav">
-                    @*<li class="dropdown">
-                            <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Colors<i class="glyph glyph-chevron-down-2"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="colors.html">All colors</a></li>
-                                <li class="divider"></li>
-                                <li><a href="colors.html#bootstrap-colors">Bootstrap colors</a></li>
-                                <li><a href="colors.html#mdl-colors">MDL colors</a></li>
-                                <li><a href="colors.html#mdl-alt-colors">MDL alt colors</a></li>
-                            </ul>
-                        </li>*@
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li>
-                            <a class="color-type-secondary" asp-area="" asp-controller="Dashboard" asp-action="Index" data-toggle="modal">Dashboard</a>
-                        </li>
-                    }
                     <li>
                         <a class="color-type-secondary" href="#" data-toggle="modal">Pricing</a>
                     </li>
@@ -71,7 +55,12 @@
                             <li><a asp-controller="Home" asp-action="TermsOfUse">Terms of use</a></li>
                         </ul>
                     </li>
-
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>
+                            <a class="color-type-secondary" asp-area="" asp-controller="Dashboard" asp-action="Index" data-toggle="modal">Dashboard</a>
+                        </li>
+                    }
                 </ul>
 
 

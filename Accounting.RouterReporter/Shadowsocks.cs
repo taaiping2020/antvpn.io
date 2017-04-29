@@ -34,6 +34,7 @@ namespace Accounting.RouterReporter
         byte[] buffer = new byte[1024];
         readonly ICollection<Login> _inMemoryUsers = new List<Login>();
         string _machineName;
+        bool isFirstTime = true;
         IRepo _repo;
         LoginComparer _loginComparer = new LoginComparer();
 
@@ -103,6 +104,12 @@ namespace Accounting.RouterReporter
                         }), ReportShadowsocksStat, tryGetOkResult: true);
                     }
                 }
+
+                if (!isFirstTime)
+                {
+                    ReportShadowsocksStat(null);
+                }
+                isFirstTime = false;
             }
             catch (Exception ex)
             {
