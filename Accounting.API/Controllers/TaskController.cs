@@ -33,7 +33,7 @@ namespace Accounting.API.Controllers
         {
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
-            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1);
             var accts = await _repo.GetAcctNAsync(firstDayOfMonth, lastDayOfMonth);
             if (accts == null)
             {

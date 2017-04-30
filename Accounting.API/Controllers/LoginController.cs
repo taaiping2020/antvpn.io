@@ -42,7 +42,7 @@ namespace Accounting.API.Controllers
             var logins = await _repo.GetLogins(userId);
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
-            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1);
             var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
             var acctsss = await _repo.GetSSAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
             var ssonlineuser = await _repo.GetSSOnlineUsersAsync();
@@ -78,7 +78,7 @@ namespace Accounting.API.Controllers
             var logins = await _repo.GetLogins(userId);
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
-            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1);
             var acctRaws = _repo.GetAcctRaw(logins.Select(c => c.LoginName).ToString(','), pageSize, pageIndex).ToArray();
 
             return Ok(acctRaws);
