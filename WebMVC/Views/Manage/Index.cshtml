@@ -1,0 +1,218 @@
+﻿
+
+<div class="container">
+    <ol class="list-items">
+        @if (ViewData["servers"] != null)
+        {
+            foreach (var server in ViewData["servers"] as IEnumerable<WebMVC.ViewModels.Server>)
+            {
+                <li class="list-items-row">
+                    <div data-toggle="collapse" aria-expanded="false" data-target="@("#list-item-line-" + server.Id)">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <i class="glyph glyph-add"></i>
+                                <i class="glyph glyph-remove"></i>
+                                @*<strong>1</strong>*@
+                            </div>
+                            <div class="col-md-4">
+                                @if (server.IsHybrid)
+                                {
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.RedirectorServerCountryFlag)" alt="@server.RedirectorServerCountryName" />
+                                    <strong><span class="glyph glyph-remote"></span></strong>
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.TrafficServerCountryFlag)" alt="@server.TrafficServerCountryName" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("/images/flags_iso/32/" + server.CountryFlag)" alt="@server.CountryName" />
+                                }
+
+
+                                @*<a>sh.uk.antvpn.io</a>*@
+                            </div>
+                            <div class="col-md-7">
+                                Protocals: <strong>@server.ProtocalsDisplay</strong>
+                            </div>
+                            <div class="col-md-4">
+                                Type: <strong>@(server.IsHybrid ? "Hybrid" : "Normal")</strong>
+
+                            </div>
+                            <div class="col-md-4">
+                                @if (!server.IsServerStatusGood)
+                                {
+                                    <span>Status: </span><span class="glyph glyph-radio-bullet status-stop" title="Stopped"></span>
+                                }
+                                else
+                                {
+                                    <span>Status: </span><span class="glyph glyph-radio-bullet status-running" title="Running"></span>
+                                }
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a><span class="glyph glyph-hamburger"></span></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapse" id="@("list-item-line-" + server.Id)">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-24">
+                                    MachineName: <strong>@server.HealthReport.MachineName</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    Available Memory: <strong>@server.HealthReport.AvailableMemoryMegaBytes MB</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    IsShadowsocksServerRunning: <strong>@server.HealthReport.IsShadowsocksServerRunning</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    BeginTimestamp: <strong>@server.HealthReport.BeginTimestamp.ToString("yyyy/MM/dd")</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    EndTimestamp: <strong>@server.HealthReport.EndTimestamp.ToString("yyyy/MM/dd")</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    SampleIntervalInSec: <strong>@server.HealthReport.SampleIntervalInSec</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    VpnS2SStatus: <strong>@server.HealthReport.VpnS2SStatus</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    VpnStatus: <strong>@server.HealthReport.VpnStatus</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    UseHttp: <strong>@server.HealthReport.UseHttp</strong>
+                                </div>
+
+                                <div class="col-md-24">
+                                    RoutingStatus: <strong>@server.HealthReport.RoutingStatus</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    SstpProxyStatus: <strong>@server.HealthReport.SstpProxyStatus</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="col-md-24">
+                                    Server Endpoint: <strong>@server.Domain</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    CPU Load: <strong>@server.CPUPercentage</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    Bandwidth In: <strong>@server.BandwidthIn</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    Bandwidth Out: <strong>@server.BandwidthOut</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    Bandwidth Total: <strong>@server.BandwidthTotal</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    Last Updated: <strong>@server.DurationDisplay</strong>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-12">
+                                <div class="col-md-24">
+                                    CertIssuer: <strong>@server.HealthReport.CertIssuer</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    CertSubject: <strong>@server.HealthReport.CertSubject</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    CertNotBefore: <strong>@server.HealthReport.CertNotBefore.ToString("yyyy/MM/dd")</strong>
+                                </div>
+                                <div class="col-md-24">
+                                    CertNotAfter: <strong>@server.HealthReport.CertNotAfter.ToString("yyyy/MM/dd")</strong>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ol>
+</div>
+
+
+<div class="container">
+    <div class="row">
+
+        @if (ViewData["logins"] != null)
+            {
+            <div class="entity-list entity-list-expandable">
+                @foreach (var l in (IEnumerable<SharedProject.LoginStatus>)ViewData["logins"])
+                {
+                    <div class="col-md-12">
+                        <div class="entity-list-item">
+                            <div class="item-icon">
+                                @if (l.AllowDialIn && l.Enabled)
+                                {
+                                    <span class="glyph glyph-contact"></span>
+                                }
+                                else
+                                {
+                                    <span class="glyph glyph-block-contact"></span>
+                                }
+                            </div>
+                            <div class="item-content-secondary">
+                                @if (l.IsOnline)
+                                {
+                                    <text>Status: <span title="Online" class="glyph glyph-radio-bullet status-running"></span></text>
+                                }
+                                else
+                                {
+                                    <text>Status: <span title="Offline" class="glyph glyph-radio-bullet status-stop"></span></text>
+                                }
+                                <div class="content-text-secondary">@(l.LastUpdated?.ToLocalTime().ToString("yyyy/MM/dd"))</div>
+                            </div>
+                            <div class="item-content-primary">
+                                <div class="content-text-primary">@l.LoginName <small>(@((User as System.Security.Claims.ClaimsPrincipal).FindFirst(l.UserId)?.Value))</small></div>
+
+                                <div class="content-text-secondary">
+                                    @*Allow dial in: @(l.AllowDialIn && l.Enabled ? "Yes" : "No")*@
+
+                                    @if (String.IsNullOrEmpty(l.MonthlyTrafficDisplay))
+                                    {
+                                        <div class="content-text-primary text-right">@(l.BasicAcct?.TotalInOutDisplay) / Unlimited</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="content-text-primary text-right">@(l.BasicAcct?.TotalInOutDisplay) / @(l.MonthlyTrafficDisplay)</div>
+                                    }
+                                    <div class="content-text-primary text-right"><strong>Shadowsocks&trade; Port Number</strong>: @l.Port</div>
+                                    <div class="content-text-primary text-right"><strong>Shadowsocks&trade; Usage </strong>: @l.SSMonthlyTrafficDisplay</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="@(l.BasicAcct?.TotalInOut.ToString())" aria-valuemin="0" aria-valuemax="@(l.MonthlyTraffic.ToString())" style="width: @(l.Percent());">
+                                        <span class="sr-only">@(l.Percent())</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="item-content-expanded">
+                                <div class="content-text-primary text-right"><strong>Shadowsocks&trade; Port Number</strong>: @l.Port</div>
+                                <div class="content-text-primary text-right"><strong>Shadowsocks&trade; Usage </strong>: @l.SSMonthlyTrafficDisplay</div>
+                                <button class="btn btn-default configure" data-loginname="@l.LoginName" data-traffic="@l.MonthlyTraffic" data-toggle="modal" data-target="#modal-configure">Configure</button>
+                                <button class="btn btn-default reset-password" data-loginname="@l.LoginName" data-toggle="modal" data-target="#modal-resetpassword">Reset password</button>
+                            </div>*@
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+@section scripts {
+    <script>
+        $(function () {
+        }
+    </script>
+}

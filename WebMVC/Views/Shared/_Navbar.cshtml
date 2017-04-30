@@ -29,7 +29,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a class="color-type-secondary" href="#" data-toggle="modal">Pricing</a>
+                        <a class="color-type-secondary" asp-controller="Home" asp-action="Pricing">Pricing</a>
                     </li>
                     <li>
                         <a class="color-type-secondary" asp-controller="Docs" asp-action="Index">Documentation</a>
@@ -40,10 +40,11 @@
                     <li class="dropdown">
                         <a href="colors.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Download<i class="glyph glyph-chevron-down-2"></i></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Windows</a></li>
+                            <li><a target="_blank" href="https://github.com/shadowsocks/shadowsocks-windows/releases">Windows</a></li>
                             <li class="divider"></li>
                             <li><a href="http://download.antvpn.io/strongSwan-1.8.2.apk">Android</a></li>
-                            <li><a href="#">iOS</a></li>
+                            <li><a target="_blank" href="https://itunes.apple.com/cn/app/shadowsocks-wingy-proxy-for-http-socks5-ss/id1148026741?mt=8">iOS</a></li>
+                            <li><a target="_blank" href="https://github.com/shadowsocks/shadowsocks-windows/releases">Shadowsocks</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -53,14 +54,11 @@
                             <li class="divider"></li>
                             <li><a asp-controller="Home" asp-action="PrivacyStatement">Privacy & cookies</a></li>
                             <li><a asp-controller="Home" asp-action="TermsOfUse">Terms of use</a></li>
+                            <li>
+                                <a class="color-type-secondary no-outline" href="#changelog" data-toggle="modal">Changelog</a>
+                            </li>
                         </ul>
                     </li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li>
-                            <a class="color-type-secondary" asp-area="" asp-controller="Dashboard" asp-action="Index" data-toggle="modal">Dashboard</a>
-                        </li>
-                    }
                 </ul>
 
 
@@ -70,6 +68,21 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@(User.FindFirst("preferred_username").Value)<i class="glyph glyph-chevron-down-2"></i></a>
                             <ul class="dropdown-menu" role="menu">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li>
+                                        <a class="color-type-secondary" asp-area="" asp-controller="Dashboard" asp-action="Index" data-toggle="modal">Dashboard</a>
+                                    </li>
+                                }
+                                @if ((User as System.Security.Claims.ClaimsPrincipal).FindFirst("role")?.Value == "Administrator")
+                                {
+                                    <li>
+                                        <a class="color-type-secondary" asp-area="" asp-controller="Manage" asp-action="Index" data-toggle="modal">Manage</a>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="color-type-secondary" href="#" data-toggle="modal">Redeem code</a>
+                                </li>
                                 <li class="divider"></li>
                                 <li><a asp-controller="Account" asp-action="Signout">Sign out</a></li>
                             </ul>
@@ -86,3 +99,160 @@
         </div>
     </div>
 </nav>
+
+
+<div class="modal modal-center in" id="changelog" tabindex="-1" role="dialog" aria-labelledby="changelog-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="glyph glyph-cancel" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title" id="changelog-label">Changelog</h4>
+            </div>
+            <div class="modal-body">
+                <dl>
+                    <dt class="m-t-sm">2017.04.29</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Added Shadowsocks Support.</li>
+                            @*<li>Updated Bootstrap to v3.3.7.</li>
+                            <li>Added <a href="components.html#entity-list">Entity list</a> and <a href="controls.html#putbox">Put box.</a></li>
+                            <li>Added <code>!important</code> to spacer classes.</li>
+                            <li>Bug fixes.</li>*@
+                        </ul>
+                    </dd>
+
+                    @*<dt class="m-t-sm">0.5.8</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Added default styling for <code>&lt;pre&gt;</code>, <code>&lt;blockquote&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, and <code>&lt;dl&gt;</code>.</li>
+                            <li>Fixed Jumbotron max-width issue on wide screen width.</li>
+                            <li>Navbar styling bug fixes.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.5.7</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Updated glyph fonts. Glyph style is now aligned with Windows 10.</li>
+                            <li>Added new <a href="typography.html#glyphs">glyphs</a>.</li>
+                            <li>Removed fixed width from <code>.container</code> layout.</li>
+                            <li>Prebuilt and minified CSS files. NPM and Bower packages now come with prebuilt <code>dist</code> folder and minified CSS files.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.5.6</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Simplified <a href="components.html#jumbotron">Jumbotron</a>.</li>
+                            <li>Added <code>.compressed</code> option to <a href="controls.html#navs">Navbar</a>.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.5.5</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Big update to <a href="controls.html#navs">Navbar</a> allowing two navbars to stack.</li>
+                            <li>Added variable font path with <code>!default</code> declaration to enable you to set the path based on your project needs</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.5.3</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Added <a href="controls.html#side-nav">side-nav</a> control.</li>
+                            <li>Moved bower to devDependency in package.json.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.4.12</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Updated toggle switch, tooltip, popover, and link button.</li>
+                            <li>Added color themes to <code>&lt;a&gt;</code> and fixed states.</li>
+                            <li>Changed color theme classes.</li>
+                            <li>Updated breadcrumb styling.</li>
+                            <li>Changed font-family variable names.</li>
+                            <li>Updated glyphs font path.</li>
+                            <li>Fixed checkbox glyph issue.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.4.9</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Typography:</li>
+                            <li>Updated type ramp, classes, mixins, and functions.</li>
+                            <li>Added type controls (headings, subheadings, paragraphs, and captions).</li>
+                            <li>Glyphs:</li>
+                            <li>Changed glyph names to be more semantic.</li>
+                            <li>Added glyph function to get a glyph's unicode value.</li>
+                            <li>Other changes:</li>
+                            <li>Added Navbar component</li>
+                            <li>Updated Dropdown control</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.4.4</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Updates and fixes for:</li>
+                            <li><a href="typography.html#fonts">Responsive type</a></li>
+                            <li><a href="controls.html#buttons">Push buttons</a></li>
+                            <li><a href="controls.html#buttons">Toggle buttons</a></li>
+                            <li><a href="controls.html#toggle-switch">Toggle switch</a></li>
+                            <li><a href="components.html#back-to-top">Back-to-top button</a></li>
+                            <li><a href="controls.html#forms">Select box</a></li>
+                            <li><a href="alerts.html">Alerts</a></li>
+                            <li><a href="components.html#tables">Tables</a></li>
+                            <li><a href="components.html#jumbotron">Jumbotron and highlight bar</a></li>
+                            <li><a href="components.html#pagination">Pagination</a></li>
+                            <li><a href="components.html#pager">Pager</a></li>
+                            <li>Default <code>&lt;p&gt;</code> spacing</li>
+                            <li>Remove MDL 1.0 controls and components</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.4.0</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>New colors and color naming that reflect the latest MDL colors.</li>
+                            <li>Remove <code>win-</code> prefix from class and variable names.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.3.2</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Rename to Winstrap.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.1.1</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Add <code>win-</code> prefix to:</li>
+                            <li><a href="components.html#list-items">list items</a></li>
+                            <li><a href="components.html#refine-list">refine list</a></li>
+                            <li><a href="typography.html#fonts">typography utilities</a></li>
+                            <li><a href="tabs.html">media browser component</a></li>
+                            <li><a href="components.html#back-to-top">back to top component</a></li>
+                            <li><a href="alerts.html">alert stack component</a></li>
+                            <li><a href="layout.html#section">section component</a></li>
+                            <li>Extend the Bootstrap grid with a <a href="layout.html#grid-small-gutters">small gutter option</a>.</li>
+                            <li>Add a <a href="images/bootstrap-winjs.png">placeholder logo</a>.</li>
+                        </ul>
+                    </dd>
+
+                    <dt class="m-t-sm">0.1.0</dt>
+                    <dd>
+                        <ul class="list-unstyled">
+                            <li>Initialize bootstrap-winjs.</li>
+                        </ul>
+                    </dd>*@
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

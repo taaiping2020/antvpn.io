@@ -12,6 +12,9 @@ a.navbar-brand {
 #introduction .title {
   color: #89BF04;
 }
+span.title {
+  color: #89BF04;
+}
 #overview {
   padding-top: 2em;
   background-color: #F4F4F4;

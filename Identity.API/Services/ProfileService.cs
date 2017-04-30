@@ -71,6 +71,7 @@ namespace Identity.API.Services
                 new Claim(JwtClaimTypes.PreferredUserName, user.UserName)
             };
 
+  
 
             claims.Add(new Claim("monthly_traffic", user.MonthlyTraffic.ToString()));
 
@@ -121,7 +122,24 @@ namespace Identity.API.Services
                     new Claim(JwtClaimTypes.PhoneNumberVerified, user.PhoneNumberConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
                 });
             }
+            var roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
+            if (roles != null && roles.Any())
+            {
+                foreach (var r in roles)
+                {
+                    claims.Add(new Claim(JwtClaimTypes.Role, r));
 
+                    if (r == "Administrator")
+                    {
+                        var users = _userManager.Users.ToDictionary<ApplicationUser, string>(c => c.Id);
+                        foreach (var u in users)
+                        {
+                            claims.Add(new Claim(u.Key, u.Value.UserName));
+                        }
+                    }
+                }
+            }
+         
             return claims;
         }
     }

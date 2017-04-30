@@ -77,7 +77,7 @@ namespace WebMVC.Services
             return response;
         }
 
-        public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync()
+        public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(bool asAdministrator = false)
         {
             var context = _httpContextAccesor.HttpContext;
             var token = await context.Authentication.GetTokenAsync("access_token");
@@ -85,7 +85,7 @@ namespace WebMVC.Services
             _apiClient = new HttpClient();
             _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var loginsUrl = $"{_remoteServiceBaseUrl}/status";
+            var loginsUrl = asAdministrator ? $"{_remoteServiceBaseUrl}/status?asAdministrator=true" : $"{_remoteServiceBaseUrl}/status";
             var dataString = await _apiClient.GetStringAsync(loginsUrl);
 
             var response = JsonConvert.DeserializeObject<LoginStatus[]>(dataString);

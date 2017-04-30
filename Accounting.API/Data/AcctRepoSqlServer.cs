@@ -40,6 +40,11 @@ namespace Accounting.API
             return await _adContext.Logins.Where(c => c.UserId == userId).ToListAsync();
         }
 
+        public async Task<IEnumerable<Login>> GetLogins()
+        {
+            return await _adContext.Logins.ToListAsync();
+        }
+
         public async Task<IEnumerable<AcctN>> GetAcctNAsync(string usernames, DateTime? beginTime, DateTime? endTime)
         {
             if (String.IsNullOrEmpty(usernames))

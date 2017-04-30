@@ -36,22 +36,25 @@ namespace Accounting.API.Controllers
         }
 
         [HttpGet("Status")]
-        public async Task<IActionResult> GetLoginStatus()
+        public async Task<IActionResult> GetLoginStatus(bool asAdministrator = false)
         {
-            var userId = User.FindFirst("sub").Value;
-            var logins = await _repo.GetLogins(userId);
+            IEnumerable<Login> logins;
+            if (User.FindFirst("role").Value == "Administrator" && asAdministrator)
+            {
+                logins = await _repo.GetLogins();
+            }
+            else
+            {
+                var userId = User.FindFirst("sub").Value;
+                logins = await _repo.GetLogins(userId);
+            }
+
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1);
             var accts = await _repo.GetAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
             var acctsss = await _repo.GetSSAcctNAsync(logins.Select(c => c.LoginName).ToString(','), firstDayOfMonth, lastDayOfMonth);
-            var ssonlineuser = await _repo.GetSSOnlineUsersAsync();
-
-            var query = from c in _accountingContext.Current
-                        join cm in _accountingContext.CurrentMeta on c.TimeStamp equals cm.TimeStamp
-                        select c.UserName;
-            var currentUserNames = await query.ToArrayAsync();
-
+            var onlines = await GetOnlineUserNamesAsync();
             var model = logins.Select(c => new LoginStatus
             {
                 AllowDialIn = c.AllowDialIn,
@@ -60,7 +63,7 @@ namespace Accounting.API.Controllers
                 UserId = c.UserId,
                 MonthlyTraffic = c.MonthlyTraffic,
                 SSMonthlyTraffic = acctsss.FirstOrDefault(d => d.Item1 == c.LoginName).Item2,
-                IsOnline = currentUserNames.Contains(c.LoginName) || ssonlineuser.Contains(c.LoginName),
+                IsOnline = onlines.Contains(c.LoginName),
                 Port = c.Port,
                 BasicAcct = new BasicAcct()
                 {
@@ -69,6 +72,20 @@ namespace Accounting.API.Controllers
                 }
             }).ToArray();
             return Ok(model);
+        }
+
+        private async Task<IEnumerable<string>> GetOnlineUserNamesAsync()
+        {
+            var before = DateTime.UtcNow.AddMinutes(-5);
+            var ssonlineuser = await _repo.GetSSOnlineUsersAsync();
+
+            var query = from c in _accountingContext.Current
+                        join cm in _accountingContext.CurrentMeta on c.TimeStamp equals cm.TimeStamp
+                        where cm.TimeStamp > before
+                        select c.UserName;
+            var currentUserNames = await query.ToArrayAsync();
+
+            return currentUserNames.Concat(ssonlineuser);
         }
 
         [HttpGet("History/{pageSize}/{pageIndex}")]

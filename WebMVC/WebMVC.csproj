@@ -984,6 +984,7 @@
     <Content Include="wwwroot\images\flags_iso\48\_Somaliland.png" />
     <Content Include="wwwroot\images\flags_iso\48\_United Nations.png" />
     <Content Include="wwwroot\images\flags_iso\48\_Wales.png" />
+    <Content Include="wwwroot\images\payment.jpg" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.10.7" />
@@ -1014,6 +1015,11 @@
     <None Include="wwwroot\images\articles\gotovpnsettin.png" />
     <None Include="wwwroot\images\articles\serveraddress.png" />
     <None Include="wwwroot\images\articles\startmenuopensetting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot/images\payment.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <!--<ItemGroup>
     <None Include="Views\Dashboard\Index.cshtml" />
