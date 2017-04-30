@@ -1,0 +1,44 @@
+@model IEnumerable<IGrouping<string, WebMVC.Docs.Article>>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
+                <div class="navigation-label">Windows Setup</div>
+                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
+                    <i class="glyph glyph-cancel"></i>
+                </button>
+                <ul>
+                    <li><a href="#">Manual Setup for Windows 10</a></li>
+                    <li><a href="#">Manual Setup for Windows 7, 8</a></li>
+                </ul>
+            </nav>
+
+            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
+                <div class="navigation-label">MacOS Setup</div>
+                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
+                    <i class="glyph glyph-cancel"></i>
+                </button>
+                <ul>
+                    <li><a href="#">Manual Setup for Windows 10</a></li>
+                    <li><a href="#">Manual Setup for Windows 7, 8</a></li>
+                </ul>
+            </nav>
+            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
+                <div class="navigation-label">Mobile Device Setup</div>
+                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
+                    <i class="glyph glyph-cancel"></i>
+                </button>
+                <ul>
+                    <li><a href="#">Manual Setup for iPhone</a></li>
+                    <li><a href="#">Manual Setup for Android</a></li>
+                    <li><a href="#">Manual Setup for Win10Mobile</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-18">
+            @Html.Raw(Model)
+        </div>
+    </div>
+
+</div>

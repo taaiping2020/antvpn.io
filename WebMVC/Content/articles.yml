@@ -1,0 +1,50 @@
+!System.Collections.Generic.List%601[[WebMVC.Docs.Article,%20WebMVC,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null]],%20System.Private.CoreLib,%20Version=4.0.0.0,%20Culture=neutral,%20PublicKeyToken=7cec85d7bea7798e
+- Category: &o2 Windows Setup
+  Created: 2017-04-30T00:00:00.0000000
+  Description: null
+  FileName: windows10
+  Tags:
+    - &o5 windows
+    - &o6 windows 10
+  Title: Manual Setup for Windows 10
+  TitleFull: &o8 Manual Setup for Windows 7
+  Updated: 2017-04-30T00:00:00.0000000
+- Category: *o2
+  Created: 2017-04-30T00:00:00.0000000
+  Description: null
+  FileName: ManualSetupforWindows7.md
+  Tags:
+    - *o5
+    - *o6
+  Title: *o8
+  TitleFull: *o8
+  Updated: 2017-04-30T00:00:00.0000000
+- Category: *o2
+  Created: 2017-04-30T00:00:00.0000000
+  Description: null
+  FileName: ManualSetupforWindows8.md
+  Tags:
+    - *o5
+    - windows 8
+  Title: &o16 Manual Setup for Windows 8
+  TitleFull: *o16
+  Updated: 2017-04-30T00:00:00.0000000
+- Category: &o18 Mobile Device Setup
+  Created: 2017-04-30T00:00:00.0000000
+  Description: null
+  FileName: ManualSetupforiPhone.md
+  Tags:
+    - iOS
+    - iPhone
+  Title: &o23 Manual Setup for iPhone
+  TitleFull: *o23
+  Updated: 2017-04-30T00:00:00.0000000
+- Category: *o18
+  Created: 2017-04-30T00:00:00.0000000
+  Description: null
+  FileName: ManualSetupforAndroid.md
+  Tags:
+    - Android
+  Title: &o28 Manual Setup for Android
+  TitleFull: *o28
+  Updated: 2017-04-30T00:00:00.0000000

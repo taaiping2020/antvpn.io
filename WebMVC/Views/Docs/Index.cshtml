@@ -1,44 +1,25 @@
-@model string
+@model IEnumerable<IGrouping<string, WebMVC.Docs.Article>>
 
 <div class="container">
+    <h1 class="pull-center">antvpn.io Support</h1>
+    <hr />
     <div class="row">
-        <div class="col-md-6">
-            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
-                <div class="navigation-label">Windows Setup</div>
-                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
-                    <i class="glyph glyph-cancel"></i>
-                </button>
+        @foreach (IGrouping<string, WebMVC.Docs.Article> item in Model)
+        {
+            <div class="col-md-8">
+                <h3>@item.Key</h3>
                 <ul>
-                    <li><a href="#">Manual Setup for Windows 10</a></li>
-                    <li><a href="#">Manual Setup for Windows 7, 8</a></li>
+                    @foreach (WebMVC.Docs.Article a in item)
+                    {
+                        <li>
+                            <a asp-controller="Docs" asp-action="Articles" asp-route-title="@a.Title.Replace(" ", "-")">@a.Title</a>
+                        </li>
+                    }
                 </ul>
-            </nav>
 
-            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
-                <div class="navigation-label">MacOS Setup</div>
-                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
-                    <i class="glyph glyph-cancel"></i>
-                </button>
-                <ul>
-                    <li><a href="#">Manual Setup for Windows 10</a></li>
-                    <li><a href="#">Manual Setup for Windows 7, 8</a></li>
-                </ul>
-            </nav>
-            <nav role="navigation" id="sidenav" class="nav side-navigation side-navigation-large theme-default">
-                <div class="navigation-label">Mobile Device Setup</div>
-                <button type="button" class="close" data-dismiss="side-navigation" aria-label="close">
-                    <i class="glyph glyph-cancel"></i>
-                </button>
-                <ul>
-                    <li><a href="#">Manual Setup for iPhone</a></li>
-                    <li><a href="#">Manual Setup for Android</a></li>
-                    <li><a href="#">Manual Setup for Win10Mobile</a></li>
-                </ul>
-            </nav>
-        </div>
-        <div class="col-md-18">
-            @Html.Raw(Model)
-        </div>
+            </div>
+        }
+
     </div>
 
 </div>
