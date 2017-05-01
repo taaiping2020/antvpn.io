@@ -123,6 +123,21 @@ namespace Accounting.API
             return acctns;
         }
 
+        public async Task<IEnumerable<AcctS>> GetServerAcctNAsync(DateTime? beginTime, DateTime? endTime)
+        {
+            beginTime = beginTime ?? DateTime.Parse("1753-1-1");
+            endTime = endTime ?? DateTime.MaxValue;
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "select totalinput, totaloutput,nasidentifier from dbo.GetServerAccountings(@begintime, @endtime)";
+            command.Parameters.Add(new SqlParameter("@begintime", beginTime));
+            command.Parameters.Add(new SqlParameter("@endtime", endTime));
+            var reader = await command.ExecuteReaderAsync();
+            var acctns = AcctS.GetFromReader(reader).ToArray();
+            return acctns;
+        }
+
         public IEnumerable<AcctRaw> GetAcctRaw(string usernames, int pageSize, int pageIndex)
         {
             if (String.IsNullOrEmpty(usernames))

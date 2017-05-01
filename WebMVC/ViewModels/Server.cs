@@ -43,6 +43,21 @@ namespace WebMVC.ViewModels
             Shadowsocks = 5
         }
 
+        public long? TrafficIn { get; set; }
+        public long? TrafficOut { get; set; }
+
+        public string TrafficInDisplay => ToMegaByte(TrafficIn);
+        public string TrafficOutDisplay => ToMegaByte(TrafficOut);
+
+        private static string ToMegaByte(long? bytes)
+        {
+            if (bytes == null)
+            {
+                return string.Empty;
+            }
+            return (bytes / 1024d / 1024d)?.ToString("0.00") + " MB";
+        }
+
         public bool IsServerStatusGood
         {
             get

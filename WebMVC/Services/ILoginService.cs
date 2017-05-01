@@ -14,5 +14,6 @@ namespace WebMVC.Services
         Task<bool> ResetPasswordAsync(LoginBindingModel model);
         Task<CreateLoginResult> CreateNewLoginAsync(string loginName, string password);
         Task<bool> SetMonthlyTrafficAsync(LoginConfigureBindingModel model);
+        Task<IEnumerable<AcctS>> GetAcctServerAsync();
     }
 }

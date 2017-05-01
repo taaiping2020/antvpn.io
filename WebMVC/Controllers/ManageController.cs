@@ -36,24 +36,29 @@ namespace WebMVC.Controllers
             {
                 return StatusCode(403);
             }
-            ViewData["servers"] = await _serverService.GetServersAsync();
-
-            var logins = await _loginService.GetWithStatusAsync(true);
+            var serversTask = _serverService.GetServersAsync();
+            var acctSTask = _loginService.GetAcctServerAsync();
+            var loginsTask = _loginService.GetWithStatusAsync(true);
+            var servers = await serversTask;
+            var acctS = await acctSTask;
+            var logins = await loginsTask;
+            
+            foreach (var s in servers)
+            {
+                if (!s.IsHybrid)
+                {
+                    s.TrafficIn = acctS.FirstOrDefault(c => c.MachineName.ToLower() == s.Name.ToLower())?.TotalInput;
+                    s.TrafficOut = acctS.FirstOrDefault(c => c.MachineName.ToLower() == s.Name.ToLower())?.TotalOutput;
+                }
+                else
+                {
+                    s.TrafficIn = acctS.FirstOrDefault(c => c.MachineName.ToLower() == s.TrafficServerName?.ToLower())?.TotalInput;
+                    s.TrafficOut = acctS.FirstOrDefault(c => c.MachineName.ToLower() == s.TrafficServerName?.ToLower())?.TotalOutput;
+                }
+               
+            }
+            ViewData["servers"] = servers;
             ViewData["logins"] = logins.OrderByDescending(c => c.IsOnline).ThenByDescending(c => c.BasicAcct.TotalInOut);
-            //var logins = await _loginService.GetWithStatusAsync();
-            //ViewData["logins"] = logins;
-            //var acctRaws = await _loginService.GetAcctRawAsync();
-            //ViewData["acctRaws"] = acctRaws.Select(c => new AcctRawViewModel(c)).OrderByDescending(c => c.EventTime);
-
-            //var user = User as ClaimsPrincipal;
-            //var m_traffic = String.IsNullOrEmpty(user.FindFirst("monthly_traffic")?.Value) ? 0d : double.Parse(user.FindFirst("monthly_traffic").Value);
-            //var used = logins.Sum(c => c.BasicAcct.TotalIn) + logins.Sum(c => c.BasicAcct.TotalOut);
-
-            //ViewData["traffic"] = m_traffic;
-            //ViewData["used"] = used;
-
-            //ViewData["traffic_gb"] = m_traffic / 1024d / 1024d / 1024d;
-            //ViewData["used_gb"] = used / 1024d / 1024d / 1024d;
             return View();
         }
     }

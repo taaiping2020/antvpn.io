@@ -77,6 +77,22 @@ namespace WebMVC.Services
             return response;
         }
 
+        public async Task<IEnumerable<AcctS>> GetAcctServerAsync()
+        {
+            var context = _httpContextAccesor.HttpContext;
+            var token = await context.Authentication.GetTokenAsync("access_token");
+
+            _apiClient = new HttpClient();
+            _apiClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var loginsUrl = $"{_remoteServiceBaseUrl}/server";
+            var dataString = await _apiClient.GetStringAsync(loginsUrl);
+
+            var response = JsonConvert.DeserializeObject<AcctS[]>(dataString);
+
+            return response;
+
+        }
         public async Task<IEnumerable<LoginStatus>> GetWithStatusAsync(bool asAdministrator = false)
         {
             var context = _httpContextAccesor.HttpContext;

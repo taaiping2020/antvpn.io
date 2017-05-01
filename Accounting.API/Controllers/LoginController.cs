@@ -39,7 +39,7 @@ namespace Accounting.API.Controllers
         public async Task<IActionResult> GetLoginStatus(bool asAdministrator = false)
         {
             IEnumerable<Login> logins;
-            if (User.FindFirst("role").Value == "Administrator" && asAdministrator)
+            if (User.FindFirst("role")?.Value == "Administrator" && asAdministrator)
             {
                 logins = await _repo.GetLogins();
             }
@@ -99,6 +99,16 @@ namespace Accounting.API.Controllers
             var acctRaws = _repo.GetAcctRaw(logins.Select(c => c.LoginName).ToString(','), pageSize, pageIndex).ToArray();
 
             return Ok(acctRaws);
+        }
+
+        [HttpGet("Server")]
+        public async Task<IActionResult> GetServer()
+        {
+            DateTime date = DateTime.Now;
+            var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1);
+            var servers = await _repo.GetServerAcctNAsync(firstDayOfMonth, lastDayOfMonth);
+            return Ok(servers);
         }
 
         [HttpPost]

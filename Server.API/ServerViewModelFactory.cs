@@ -30,9 +30,11 @@ namespace Server.API
             };
             if (server.IsHybrid)
             {
+                sv.RedirectorServerName = server.RedirectorServer?.Name;
                 sv.RedirectorServerCountryName = server.RedirectorServer?.Country?.Name;
                 sv.RedirectorServerCountryFlag = server.RedirectorServer?.Country?.Flag;
 
+                sv.TrafficServerName = server.TrafficServer?.Name;
                 sv.TrafficServerCountryName = server.TrafficServer?.Country?.Name;
                 sv.TrafficServerCountryFlag = server.TrafficServer?.Country?.Flag;
 

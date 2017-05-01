@@ -30,9 +30,13 @@ namespace WebMVC.Controllers
         {
             var userId = User.Identities.GetUserId();
 
-            var logins = await _loginService.GetWithStatusAsync();
+            var loginsTask = _loginService.GetWithStatusAsync();
+            var acctRawsTask = _loginService.GetAcctRawAsync();
+
+            var logins = await loginsTask;
+            var acctRaws = await acctRawsTask;
+
             ViewData["logins"] = logins;
-            var acctRaws = await _loginService.GetAcctRawAsync();
             ViewData["acctRaws"] = acctRaws.Select(c => new AcctRawViewModel(c)).OrderByDescending(c => c.EventTime);
 
             var user = User as ClaimsPrincipal;

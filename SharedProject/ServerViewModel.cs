@@ -15,9 +15,11 @@ namespace SharedProject
         public string CountryName { get; set; }
         public string CountryFlag { get; set; }
 
+        public string RedirectorServerName { get; set; }
         public string RedirectorServerCountryName { get; set; }
         public string RedirectorServerCountryFlag { get; set; }
 
+        public string TrafficServerName { get; set; }
         public string TrafficServerCountryName { get; set; }
         public string TrafficServerCountryFlag { get; set; }
         public bool Off { get; set; }

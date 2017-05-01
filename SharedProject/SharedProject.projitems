@@ -9,6 +9,7 @@
     <Import_RootNamespace>SharedProject</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AcctS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AcctRaw.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BasicAcct.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extension.cs" />
