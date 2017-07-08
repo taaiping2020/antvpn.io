@@ -9,10 +9,10 @@ namespace Accounting.API
         public string InfoXml { get; set; }
         public string InfoJson { get; set; }
 
-        public int AcctStatusType { get; set; }
+        public int? AcctStatusType { get; set; }
         public string UserName { get; set; }
-        public DateTime EventTimeStamp { get; set; }
-        public long AcctInputOctets { get; set; }
-        public long AcctOutputOctets { get; set; }
+        public DateTime? EventTimeStamp { get; set; }
+        public long? AcctInputOctets { get; set; }
+        public long? AcctOutputOctets { get; set; }
     }
 }
