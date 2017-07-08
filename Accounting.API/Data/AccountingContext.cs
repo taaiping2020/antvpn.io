@@ -16,6 +16,7 @@ namespace Accounting.API.Data
         }
         
         public virtual DbSet<Eventraw> Eventraw { get; set; }
+        public virtual DbSet<EventrawBackup> EventrawBackup { get; set; }
         public virtual DbSet<Current> Current { get; set; }
         public virtual DbSet<CurrentMeta> CurrentMeta { get; set; }
         public virtual DbSet<SSEventraw> SSEventraw { get; set; }
